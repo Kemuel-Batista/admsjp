@@ -1,16 +1,18 @@
-import { Either, failure, success } from '@/core/either'
-import { ChurchsRepository } from '../../repositories/churchs-repository'
-import { ResourceAlreadyExistsError } from '@/core/errors/errors/resource-already-exists-error'
 import { Injectable } from '@nestjs/common'
-import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
+
+import { Either, failure, success } from '@/core/either'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
-import { PasswordGenerator } from '../../cryptography/password-generator'
-import { HashGenerator } from '../../cryptography/hash-generator'
-import { ChurchDepartmentsRepository } from '../../repositories/church-departments-repository'
-import { DepartmentsRepository } from '../../repositories/departments-repository'
+import { ResourceAlreadyExistsError } from '@/core/errors/errors/resource-already-exists-error'
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 import { ChurchDepartment } from '@/domain/admsjp/enterprise/entities/church-department'
 import { ChurchDepartmentMember } from '@/domain/admsjp/enterprise/entities/church-department-member'
 import { ChurchDepartmentMemberList } from '@/domain/admsjp/enterprise/entities/church-department-member-list'
+
+import { HashGenerator } from '../../cryptography/hash-generator'
+import { PasswordGenerator } from '../../cryptography/password-generator'
+import { ChurchDepartmentsRepository } from '../../repositories/church-departments-repository'
+import { ChurchsRepository } from '../../repositories/churchs-repository'
+import { DepartmentsRepository } from '../../repositories/departments-repository'
 
 interface SaveChurchDepartmentUseCaseRequest {
   churchId: string
@@ -22,6 +24,7 @@ interface SaveChurchDepartmentUseCaseRequest {
     subFunction: string
     phone: string
     email: string
+    birthday: Date
   }[]
 }
 
@@ -90,6 +93,7 @@ export class SaveChurchDepartmentUseCase {
         name: member.name,
         phone: member.phone,
         functionName: member.functionName,
+        birthday: member.birthday,
       })
     })
 

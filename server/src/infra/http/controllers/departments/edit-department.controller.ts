@@ -1,7 +1,3 @@
-import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
-import { EditDepartmentUseCase } from '@/domain/use-cases/departments/edit-department'
-import { DepartmentAlreadyExistsError } from '@/domain/use-cases/departments/errors/department-already-exists-error'
-import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 import {
   BadRequestException,
   Body,
@@ -13,6 +9,11 @@ import {
   Put,
 } from '@nestjs/common'
 import { z } from 'zod'
+
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
+import { EditDepartmentUseCase } from '@/domain/admsjp/application/use-cases/departments/edit-department'
+import { DepartmentAlreadyExistsError } from '@/domain/admsjp/application/use-cases/departments/errors/department-already-exists-error'
+import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 
 const editDepartmentBodySchema = z.object({
   name: z.string(),

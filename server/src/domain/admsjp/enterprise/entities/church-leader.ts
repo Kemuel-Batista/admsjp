@@ -2,18 +2,19 @@ import { Entity } from '@/core/entities/entity'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { Optional } from '@/core/types/optional'
 
-export interface ChurchLeadersProps {
+export interface ChurchLeaderProps {
   churchId: UniqueEntityID
   name: string
   functionName: string
   phone: string
   email: string
+  birthday: Date
   createdAt: Date
   updatedAt?: Date | null
   deletedAt?: Date | null
 }
 
-export class ChurchLeaders extends Entity<ChurchLeadersProps> {
+export class ChurchLeader extends Entity<ChurchLeaderProps> {
   get churchId() {
     return this.props.churchId
   }
@@ -59,6 +60,15 @@ export class ChurchLeaders extends Entity<ChurchLeadersProps> {
     this.touch()
   }
 
+  get birthday() {
+    return this.props.birthday
+  }
+
+  set birthday(birthday: Date) {
+    this.props.birthday = birthday
+    this.touch()
+  }
+
   get createdAt() {
     return this.props.createdAt
   }
@@ -81,10 +91,10 @@ export class ChurchLeaders extends Entity<ChurchLeadersProps> {
   }
 
   static create(
-    props: Optional<ChurchLeadersProps, 'createdAt' | 'deletedAt'>,
+    props: Optional<ChurchLeaderProps, 'createdAt' | 'deletedAt'>,
     id?: UniqueEntityID,
   ) {
-    const churchLeaders = new ChurchLeaders(
+    const churchLeaders = new ChurchLeader(
       {
         ...props,
         createdAt: props.createdAt ?? new Date(),

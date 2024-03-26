@@ -1,7 +1,9 @@
-import { Either, failure, success } from '@/core/either'
-import { DepartmentAlreadyExistsError } from './errors/department-already-exists-error'
-import { DepartmentsRepository } from '../../repositories/departments-repository'
 import { Injectable } from '@nestjs/common'
+
+import { Either, failure, success } from '@/core/either'
+
+import { DepartmentsRepository } from '../../repositories/departments-repository'
+import { DepartmentAlreadyExistsError } from './errors/department-already-exists-error'
 
 interface CreateDepartmentUseCaseRequest {
   name: string

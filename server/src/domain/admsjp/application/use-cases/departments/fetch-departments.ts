@@ -1,7 +1,9 @@
-import { Either, success } from '@/core/either'
-import { DepartmentsRepository } from '@/domain/repositories/departments-repository'
 import { Injectable } from '@nestjs/common'
 import { Department } from '@prisma/client'
+
+import { Either, success } from '@/core/either'
+
+import { DepartmentsRepository } from '../../repositories/departments-repository'
 
 interface FetchDepartmentsUseCaseRequest {
   page: number

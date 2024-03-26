@@ -9,6 +9,7 @@ export interface ChurchDepartmentMemberProps {
   subFunction: string
   phone: string
   email: string
+  birthday: Date
   createdAt: Date
   updatedAt?: Date | null
   deletedAt?: Date | null
@@ -66,6 +67,15 @@ export class ChurchDepartmentMember extends Entity<ChurchDepartmentMemberProps> 
 
   set email(email: string) {
     this.props.email = email
+    this.touch()
+  }
+
+  get birthday() {
+    return this.props.birthday
+  }
+
+  set birthday(birthday: Date) {
+    this.props.birthday = birthday
     this.touch()
   }
 

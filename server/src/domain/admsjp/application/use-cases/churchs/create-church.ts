@@ -1,16 +1,18 @@
+import { Injectable } from '@nestjs/common'
+
 import { Either, failure, success } from '@/core/either'
-import { ChurchsRepository } from '../../repositories/churchs-repository'
 import { ResourceAlreadyExistsError } from '@/core/errors/errors/resource-already-exists-error'
 import { Church } from '@/domain/admsjp/enterprise/entities/church'
-import { PasswordGenerator } from '../../cryptography/password-generator'
+
 import { HashGenerator } from '../../cryptography/hash-generator'
-import { Injectable } from '@nestjs/common'
+import { PasswordGenerator } from '../../cryptography/password-generator'
+import { ChurchsRepository } from '../../repositories/churchs-repository'
 
 interface CreateChurchUseCaseRequest {
   name: string
   description: string
   street: string
-  neighbourhood: string
+  neighborhood: string
   city: string
   state: string
   postalCode: string
@@ -33,7 +35,7 @@ export class CreateChurchUseCase {
     name,
     description,
     street,
-    neighbourhood,
+    neighborhood,
     city,
     state,
     postalCode,
@@ -58,7 +60,7 @@ export class CreateChurchUseCase {
       name,
       description,
       street,
-      neighbourhood,
+      neighborhood,
       city,
       state,
       postalCode,

@@ -32,6 +32,8 @@ model Department {
   updatedAt DateTime? @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
+  churchDepartments ChurchDepartment[]
+
   @@map("departments")
 }
 
@@ -47,8 +49,71 @@ model Church {
   number       String
   latitude     Decimal
   longitude    Decimal
-  username     String
+  username     String  @unique
   password     String
 
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  leaders     ChurchLeader[]
+  departments ChurchDepartment[]
+
   @@map("churchs")
+}
+
+model ChurchLeader {
+  id           String   @id @default(uuid())
+  churchId     String   @map("church_id")
+  name         String
+  functionName String
+  phone        String
+  email        String   @unique
+  birthday     DateTime
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  church Church @relation(fields: [churchId], references: [id])
+
+  @@map("church_leaders")
+}
+
+model ChurchDepartment {
+  id           String @id @default(uuid())
+  churchId     String @map("church_id")
+  departmentId String @map("department_id")
+  username     String @unique
+  password     String
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  church     Church     @relation(fields: [churchId], references: [id])
+  department Department @relation(fields: [departmentId], references: [id])
+
+  members ChurchDepartmentMember[]
+
+  @@map("church_departments")
+}
+
+model ChurchDepartmentMember {
+  id                 String   @id @default(uuid())
+  churchDepartmentId String   @map("church_department_id")
+  name               String
+  functionName       String   @map("function_name")
+  subFunction        String   @map("sub_function")
+  phone              String
+  email              String   @unique
+  birthday           DateTime
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  churchDepartment ChurchDepartment @relation(fields: [churchDepartmentId], references: [id])
+
+  @@map("church_department_members")
 }

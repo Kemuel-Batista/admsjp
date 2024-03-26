@@ -1,4 +1,5 @@
 import { WatchedList } from '@/core/entities/watched-list'
+
 import { ChurchDepartmentMember } from './church-department-member'
 
 export class ChurchDepartmentMemberList extends WatchedList<ChurchDepartmentMember> {

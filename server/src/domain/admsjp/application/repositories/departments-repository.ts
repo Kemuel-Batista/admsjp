@@ -1,5 +1,6 @@
-import { PaginationParams } from '@/core/repositories/paginations-params'
 import { Department, Prisma } from '@prisma/client'
+
+import { PaginationParams } from '@/core/repositories/paginations-params'
 
 export abstract class DepartmentsRepository {
   abstract findById(id: string): Promise<Department | null>

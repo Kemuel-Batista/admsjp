@@ -8,10 +8,12 @@ import {
   UsePipes,
 } from '@nestjs/common'
 import { z } from 'zod'
+
+import { CreateAccountUseCase } from '@/domain/admsjp/application/use-cases/administrators/create-account'
+import { UserAlreadyExistsError } from '@/domain/admsjp/application/use-cases/errors/user-already-exists-error'
 import { Public } from '@/infra/auth/public'
+
 import { ZodValidationPipe } from '../pipes/zod-validation-pipe'
-import { CreateAccountUseCase } from '@/domain/use-cases/administrators/create-account'
-import { UserAlreadyExistsError } from '@/domain/use-cases/errors/user-already-exists-error'
 
 const createAccountBodySchema = z.object({
   name: z.string(),

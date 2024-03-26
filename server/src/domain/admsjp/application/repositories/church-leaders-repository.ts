@@ -1,8 +1,8 @@
-import { ChurchLeaders } from '../../enterprise/entities/church-leaders'
+import { ChurchLeader } from '../../enterprise/entities/church-leader'
 
 export abstract class ChurchLeadersRepository {
-  abstract createMany(days: ChurchLeaders[]): Promise<void>
-  abstract deleteMany(days: ChurchLeaders[]): Promise<void>
-  abstract findManyByChurchId(churchId: string): Promise<ChurchLeaders[]>
+  abstract createMany(churchLeaders: ChurchLeader[]): Promise<void>
+  abstract deleteMany(churchLeaders: ChurchLeader[]): Promise<void>
+  abstract findManyByChurchId(churchId: string): Promise<ChurchLeader[]>
   abstract deleteManyByChurchId(churchId: string): Promise<void>
 }

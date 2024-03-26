@@ -1,15 +1,17 @@
-import { Either, failure, success } from '@/core/either'
-import { ChurchsRepository } from '../../repositories/churchs-repository'
-import { ResourceAlreadyExistsError } from '@/core/errors/errors/resource-already-exists-error'
 import { Injectable } from '@nestjs/common'
+
+import { Either, failure, success } from '@/core/either'
+import { ResourceAlreadyExistsError } from '@/core/errors/errors/resource-already-exists-error'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
+
+import { ChurchsRepository } from '../../repositories/churchs-repository'
 
 interface EditChurchUseCaseRequest {
   churchId: string
   name: string
   description: string
   street: string
-  neighbourhood: string
+  neighborhood: string
   city: string
   state: string
   postalCode: string
@@ -29,7 +31,7 @@ export class EditChurchUseCase {
     name,
     description,
     street,
-    neighbourhood,
+    neighborhood,
     city,
     state,
     postalCode,
@@ -55,7 +57,7 @@ export class EditChurchUseCase {
 
     church.description = description
     church.street = street
-    church.neighbourhood = neighbourhood
+    church.neighborhood = neighborhood
     church.city = city
     church.state = state
     church.postalCode = postalCode

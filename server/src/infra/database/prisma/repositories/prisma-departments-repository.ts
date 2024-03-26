@@ -1,8 +1,10 @@
-import { DepartmentsRepository } from '@/domain/repositories/departments-repository'
-import { Prisma, Department } from '@prisma/client'
-import { PrismaService } from '../prisma.service'
 import { Injectable } from '@nestjs/common'
+import { Department, Prisma } from '@prisma/client'
+
 import { PaginationParams } from '@/core/repositories/paginations-params'
+import { DepartmentsRepository } from '@/domain/admsjp/application/repositories/departments-repository'
+
+import { PrismaService } from '../prisma.service'
 
 @Injectable()
 export class PrismaDepartmentsRepository implements DepartmentsRepository {

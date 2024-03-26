@@ -1,6 +1,19 @@
 {
-  "extends": "@rocketseat/eslint-config/node",
+  "extends": [
+    "@rocketseat/eslint-config/node",
+    "plugin:vitest-globals/recommended"
+  ],
+  "plugins": [
+    "simple-import-sort"
+  ],
+  "env": {
+    "vitest-globals/env": true
+  },
   "rules": {
-    "no-useless-constructor": "off"
+    "no-useless-constructor":"off",
+    "no-new": "off",
+    "@typescript-eslint/adjacent-overload-signatures": "off",
+    "@typescript-eslint/ban-types": "off",
+    "simple-import-sort/imports": "error"
   }
 }

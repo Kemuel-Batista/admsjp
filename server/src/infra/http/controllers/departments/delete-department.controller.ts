@@ -1,5 +1,3 @@
-import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
-import { DeleteDepartmentUseCase } from '@/domain/use-cases/departments/delete-department'
 import {
   BadRequestException,
   Controller,
@@ -8,6 +6,9 @@ import {
   NotFoundException,
   Param,
 } from '@nestjs/common'
+
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
+import { DeleteDepartmentUseCase } from '@/domain/admsjp/application/use-cases/departments/delete-department'
 
 @Controller('/departments/:departmentId')
 export class DeleteDepartmentController {

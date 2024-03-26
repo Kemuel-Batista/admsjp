@@ -1,6 +1,3 @@
-import { CreateDepartmentUseCase } from '@/domain/use-cases/departments/create-department'
-import { DepartmentAlreadyExistsError } from '@/domain/use-cases/departments/errors/department-already-exists-error'
-import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 import {
   BadRequestException,
   Body,
@@ -10,6 +7,10 @@ import {
   Post,
 } from '@nestjs/common'
 import { z } from 'zod'
+
+import { CreateDepartmentUseCase } from '@/domain/admsjp/application/use-cases/departments/create-department'
+import { DepartmentAlreadyExistsError } from '@/domain/admsjp/application/use-cases/departments/errors/department-already-exists-error'
+import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 
 const createDepartmentBodySchema = z.object({
   name: z.string(),

@@ -7,10 +7,12 @@ import {
   UsePipes,
 } from '@nestjs/common'
 import { z } from 'zod'
-import { AuthenticateUseCase } from '@/domain/use-cases/administrators/authenticate'
-import { ZodValidationPipe } from '../pipes/zod-validation-pipe'
-import { InvalidCredentialsError } from '@/domain/use-cases/errors/invalid-credentials-error'
+
+import { AuthenticateUseCase } from '@/domain/admsjp/application/use-cases/administrators/authenticate'
+import { InvalidCredentialsError } from '@/domain/admsjp/application/use-cases/errors/invalid-credentials-error'
 import { Public } from '@/infra/auth/public'
+
+import { ZodValidationPipe } from '../pipes/zod-validation-pipe'
 
 const authenticateBodySchema = z.object({
   email: z.string().email(),

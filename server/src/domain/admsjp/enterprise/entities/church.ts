@@ -1,13 +1,15 @@
 import { Entity } from '@/core/entities/entity'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { Optional } from '@/core/types/optional'
-import { ChurchLeadersList } from './church-leaders-list'
+
+import { ChurchDepartmentList } from './church-department-list'
+import { ChurchLeaderList } from './church-leaders-list'
 
 export interface ChurchProps {
   name: string
   description: string
   street: string
-  neighbourhood: string
+  neighborhood: string
   city: string
   state: string
   postalCode: string
@@ -16,7 +18,8 @@ export interface ChurchProps {
   longitude: number
   username: string
   password: string
-  leaders: ChurchLeadersList
+  leaders: ChurchLeaderList
+  departments: ChurchDepartmentList
   createdAt: Date
   updatedAt?: Date | null
   deletedAt?: Date | null
@@ -50,12 +53,12 @@ export class Church extends Entity<ChurchProps> {
     this.touch()
   }
 
-  get neighbourhood() {
-    return this.props.neighbourhood
+  get neighborhood() {
+    return this.props.neighborhood
   }
 
-  set neighbourhood(neighbourhood: string) {
-    this.props.neighbourhood = neighbourhood
+  set neighborhood(neighborhood: string) {
+    this.props.neighborhood = neighborhood
     this.touch()
   }
 
@@ -117,8 +120,17 @@ export class Church extends Entity<ChurchProps> {
     return this.props.leaders
   }
 
-  set leaders(leaders: ChurchLeadersList) {
+  set leaders(leaders: ChurchLeaderList) {
     this.props.leaders = leaders
+    this.touch()
+  }
+
+  get departments() {
+    return this.props.departments
+  }
+
+  set departments(departments: ChurchDepartmentList) {
+    this.props.departments = departments
     this.touch()
   }
 
@@ -162,7 +174,10 @@ export class Church extends Entity<ChurchProps> {
   }
 
   static create(
-    props: Optional<ChurchProps, 'createdAt' | 'deletedAt' | 'leaders'>,
+    props: Optional<
+      ChurchProps,
+      'createdAt' | 'deletedAt' | 'leaders' | 'departments'
+    >,
     id?: UniqueEntityID,
   ) {
     const church = new Church(
@@ -170,7 +185,8 @@ export class Church extends Entity<ChurchProps> {
         ...props,
         createdAt: props.createdAt ?? new Date(),
         deletedAt: props.deletedAt ?? null,
-        leaders: props.leaders ?? new ChurchLeadersList(),
+        leaders: props.leaders ?? new ChurchLeaderList(),
+        departments: props.departments ?? new ChurchDepartmentList(),
       },
       id,
     )

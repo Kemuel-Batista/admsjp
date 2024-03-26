@@ -1,7 +1,9 @@
-import { z } from 'zod'
 import { Controller, Get, Query } from '@nestjs/common'
+import { z } from 'zod'
+
+import { FetchDepartmentsUseCase } from '@/domain/admsjp/application/use-cases/departments/fetch-departments'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
-import { FetchDepartmentsUseCase } from '@/domain/use-cases/departments/fetch-departments'
+
 import { DepartmentPresenter } from '../../presenters/department-presenter'
 
 const pageQueryParamSchema = z
