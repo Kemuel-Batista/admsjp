@@ -34,3 +34,21 @@ model Department {
 
   @@map("departments")
 }
+
+model Church {
+  id           String  @id @default(uuid())
+  name         String  @unique
+  description  String
+  street       String
+  neighborhood String
+  city         String
+  state        String
+  postalCode   String  @map("postal_code")
+  number       String
+  latitude     Decimal
+  longitude    Decimal
+  username     String
+  password     String
+
+  @@map("churchs")
+}
