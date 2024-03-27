@@ -23,6 +23,8 @@ import { CreateDepartmentController } from './controllers/departments/create-dep
 import { DeleteDepartmentController } from './controllers/departments/delete-department.controller'
 import { EditDepartmentController } from './controllers/departments/edit-department.controller'
 import { FetchDepartmentsController } from './controllers/departments/fetch-departments.controller'
+import { FetchChurchsController } from './controllers/churchs/fetch-churchs.controller'
+import { FetchChurchsUseCase } from '@/domain/admsjp/application/use-cases/churchs/fetch-churchs'
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],
@@ -33,6 +35,7 @@ import { FetchDepartmentsController } from './controllers/departments/fetch-depa
     EditChurchController,
     SaveChurchLeaderController,
     SaveChurchDepartmentController,
+    FetchChurchsController,
     CreateDepartmentController,
     EditDepartmentController,
     DeleteDepartmentController,
@@ -45,6 +48,7 @@ import { FetchDepartmentsController } from './controllers/departments/fetch-depa
     EditChurchUseCase,
     SaveChurchLeaderUseCase,
     SaveChurchDepartmentUseCase,
+    FetchChurchsUseCase,
     CreateDepartmentUseCase,
     EditDepartmentUseCase,
     DeleteDepartmentUseCase,

@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
-import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -31,14 +30,12 @@ interface CepResponse {
 }
 
 const createChurchBodySchema = z.object({
-  name: z.string(),
-  description: z.string(),
-  street: z.string(),
-  neighborhood: z.string(),
-  city: z.string(),
-  state: z.string(),
-  postalCode: z.string(),
-  number: z.string(),
+  name: z.string({ required_error: 'Nome da igreja não pode estar vazio.' }),
+  description: z.string({ required_error: 'Descrição não pode estar vazio.' }),
+  street: z.string({ required_error: 'A rua não pode estar vazio' }),
+  neighborhood: z.string({ required_error: 'O bairro não pode estar vazio' }),
+  postalCode: z.string({ required_error: 'O CEP não pode estar vazio' }),
+  number: z.string({ required_error: 'O número não pode estar vazio' }),
   latitude: z.number().refine((value) => {
     return Math.abs(value) <= 90
   }),
@@ -51,9 +48,6 @@ type CreateChurchFormData = z.infer<typeof createChurchBodySchema>
 
 export function NewAdministratorChurch() {
   const navigate = useNavigate()
-  const [positionMarker, setPositionMarker] = useState<[number, number] | null>(
-    null,
-  )
 
   const form = useForm<CreateChurchFormData>({
     resolver: zodResolver(createChurchBodySchema),
@@ -71,7 +65,11 @@ export function NewAdministratorChurch() {
   async function handlePositionMarkerChange(
     positionMarker: [number, number] | null,
   ) {
-    setPositionMarker(positionMarker)
+    const latitude = positionMarker?.[0]
+    const longitude = positionMarker?.[1]
+
+    form.setValue('latitude', latitude ?? 0)
+    form.setValue('longitude', longitude ?? 0)
   }
 
   const { mutateAsync: createChurchFn, isPending } = useMutation({
@@ -88,7 +86,19 @@ export function NewAdministratorChurch() {
   })
 
   async function onSubmit(data: CreateChurchFormData) {
-    await createChurchFn(data)
+    const latitude = form.watch('latitude')
+    const longitude = form.watch('longitude')
+
+    if (!latitude || !longitude) {
+      toast.warning('Informe localização da Igreja no mapa!')
+    }
+
+    const church = {
+      ...data,
+      postalCode: data.postalCode.replace(/\D/g, ''),
+    }
+
+    await createChurchFn(church)
   }
 
   return (
@@ -120,6 +130,7 @@ export function NewAdministratorChurch() {
                     <Input
                       placeholder="Nome da Igreja"
                       autoComplete="off"
+                      disabled={isPending}
                       {...field}
                     />
                   </FormControl>
@@ -140,6 +151,7 @@ export function NewAdministratorChurch() {
                     <Input
                       placeholder="Descrição"
                       autoComplete="off"
+                      disabled={isPending}
                       {...field}
                     />
                   </FormControl>
@@ -161,6 +173,7 @@ export function NewAdministratorChurch() {
                       placeholder="CEP"
                       autoComplete="off"
                       maxLength={9}
+                      disabled={isPending}
                       {...field}
                       onChange={(event) =>
                         field.onChange(maskCep(event.target.value))
@@ -183,6 +196,7 @@ export function NewAdministratorChurch() {
                       placeholder="Número do endereço"
                       autoComplete="off"
                       maxLength={6}
+                      disabled={isPending}
                       {...field}
                     />
                   </FormControl>
@@ -197,7 +211,12 @@ export function NewAdministratorChurch() {
                 <FormItem>
                   <FormLabel>Rua</FormLabel>
                   <FormControl>
-                    <Input placeholder="Rua" autoComplete="off" {...field} />
+                    <Input
+                      placeholder="Rua"
+                      autoComplete="off"
+                      disabled={isPending}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -210,7 +229,12 @@ export function NewAdministratorChurch() {
                 <FormItem>
                   <FormLabel>Bairro</FormLabel>
                   <FormControl>
-                    <Input placeholder="Bairro" autoComplete="off" {...field} />
+                    <Input
+                      placeholder="Bairro"
+                      autoComplete="off"
+                      disabled={isPending}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

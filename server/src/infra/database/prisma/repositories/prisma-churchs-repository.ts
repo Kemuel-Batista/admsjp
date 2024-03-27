@@ -7,6 +7,7 @@ import { Church } from '@/domain/admsjp/enterprise/entities/church'
 
 import { PrismaChurchMapper } from '../mappers/prisma-church-mapper'
 import { PrismaService } from '../prisma.service'
+import { PaginationParams } from '@/core/repositories/paginations-params'
 
 @Injectable()
 export class PrismaChurchsRepository implements ChurchsRepository {
@@ -59,17 +60,31 @@ export class PrismaChurchsRepository implements ChurchsRepository {
     return PrismaChurchMapper.toDomain(church)
   }
 
+  async findMany({ page }: PaginationParams): Promise<Church[]> {
+    const churchs = await this.prisma.church.findMany({
+      where: {
+        deletedAt: null,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 20,
+      skip: (page - 1) * 20,
+    })
+
+    return churchs.map(PrismaChurchMapper.toDomain)
+  }
+
   async create(church: Church): Promise<void> {
     const data = PrismaChurchMapper.toPersistency(church)
 
-    await Promise.all([
-      this.prisma.church.create({
-        data,
-      }),
-      this.churchDepartmentsRepository.createMany(
-        church.departments.getItems(),
-      ),
-    ])
+    await this.prisma.church.create({
+      data,
+    })
+
+    await this.churchDepartmentsRepository.createMany(
+      church.departments.getItems(),
+    )
   }
 
   async save(church: Church): Promise<void> {

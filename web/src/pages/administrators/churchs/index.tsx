@@ -1,9 +1,21 @@
+import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 
+import { fetchChurchs } from '@/api/fetch-churchs'
 import { Button } from '@/components/ui/button'
+
+import { DataTableChurchs } from './data-table'
+import { DataTableChurchColumns } from './data-table-columns'
 
 export function AdministratorChurch() {
   const navigate = useNavigate()
+
+  const { data: result } = useQuery({
+    queryKey: ['churchs'],
+    queryFn: () => fetchChurchs(),
+  })
+
+  const churchs = result?.churchs || []
 
   return (
     <div className="flex-1 flex-col space-y-8 p-8">
@@ -22,6 +34,8 @@ export function AdministratorChurch() {
           </Button>
         </div>
       </div>
+
+      <DataTableChurchs columns={DataTableChurchColumns} data={churchs} />
     </div>
   )
 }

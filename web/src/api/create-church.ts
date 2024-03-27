@@ -5,8 +5,6 @@ interface CreateChurchBody {
   description: string
   street: string
   neighborhood: string
-  city: string
-  state: string
   postalCode: string
   number: string
   latitude: number
@@ -18,8 +16,6 @@ export const createChurch = async ({
   description,
   street,
   neighborhood,
-  city,
-  state,
   postalCode,
   number,
   latitude,
@@ -30,8 +26,8 @@ export const createChurch = async ({
     description,
     street,
     neighborhood,
-    city,
-    state,
+    city: 'SJP',
+    state: 'PR',
     postalCode,
     number,
     latitude,
