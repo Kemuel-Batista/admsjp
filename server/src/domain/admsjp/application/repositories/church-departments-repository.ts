@@ -1,13 +1,9 @@
 import { ChurchDepartment } from '../../enterprise/entities/church-department'
 
 export abstract class ChurchDepartmentsRepository {
-  abstract findById(id: string): Promise<ChurchDepartment | null>
-  abstract findByChurchIdAndDepartmentId(
-    churchId: string,
-    departmentId: string,
-  ): Promise<ChurchDepartment | null>
-
-  abstract create(churchDepartment: ChurchDepartment): Promise<void>
+  abstract createMany(churchDepartments: ChurchDepartment[]): Promise<void>
+  abstract deleteMany(churchDepartments: ChurchDepartment[]): Promise<void>
+  abstract findManyByChurchId(churchId: string): Promise<ChurchDepartment[]>
+  abstract deleteManyByChurchId(churchId: string): Promise<void>
   abstract save(churchDepartment: ChurchDepartment): Promise<void>
-  abstract delete(churchDepartment: ChurchDepartment): Promise<void>
 }

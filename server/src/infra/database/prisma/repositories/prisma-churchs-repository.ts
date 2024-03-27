@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 
+import { ChurchDepartmentsRepository } from '@/domain/admsjp/application/repositories/church-departments-repository'
 import { ChurchLeadersRepository } from '@/domain/admsjp/application/repositories/church-leaders-repository'
 import { ChurchsRepository } from '@/domain/admsjp/application/repositories/churchs-repository'
 import { Church } from '@/domain/admsjp/enterprise/entities/church'
@@ -12,6 +13,7 @@ export class PrismaChurchsRepository implements ChurchsRepository {
   constructor(
     private prisma: PrismaService,
     private churchLeadersRepository: ChurchLeadersRepository,
+    private churchDepartmentsRepository: ChurchDepartmentsRepository,
   ) {}
 
   async findById(id: string): Promise<Church> {
@@ -78,6 +80,15 @@ export class PrismaChurchsRepository implements ChurchsRepository {
       this.churchLeadersRepository.createMany(church.leaders.getItems()),
       this.churchLeadersRepository.createMany(church.leaders.getNewItems()),
       this.churchLeadersRepository.deleteMany(church.leaders.getRemovedItems()),
+      this.churchDepartmentsRepository.createMany(
+        church.departments.getItems(),
+      ),
+      this.churchDepartmentsRepository.createMany(
+        church.departments.getNewItems(),
+      ),
+      this.churchDepartmentsRepository.deleteMany(
+        church.departments.getRemovedItems(),
+      ),
     ])
   }
 

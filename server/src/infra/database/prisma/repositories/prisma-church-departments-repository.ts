@@ -16,43 +16,59 @@ export class PrismaChurchDepartmentsRepository
     private churchDepartmentMembers: ChurchDepartmentMembersRepository,
   ) {}
 
-  async findById(id: string): Promise<ChurchDepartment> {
-    const church = await this.prisma.churchDepartment.findUnique({
-      where: {
-        id,
-      },
-    })
-
-    if (!church) {
-      return null
+  async createMany(churchDepartments: ChurchDepartment[]): Promise<void> {
+    if (churchDepartments.length === 0) {
+      return
     }
 
-    return PrismaChurchDepartmentMapper.toDomain(church)
+    churchDepartments.map(async (churchDepartment) => {
+      const data = PrismaChurchDepartmentMapper.toPersistency(churchDepartment)
+
+      await this.prisma.churchDepartment.create({
+        data,
+      })
+    })
   }
 
-  async findByChurchIdAndDepartmentId(
-    churchId: string,
-    departmentId: string,
-  ): Promise<ChurchDepartment> {
-    const church = await this.prisma.churchDepartment.findFirst({
+  async deleteMany(churchDepartments: ChurchDepartment[]): Promise<void> {
+    if (churchDepartments.length === 0) {
+      return
+    }
+
+    const churchDepartmentsIds = churchDepartments.map((churchDepartment) => {
+      return churchDepartment.id.toString()
+    })
+
+    await this.prisma.churchDepartment.updateMany({
+      where: {
+        id: {
+          in: churchDepartmentsIds,
+        },
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    })
+  }
+
+  async findManyByChurchId(churchId: string): Promise<ChurchDepartment[]> {
+    const churchDepartments = await this.prisma.churchDepartment.findMany({
       where: {
         churchId,
-        departmentId,
       },
     })
 
-    if (!church) {
-      return null
-    }
-
-    return PrismaChurchDepartmentMapper.toDomain(church)
+    return churchDepartments.map(PrismaChurchDepartmentMapper.toDomain)
   }
 
-  async create(churchDepartment: ChurchDepartment): Promise<void> {
-    const data = PrismaChurchDepartmentMapper.toPersistency(churchDepartment)
-
-    await this.prisma.churchDepartment.create({
-      data,
+  async deleteManyByChurchId(churchId: string): Promise<void> {
+    await this.prisma.churchDepartment.updateMany({
+      where: {
+        churchId,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
     })
   }
 
@@ -74,22 +90,6 @@ export class PrismaChurchDepartmentsRepository
       ),
       this.churchDepartmentMembers.deleteMany(
         churchDepartment.members.getRemovedItems(),
-      ),
-    ])
-  }
-
-  async delete(churchDepartment: ChurchDepartment): Promise<void> {
-    await Promise.all([
-      this.prisma.churchDepartment.update({
-        where: {
-          id: churchDepartment.id.toString(),
-        },
-        data: {
-          deletedAt: new Date(),
-        },
-      }),
-      this.churchDepartmentMembers.deleteManyByChurchDepartmentId(
-        churchDepartment.id.toString(),
       ),
     ])
   }

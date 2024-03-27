@@ -5,6 +5,7 @@ import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { ResourceAlreadyExistsError } from '@/core/errors/errors/resource-already-exists-error'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 import { ChurchDepartment } from '@/domain/admsjp/enterprise/entities/church-department'
+import { ChurchDepartmentList } from '@/domain/admsjp/enterprise/entities/church-department-list'
 import { ChurchDepartmentMember } from '@/domain/admsjp/enterprise/entities/church-department-member'
 import { ChurchDepartmentMemberList } from '@/domain/admsjp/enterprise/entities/church-department-member-list'
 
@@ -59,30 +60,33 @@ export class SaveChurchDepartmentUseCase {
       return failure(new ResourceNotFoundError('Department'))
     }
 
-    const churchDepartment =
-      await this.churchDepartmentsRepository.findByChurchIdAndDepartmentId(
-        churchId,
-        departmentId,
-      )
+    // Pegando a lista atual de departamentos da igreja
+    const currentChurchDepartments =
+      await this.churchDepartmentsRepository.findManyByChurchId(churchId)
 
-    console.log(churchDepartment)
+    const churchDepartmentsList = new ChurchDepartmentList(
+      currentChurchDepartments,
+    )
 
-    if (!churchDepartment) {
-      const username = `admsjp.${church.name.toLowerCase()}.${department.name.toLowerCase()}`
+    const username = `admsjp.${church.name.toLowerCase()}.${department.name.toLowerCase()}`
+    const password = await this.passwordGenerator.generate()
+    const hashedPassword = await this.hashGenerator.hash(password)
 
-      const password = await this.passwordGenerator.generate()
+    const churchDepartment = ChurchDepartment.create({
+      churchId: church.id,
+      departmentId: new UniqueEntityID(departmentId),
+      username,
+      password: hashedPassword,
+    })
 
-      const hashedPassword = await this.hashGenerator.hash(password)
+    // Adicionando departamento a lista atual de itens
+    churchDepartmentsList.add(churchDepartment)
 
-      const newChurchDepartment = ChurchDepartment.create({
-        churchId: church.id,
-        departmentId: new UniqueEntityID(departmentId),
-        username,
-        password: hashedPassword,
-      })
+    // Adicionando departamentos a igreja
+    church.departments = churchDepartmentsList
 
-      await this.churchDepartmentsRepository.create(newChurchDepartment)
-    }
+    // Salvando lista de departamentos
+    await this.churchsRepository.save(church)
 
     const churchDepartmentId = churchDepartment.id
 
