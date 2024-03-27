@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common'
 
+import { PaginationParams } from '@/core/repositories/paginations-params'
 import { ChurchDepartmentsRepository } from '@/domain/admsjp/application/repositories/church-departments-repository'
 import { ChurchLeadersRepository } from '@/domain/admsjp/application/repositories/church-leaders-repository'
 import { ChurchsRepository } from '@/domain/admsjp/application/repositories/churchs-repository'
 import { Church } from '@/domain/admsjp/enterprise/entities/church'
+import { ChurchDetails } from '@/domain/admsjp/enterprise/entities/value-objects/church-details'
 
+import { PrismaChurchDetailsMapper } from '../mappers/prisma-church-details-mapper'
 import { PrismaChurchMapper } from '../mappers/prisma-church-mapper'
 import { PrismaService } from '../prisma.service'
-import { PaginationParams } from '@/core/repositories/paginations-params'
 
 @Injectable()
 export class PrismaChurchsRepository implements ChurchsRepository {
@@ -29,6 +31,28 @@ export class PrismaChurchsRepository implements ChurchsRepository {
     }
 
     return PrismaChurchMapper.toDomain(church)
+  }
+
+  async findDetailsById(id: string): Promise<ChurchDetails | null> {
+    const church = await this.prisma.church.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        leaders: true,
+        departments: {
+          include: {
+            department: true,
+          },
+        },
+      },
+    })
+
+    if (!church) {
+      return null
+    }
+
+    return PrismaChurchDetailsMapper.toDomain(church)
   }
 
   async findByName(name: string, id?: string): Promise<Church> {

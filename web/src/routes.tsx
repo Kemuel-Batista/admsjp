@@ -3,6 +3,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import { AdministratorAppLayout } from './pages/_layouts/administrator-app-layout'
 import AuthLayout from './pages/_layouts/auth-layout'
 import { AdministratorChurch } from './pages/administrators/churchs'
+import { ChurchDetails } from './pages/administrators/churchs/details'
 import { NewAdministratorChurch } from './pages/administrators/churchs/save'
 import { AdministratorDashboard } from './pages/administrators/dashboard'
 import { DepartmentList } from './pages/administrators/departments'
@@ -36,6 +37,10 @@ export const routes = createBrowserRouter([
       {
         path: '/administrators/church',
         element: <AdministratorChurch />,
+      },
+      {
+        path: '/administrators/church/details',
+        element: <ChurchDetails />,
       },
       {
         path: '/administrators/church/save',

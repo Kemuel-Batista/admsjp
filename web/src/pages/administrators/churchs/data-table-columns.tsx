@@ -1,5 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { MoreHorizontal } from 'lucide-react'
+import { setCookie } from 'nookies'
 import { toast } from 'sonner'
 
 import { ChurchProps } from '@/api/fetch-churchs'
@@ -39,6 +40,11 @@ export const DataTableChurchColumns: ColumnDef<ChurchProps>[] = [
     cell: ({ row }) => {
       const church = row.original
 
+      function handleNavigateToChurchDetails() {
+        setCookie(undefined, 'admsjp_church_id', church.id)
+        window.location.assign('/administrators/church/details')
+      }
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -50,6 +56,9 @@ export const DataTableChurchColumns: ColumnDef<ChurchProps>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Ações</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => handleNavigateToChurchDetails()}>
+              Visualizar
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() =>
                 toast.info('Funcionalidade ainda em desenvolvimento')

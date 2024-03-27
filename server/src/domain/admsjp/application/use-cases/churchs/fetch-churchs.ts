@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 
 import { Either, success } from '@/core/either'
+import { Church } from '@/domain/admsjp/enterprise/entities/church'
 
 import { ChurchsRepository } from '../../repositories/churchs-repository'
-import { Church } from '@/domain/admsjp/enterprise/entities/church'
 
 interface FetchChurchsUseCaseRequest {
   page: number
