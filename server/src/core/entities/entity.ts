@@ -10,7 +10,7 @@ export class Entity<Props> {
 
   protected constructor(props: Props, id?: UniqueEntityID) {
     this.props = props
-    this._id = id ?? new UniqueEntityID(id)
+    this._id = id ?? new UniqueEntityID()
   }
 
   public equals(entity: Entity<unknown>) {

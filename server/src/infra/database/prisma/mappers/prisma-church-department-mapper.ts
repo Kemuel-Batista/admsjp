@@ -1,7 +1,8 @@
 import {
-  Prisma,
   ChurchDepartment as PrismaChurchDepartment,
+  Prisma,
 } from '@prisma/client'
+
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { ChurchDepartment } from '@/domain/admsjp/enterprise/entities/church-department'
 

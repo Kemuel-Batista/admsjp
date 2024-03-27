@@ -15,9 +15,13 @@ export class PrismaChurchLeadersRepository implements ChurchLeadersRepository {
       return
     }
 
-    const data = PrismaChurchLeaderMapper.toPersistencyMany(churchLeaders)
+    churchLeaders.map(async (churchLeader) => {
+      const data = PrismaChurchLeaderMapper.toPersistency(churchLeader)
 
-    await this.prisma.churchLeader.createMany(data)
+      await this.prisma.churchLeader.create({
+        data,
+      })
+    })
   }
 
   async deleteMany(churchLeaders: ChurchLeader[]): Promise<void> {

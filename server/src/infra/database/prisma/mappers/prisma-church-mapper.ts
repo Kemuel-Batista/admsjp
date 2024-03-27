@@ -1,6 +1,7 @@
+import { Church as PrismaChurch, Prisma } from '@prisma/client'
+
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { Church } from '@/domain/admsjp/enterprise/entities/church'
-import { Church as PrismaChurch, Prisma } from '@prisma/client'
 
 export class PrismaChurchMapper {
   static toDomain(raw: PrismaChurch): Church {

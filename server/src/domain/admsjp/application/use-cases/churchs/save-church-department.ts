@@ -18,13 +18,12 @@ interface SaveChurchDepartmentUseCaseRequest {
   churchId: string
   departmentId: string
   members: {
-    churchDepartmentId: string
-    name: string
-    functionName: string
-    subFunction: string
-    phone: string
-    email: string
-    birthday: Date
+    name?: string
+    functionName?: string
+    subFunction?: string
+    phone?: string
+    email?: string
+    birthday?: Date
   }[]
 }
 
@@ -65,6 +64,8 @@ export class SaveChurchDepartmentUseCase {
         churchId,
         departmentId,
       )
+
+    console.log(churchDepartment)
 
     if (!churchDepartment) {
       const username = `admsjp.${church.name.toLowerCase()}.${department.name.toLowerCase()}`

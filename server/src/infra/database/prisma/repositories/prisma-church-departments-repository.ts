@@ -67,6 +67,9 @@ export class PrismaChurchDepartmentsRepository
         data,
       }),
       this.churchDepartmentMembers.createMany(
+        churchDepartment.members.getItems(),
+      ),
+      this.churchDepartmentMembers.createMany(
         churchDepartment.members.getNewItems(),
       ),
       this.churchDepartmentMembers.deleteMany(

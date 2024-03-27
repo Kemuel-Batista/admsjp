@@ -4,13 +4,25 @@ import { AuthenticateUseCase } from '@/domain/admsjp/application/use-cases/admin
 import { CreateAccountUseCase } from '@/domain/admsjp/application/use-cases/administrators/create-account'
 import { CreateChurchUseCase } from '@/domain/admsjp/application/use-cases/churchs/create-church'
 import { EditChurchUseCase } from '@/domain/admsjp/application/use-cases/churchs/edit-church'
+import { SaveChurchDepartmentUseCase } from '@/domain/admsjp/application/use-cases/churchs/save-church-department'
+import { SaveChurchLeaderUseCase } from '@/domain/admsjp/application/use-cases/churchs/save-church-leader'
+import { CreateDepartmentUseCase } from '@/domain/admsjp/application/use-cases/departments/create-department'
+import { DeleteDepartmentUseCase } from '@/domain/admsjp/application/use-cases/departments/delete-department'
+import { EditDepartmentUseCase } from '@/domain/admsjp/application/use-cases/departments/edit-department'
+import { FetchDepartmentsUseCase } from '@/domain/admsjp/application/use-cases/departments/fetch-departments'
 
 import { CryptographyModule } from '../cryptography/cryptography.module'
 import { DatabaseModule } from '../database/database.module'
 import { AuthenticateController } from './controllers/authenticate.controller'
 import { CreateChurchController } from './controllers/churchs/create-church.controller'
 import { EditChurchController } from './controllers/churchs/edit-church.controller'
+import { SaveChurchDepartmentController } from './controllers/churchs/save-church-department.controller'
+import { SaveChurchLeaderController } from './controllers/churchs/save-church-leader.controller'
 import { CreateAccountController } from './controllers/create-account.controller'
+import { CreateDepartmentController } from './controllers/departments/create-department.controller'
+import { DeleteDepartmentController } from './controllers/departments/delete-department.controller'
+import { EditDepartmentController } from './controllers/departments/edit-department.controller'
+import { FetchDepartmentsController } from './controllers/departments/fetch-departments.controller'
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],
@@ -19,12 +31,24 @@ import { CreateAccountController } from './controllers/create-account.controller
     CreateAccountController,
     CreateChurchController,
     EditChurchController,
+    SaveChurchLeaderController,
+    SaveChurchDepartmentController,
+    CreateDepartmentController,
+    EditDepartmentController,
+    DeleteDepartmentController,
+    FetchDepartmentsController,
   ],
   providers: [
     AuthenticateUseCase,
     CreateAccountUseCase,
     CreateChurchUseCase,
     EditChurchUseCase,
+    SaveChurchLeaderUseCase,
+    SaveChurchDepartmentUseCase,
+    CreateDepartmentUseCase,
+    EditDepartmentUseCase,
+    DeleteDepartmentUseCase,
+    FetchDepartmentsUseCase,
   ],
 })
 export class HttpModule {}

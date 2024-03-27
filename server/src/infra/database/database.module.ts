@@ -49,6 +49,7 @@ import { PrismaUsersRepository } from './prisma/repositories/prisma-users-reposi
     DepartmentsRepository,
     ChurchsRepository,
     ChurchLeadersRepository,
+    ChurchDepartmentsRepository,
     ChurchDepartmentMembersRepository,
   ],
 })
