@@ -1,6 +1,7 @@
 import { ChurchDepartment } from '../../enterprise/entities/church-department'
 
 export abstract class ChurchDepartmentsRepository {
+  abstract findById(id: string): Promise<ChurchDepartment | null>
   abstract createMany(churchDepartments: ChurchDepartment[]): Promise<void>
   abstract deleteMany(churchDepartments: ChurchDepartment[]): Promise<void>
   abstract findManyByChurchId(churchId: string): Promise<ChurchDepartment[]>

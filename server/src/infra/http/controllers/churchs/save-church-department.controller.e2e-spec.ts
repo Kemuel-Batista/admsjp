@@ -3,9 +3,11 @@ import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
 import request from 'supertest'
 import { ChurchFactory } from 'test/factories/make-church'
+import { ChurchDepartmentFactory } from 'test/factories/make-church-department'
 import { DepartmentFactory } from 'test/factories/make-department'
 import { UserFactory } from 'test/factories/make-user'
 
+import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { AppModule } from '@/infra/app.module'
 import { DatabaseModule } from '@/infra/database/database.module'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
@@ -17,11 +19,17 @@ describe('Save Church Department (E2E)', () => {
   let userFactory: UserFactory
   let churchFactory: ChurchFactory
   let departmentFactory: DepartmentFactory
+  let churchDepartmentFactory: ChurchDepartmentFactory
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
-      providers: [UserFactory, ChurchFactory, DepartmentFactory],
+      providers: [
+        UserFactory,
+        ChurchFactory,
+        DepartmentFactory,
+        ChurchDepartmentFactory,
+      ],
     }).compile()
 
     app = moduleRef.createNestApplication()
@@ -30,6 +38,7 @@ describe('Save Church Department (E2E)', () => {
     userFactory = moduleRef.get(UserFactory)
     churchFactory = moduleRef.get(ChurchFactory)
     departmentFactory = moduleRef.get(DepartmentFactory)
+    churchDepartmentFactory = moduleRef.get(ChurchDepartmentFactory)
 
     await app.init()
   })
@@ -39,16 +48,19 @@ describe('Save Church Department (E2E)', () => {
     const accessToken = jwt.sign({ sub: user.id.toString() })
 
     const church = await churchFactory.makePrismaChurch()
-    const churchId = church.id.toString()
-
     const department = await departmentFactory.makePrismaDepartment()
-    const departmentId = department.id.toString()
+
+    const churchDepartment =
+      await churchDepartmentFactory.makePrismaChurchDepartment({
+        churchId: church.id,
+        departmentId: new UniqueEntityID(department.id),
+      })
+    const churchDepartmentId = churchDepartment.id.toString()
 
     const result = await request(app.getHttpServer())
-      .post(`/admsjp/churchs/${churchId}/department`)
+      .post(`/admsjp/churchs/department/${churchDepartmentId}`)
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
-        departmentId,
         members: [
           {
             name: 'Kemuel',
@@ -63,14 +75,24 @@ describe('Save Church Department (E2E)', () => {
 
     expect(result.statusCode).toBe(201)
 
-    const churchDepartmentOnDatabase = await prisma.churchDepartment.findFirst({
-      where: {
-        churchId,
-        departmentId,
+    const churchDepartmentOnDatabase = await prisma.churchDepartment.findUnique(
+      {
+        where: {
+          id: churchDepartmentId,
+        },
       },
-    })
+    )
 
     expect(churchDepartmentOnDatabase).toBeTruthy()
-    expect(churchDepartmentOnDatabase).toHaveLength(1)
+
+    const churchDepartmentMembersOnDatabase =
+      await prisma.churchDepartmentMember.findMany({
+        where: {
+          churchDepartmentId,
+        },
+      })
+
+    expect(churchDepartmentMembersOnDatabase).toBeTruthy()
+    expect(churchDepartmentMembersOnDatabase).toHaveLength(1)
   })
 })

@@ -1,23 +1,16 @@
 import { Injectable } from '@nestjs/common'
 
 import { Either, failure, success } from '@/core/either'
-import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { ResourceAlreadyExistsError } from '@/core/errors/errors/resource-already-exists-error'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
-import { ChurchDepartment } from '@/domain/admsjp/enterprise/entities/church-department'
-import { ChurchDepartmentList } from '@/domain/admsjp/enterprise/entities/church-department-list'
 import { ChurchDepartmentMember } from '@/domain/admsjp/enterprise/entities/church-department-member'
 import { ChurchDepartmentMemberList } from '@/domain/admsjp/enterprise/entities/church-department-member-list'
 
-import { HashGenerator } from '../../cryptography/hash-generator'
-import { PasswordGenerator } from '../../cryptography/password-generator'
+import { ChurchDepartmentMembersRepository } from '../../repositories/church-department-members-repository'
 import { ChurchDepartmentsRepository } from '../../repositories/church-departments-repository'
-import { ChurchsRepository } from '../../repositories/churchs-repository'
-import { DepartmentsRepository } from '../../repositories/departments-repository'
 
 interface SaveChurchDepartmentUseCaseRequest {
-  churchId: string
-  departmentId: string
+  churchDepartmentId: string
   members: {
     name?: string
     functionName?: string
@@ -36,63 +29,33 @@ type SaveChurchDepartmentUseCaseResponse = Either<
 @Injectable()
 export class SaveChurchDepartmentUseCase {
   constructor(
-    private churchsRepository: ChurchsRepository,
-    private departmentsRepository: DepartmentsRepository,
     private churchDepartmentsRepository: ChurchDepartmentsRepository,
-    private passwordGenerator: PasswordGenerator,
-    private hashGenerator: HashGenerator,
+    private churchDepartmentMembersRepository: ChurchDepartmentMembersRepository,
   ) {}
 
   async execute({
-    churchId,
-    departmentId,
+    churchDepartmentId,
     members,
   }: SaveChurchDepartmentUseCaseRequest): Promise<SaveChurchDepartmentUseCaseResponse> {
-    const church = await this.churchsRepository.findById(churchId)
+    const churchDepartment =
+      await this.churchDepartmentsRepository.findById(churchDepartmentId)
 
-    if (!church) {
-      return failure(new ResourceNotFoundError('Church'))
+    if (!churchDepartment) {
+      return failure(new ResourceNotFoundError('Church Department'))
     }
 
-    const department = await this.departmentsRepository.findById(departmentId)
+    const currentChurchDepartmentMembers =
+      await this.churchDepartmentMembersRepository.findManyByChurchDepartmentId(
+        churchDepartmentId,
+      )
 
-    if (!department) {
-      return failure(new ResourceNotFoundError('Department'))
-    }
-
-    // Pegando a lista atual de departamentos da igreja
-    const currentChurchDepartments =
-      await this.churchDepartmentsRepository.findManyByChurchId(churchId)
-
-    const churchDepartmentsList = new ChurchDepartmentList(
-      currentChurchDepartments,
+    const churchDepartmentsList = new ChurchDepartmentMemberList(
+      currentChurchDepartmentMembers,
     )
-
-    const username = `admsjp.${church.name.toLowerCase()}.${department.name.toLowerCase()}`
-    const password = await this.passwordGenerator.generate()
-    const hashedPassword = await this.hashGenerator.hash(password)
-
-    const churchDepartment = ChurchDepartment.create({
-      churchId: church.id,
-      departmentId: new UniqueEntityID(departmentId),
-      username,
-      password: hashedPassword,
-    })
-
-    // Adicionando departamento a lista atual de itens
-    churchDepartmentsList.add(churchDepartment)
-
-    // Adicionando departamentos a igreja
-    church.departments = churchDepartmentsList
-
-    // Salvando lista de departamentos
-    await this.churchsRepository.save(church)
-
-    const churchDepartmentId = churchDepartment.id
 
     const churchDepartmentMembers = members.map((member) => {
       return ChurchDepartmentMember.create({
-        churchDepartmentId,
+        churchDepartmentId: churchDepartment.id,
         subFunction: member.subFunction,
         email: member.email,
         name: member.name,
@@ -102,9 +65,9 @@ export class SaveChurchDepartmentUseCase {
       })
     })
 
-    churchDepartment.members = new ChurchDepartmentMemberList(
-      churchDepartmentMembers,
-    )
+    churchDepartmentsList.update(churchDepartmentMembers)
+
+    churchDepartment.members = churchDepartmentsList
 
     await this.churchDepartmentsRepository.save(churchDepartment)
 

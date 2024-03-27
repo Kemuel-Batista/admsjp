@@ -16,6 +16,20 @@ export class PrismaChurchDepartmentsRepository
     private churchDepartmentMembers: ChurchDepartmentMembersRepository,
   ) {}
 
+  async findById(id: string): Promise<ChurchDepartment> {
+    const churchDepartment = await this.prisma.churchDepartment.findUnique({
+      where: {
+        id,
+      },
+    })
+
+    if (!churchDepartment) {
+      return null
+    }
+
+    return PrismaChurchDepartmentMapper.toDomain(churchDepartment)
+  }
+
   async createMany(churchDepartments: ChurchDepartment[]): Promise<void> {
     if (churchDepartments.length === 0) {
       return
@@ -82,9 +96,6 @@ export class PrismaChurchDepartmentsRepository
         },
         data,
       }),
-      this.churchDepartmentMembers.createMany(
-        churchDepartment.members.getItems(),
-      ),
       this.churchDepartmentMembers.createMany(
         churchDepartment.members.getNewItems(),
       ),

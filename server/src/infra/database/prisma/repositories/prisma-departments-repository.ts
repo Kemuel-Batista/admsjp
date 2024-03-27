@@ -39,8 +39,21 @@ export class PrismaDepartmentsRepository implements DepartmentsRepository {
     return department
   }
 
+  async findAll(): Promise<Department[]> {
+    const departments = await this.prisma.department.findMany({
+      where: {
+        deletedAt: null,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+
+    return departments
+  }
+
   async findMany({ page }: PaginationParams): Promise<Department[]> {
-    const countrys = await this.prisma.department.findMany({
+    const departments = await this.prisma.department.findMany({
       where: {
         deletedAt: null,
       },
@@ -51,7 +64,7 @@ export class PrismaDepartmentsRepository implements DepartmentsRepository {
       skip: (page - 1) * 20,
     })
 
-    return countrys
+    return departments
   }
 
   async create(data: Prisma.DepartmentUncheckedCreateInput): Promise<void> {

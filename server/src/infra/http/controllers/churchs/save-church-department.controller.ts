@@ -23,7 +23,6 @@ const memberBodySchema = z.object({
 })
 
 const saveChurchDepartmentBodySchema = z.object({
-  departmentId: z.string().uuid(),
   members: z.array(memberBodySchema),
 })
 
@@ -33,7 +32,7 @@ type SaveChurchDepartmentBodySchema = z.infer<
 
 const bodyValidationPipe = new ZodValidationPipe(saveChurchDepartmentBodySchema)
 
-@Controller('/admsjp/churchs/:churchId/department')
+@Controller('/admsjp/churchs/department/:churchDepartmentId')
 export class SaveChurchDepartmentController {
   constructor(private saveChurchDepartment: SaveChurchDepartmentUseCase) {}
 
@@ -41,13 +40,12 @@ export class SaveChurchDepartmentController {
   @HttpCode(201)
   async handle(
     @Body(bodyValidationPipe) body: SaveChurchDepartmentBodySchema,
-    @Param('churchId') churchId: string,
+    @Param('churchDepartmentId') churchDepartmentId: string,
   ) {
-    const { departmentId, members } = body
+    const { members } = body
 
     const result = await this.saveChurchDepartment.execute({
-      churchId,
-      departmentId,
+      churchDepartmentId,
       members,
     })
 

@@ -62,9 +62,14 @@ export class PrismaChurchsRepository implements ChurchsRepository {
   async create(church: Church): Promise<void> {
     const data = PrismaChurchMapper.toPersistency(church)
 
-    await this.prisma.church.create({
-      data,
-    })
+    await Promise.all([
+      this.prisma.church.create({
+        data,
+      }),
+      this.churchDepartmentsRepository.createMany(
+        church.departments.getItems(),
+      ),
+    ])
   }
 
   async save(church: Church): Promise<void> {
@@ -80,9 +85,6 @@ export class PrismaChurchsRepository implements ChurchsRepository {
       this.churchLeadersRepository.createMany(church.leaders.getItems()),
       this.churchLeadersRepository.createMany(church.leaders.getNewItems()),
       this.churchLeadersRepository.deleteMany(church.leaders.getRemovedItems()),
-      this.churchDepartmentsRepository.createMany(
-        church.departments.getItems(),
-      ),
       this.churchDepartmentsRepository.createMany(
         church.departments.getNewItems(),
       ),
