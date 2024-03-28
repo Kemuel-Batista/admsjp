@@ -56,8 +56,9 @@ model Church {
   updatedAt DateTime? @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  leaders     ChurchLeader[]
-  departments ChurchDepartment[]
+  leaders      ChurchLeader[]
+  departments  ChurchDepartment[]
+  newBelievers NewBeliever[]
 
   @@map("churchs")
 }
@@ -116,4 +117,32 @@ model ChurchDepartmentMember {
   churchDepartment ChurchDepartment @relation(fields: [churchDepartmentId], references: [id])
 
   @@map("church_department_members")
+}
+
+model NewBeliever {
+  id       String   @id @default(uuid())
+  churchId String   @map("church_id")
+  name     String
+  lastName String
+  phone    String   @unique
+  email    String?  @unique
+  birthday DateTime
+
+  street       String
+  neighborhood String
+  city         String
+  state        String
+  postalCode   String @map("postal_code")
+  number       String
+
+  status Int
+  lgpd   Boolean
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  church Church @relation(fields: [churchId], references: [id])
+
+  @@map("new_believers")
 }

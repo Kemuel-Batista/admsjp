@@ -12,6 +12,7 @@ import { CreateDepartmentUseCase } from '@/domain/admsjp/application/use-cases/d
 import { DeleteDepartmentUseCase } from '@/domain/admsjp/application/use-cases/departments/delete-department'
 import { EditDepartmentUseCase } from '@/domain/admsjp/application/use-cases/departments/edit-department'
 import { FetchDepartmentsUseCase } from '@/domain/admsjp/application/use-cases/departments/fetch-departments'
+import { CreateNewBelieverUseCase } from '@/domain/admsjp/application/use-cases/new-believers/create-new-believer'
 
 import { CryptographyModule } from '../cryptography/cryptography.module'
 import { DatabaseModule } from '../database/database.module'
@@ -27,6 +28,7 @@ import { CreateDepartmentController } from './controllers/departments/create-dep
 import { DeleteDepartmentController } from './controllers/departments/delete-department.controller'
 import { EditDepartmentController } from './controllers/departments/edit-department.controller'
 import { FetchDepartmentsController } from './controllers/departments/fetch-departments.controller'
+import { CreateNewBelieverController } from './controllers/new-believers/create-new-believer.controller'
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],
@@ -43,6 +45,7 @@ import { FetchDepartmentsController } from './controllers/departments/fetch-depa
     EditDepartmentController,
     DeleteDepartmentController,
     FetchDepartmentsController,
+    CreateNewBelieverController,
   ],
   providers: [
     AuthenticateUseCase,
@@ -57,6 +60,7 @@ import { FetchDepartmentsController } from './controllers/departments/fetch-depa
     EditDepartmentUseCase,
     DeleteDepartmentUseCase,
     FetchDepartmentsUseCase,
+    CreateNewBelieverUseCase,
   ],
 })
 export class HttpModule {}
