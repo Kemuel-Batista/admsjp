@@ -89,19 +89,19 @@ export class PrismaChurchDepartmentsRepository
   async save(churchDepartment: ChurchDepartment): Promise<void> {
     const data = PrismaChurchDepartmentMapper.toPersistency(churchDepartment)
 
-    await Promise.all([
-      this.prisma.churchDepartment.update({
-        where: {
-          id: churchDepartment.id.toString(),
-        },
-        data,
-      }),
-      this.churchDepartmentMembers.createMany(
-        churchDepartment.members.getNewItems(),
-      ),
-      this.churchDepartmentMembers.deleteMany(
-        churchDepartment.members.getRemovedItems(),
-      ),
-    ])
+    await this.prisma.churchDepartment.update({
+      where: {
+        id: churchDepartment.id.toString(),
+      },
+      data,
+    })
+
+    await this.churchDepartmentMembers.deleteMany(
+      churchDepartment.members.getRemovedItems(),
+    )
+
+    await this.churchDepartmentMembers.createMany(
+      churchDepartment.members.getNewItems(),
+    )
   }
 }

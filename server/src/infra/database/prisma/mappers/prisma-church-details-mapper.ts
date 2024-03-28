@@ -1,6 +1,7 @@
 import {
   Church as PrismaChurch,
-  ChurchDepartment as PrismaChurchDeparment,
+  ChurchDepartment as PrismaChurchDepartment,
+  ChurchDepartmentMember as PrismaChurchDepartmentMember,
   ChurchLeader as PrismaChurchLeader,
   Department as PrismaDeparment,
 } from '@prisma/client'
@@ -11,8 +12,9 @@ import { ChurchDetails } from '@/domain/admsjp/enterprise/entities/value-objects
 import { PrismaChurchDepartmentDetailsMapper } from './prisma-church-department-details-mapper'
 import { PrismaChurchLeaderMapper } from './prisma-church-leader-mapper'
 
-type PrismaChurchDepartmentDetails = PrismaChurchDeparment & {
+type PrismaChurchDepartmentDetails = PrismaChurchDepartment & {
   department: PrismaDeparment
+  members: PrismaChurchDepartmentMember[]
 }
 
 type PrismaChurchDetails = PrismaChurch & {

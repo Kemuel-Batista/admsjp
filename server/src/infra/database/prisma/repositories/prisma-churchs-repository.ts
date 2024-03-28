@@ -43,6 +43,7 @@ export class PrismaChurchsRepository implements ChurchsRepository {
         departments: {
           include: {
             department: true,
+            members: true,
           },
         },
       },

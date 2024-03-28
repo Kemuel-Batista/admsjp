@@ -1,9 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { CalendarIcon, Trash2 } from 'lucide-react'
 import { useFieldArray, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
+import { ChurchDeparmentMemberProps } from '@/api/get-church-details'
+import { saveChurchDepartmentMember } from '@/api/save-church-department-member'
 import { Calendar } from '@/components/ui/calendar'
 import {
   Form,
@@ -24,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { queryClient } from '@/lib/react-query'
 import { cn } from '@/lib/utils'
 import { maskPhone } from '@/utils/masks'
 
@@ -48,9 +53,23 @@ type SaveChurchDepartmentMemberFormData = z.infer<
   typeof SaveChurchDepartmentMemberFormSchema
 >
 
-export function ChurchDeparmentMembers() {
+interface ChurchDeparmentMembersInterfaceProps {
+  churchDepartmentId: string
+  members: ChurchDeparmentMemberProps[]
+}
+
+export function ChurchDeparmentMembers({
+  churchDepartmentId,
+  members,
+}: ChurchDeparmentMembersInterfaceProps) {
   const form = useForm<SaveChurchDepartmentMemberFormData>({
     resolver: zodResolver(SaveChurchDepartmentMemberFormSchema),
+    values: {
+      members: members.map((member) => ({
+        ...member,
+        birthday: new Date(member.birthday),
+      })),
+    },
   })
 
   const control = form.control
@@ -75,9 +94,29 @@ export function ChurchDeparmentMembers() {
     remove(index)
   }
 
+  const { mutateAsync: saveChurchDepartmentMemberFn, isPending } = useMutation({
+    mutationFn: saveChurchDepartmentMember,
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: ['church_details'],
+      })
+
+      toast.success('Departamento atualizado com sucesso!')
+    },
+  })
+
+  async function onSubmit(data: SaveChurchDepartmentMemberFormData) {
+    const departmentMemberInfo = {
+      churchDepartmentId,
+      members: data.members,
+    }
+
+    await saveChurchDepartmentMemberFn(departmentMemberInfo)
+  }
+
   return (
     <Form {...form}>
-      <div className="grid gap-5 p-1">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-5 p-1">
         <div className="flex items-center justify-between space-y-2">
           <div>
             <h4 className="text-base font-medium tracking-tight">Liderança</h4>
@@ -111,6 +150,7 @@ export function ChurchDeparmentMembers() {
                         <Input
                           placeholder="Nome"
                           autoComplete="off"
+                          disabled={isPending}
                           {...field}
                         />
                       </FormControl>
@@ -127,6 +167,7 @@ export function ChurchDeparmentMembers() {
                         <Input
                           placeholder="Email"
                           autoComplete="off"
+                          disabled={isPending}
                           {...field}
                         />
                       </FormControl>
@@ -142,6 +183,7 @@ export function ChurchDeparmentMembers() {
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
+                        disabled={isPending}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -168,6 +210,7 @@ export function ChurchDeparmentMembers() {
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
+                        disabled={isPending}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -197,6 +240,7 @@ export function ChurchDeparmentMembers() {
                           placeholder="Telefone"
                           autoComplete="off"
                           maxLength={15}
+                          disabled={isPending}
                           {...field}
                           onChange={(event) =>
                             field.onChange(maskPhone(event.target.value))
@@ -217,6 +261,7 @@ export function ChurchDeparmentMembers() {
                           <FormControl>
                             <Button
                               variant={'outline'}
+                              disabled={isPending}
                               className={cn(
                                 'w-full pl-3 text-left font-normal',
                                 !field.value && 'text-muted-foreground',
@@ -249,6 +294,7 @@ export function ChurchDeparmentMembers() {
               <Button
                 variant="destructive"
                 className="w-fit"
+                disabled={isPending}
                 onClick={() => handleRemoveMember(index)}
               >
                 <Trash2 size={16} />
@@ -256,7 +302,11 @@ export function ChurchDeparmentMembers() {
             </div>
           )
         })}
-      </div>
+
+        <Button disabled={isPending} type="submit">
+          Salvar alterações
+        </Button>
+      </form>
     </Form>
   )
 }

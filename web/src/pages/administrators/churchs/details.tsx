@@ -44,6 +44,28 @@ export function ChurchDetails() {
         </div>
       </div>
       <div className="grid">
+        <h2 className="text-xl font-bold tracking-tight">
+          Líderes da congregação
+        </h2>
+        {church?.departments.map((churchDepartment) => (
+          <Accordion key={churchDepartment.id} type="single" collapsible>
+            <AccordionItem value="item-1">
+              <AccordionTrigger>
+                {churchDepartment.departmentName}
+              </AccordionTrigger>
+              <AccordionContent>
+                <Input disabled value={churchDepartment.username} />
+
+                <ChurchDeparmentMembers
+                  churchDepartmentId={churchDepartment.id}
+                  members={churchDepartment.members}
+                />
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        ))}
+      </div>
+      <div className="grid">
         <h2 className="text-xl font-bold tracking-tight">Departamentos</h2>
         {church?.departments.map((churchDepartment) => (
           <Accordion key={churchDepartment.id} type="single" collapsible>
@@ -54,7 +76,10 @@ export function ChurchDetails() {
               <AccordionContent>
                 <Input disabled value={churchDepartment.username} />
 
-                <ChurchDeparmentMembers />
+                <ChurchDeparmentMembers
+                  churchDepartmentId={churchDepartment.id}
+                  members={churchDepartment.members}
+                />
               </AccordionContent>
             </AccordionItem>
           </Accordion>

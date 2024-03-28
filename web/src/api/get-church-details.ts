@@ -9,10 +9,21 @@ export interface ChurchLeaderProps {
   birthday: Date
 }
 
+export interface ChurchDeparmentMemberProps {
+  id: string
+  name: string
+  functionName: string
+  subFunction: string
+  phone: string
+  email: string
+  birthday: string
+}
+
 export interface ChurchDeparmentProps {
   id: string
   departmentName: string
   username: string
+  members: ChurchDeparmentMemberProps[]
 }
 
 export interface ChurchDetailsProps {

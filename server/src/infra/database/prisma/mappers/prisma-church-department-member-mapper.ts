@@ -33,7 +33,6 @@ export class PrismaChurchDepartmentMemberMapper {
     raw: ChurchDepartmentMember,
   ): Prisma.ChurchDepartmentMemberUncheckedCreateInput {
     return {
-      id: raw.id.toString(),
       churchDepartmentId: raw.churchDepartmentId.toString(),
       name: raw.name,
       functionName: raw.functionName,
