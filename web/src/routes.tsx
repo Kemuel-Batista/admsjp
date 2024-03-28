@@ -9,9 +9,14 @@ import { AdministratorDashboard } from './pages/administrators/dashboard'
 import { DepartmentList } from './pages/administrators/departments'
 import { SaveDepartment } from './pages/administrators/departments/save'
 import { Authenticate } from './pages/public/authenticate'
+import { NewBeliever } from './pages/public/new-believer'
 import { Register } from './pages/public/register'
 
 export const routes = createBrowserRouter([
+  {
+    path: '/novo/convertido',
+    element: <NewBeliever />,
+  },
   {
     path: '/',
     element: <AuthLayout />,
