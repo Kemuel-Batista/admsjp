@@ -19,15 +19,11 @@ export class PrismaChurchDepartmentMembersRepository
       return
     }
 
-    churchDepartmentMembers.map(async (churchDepartmentMember) => {
-      const data = PrismaChurchDepartmentMemberMapper.toPersistency(
-        churchDepartmentMember,
-      )
+    const data = PrismaChurchDepartmentMemberMapper.toPersistencyMany(
+      churchDepartmentMembers,
+    )
 
-      await this.prisma.churchDepartmentMember.create({
-        data,
-      })
-    })
+    await this.prisma.churchDepartmentMember.createMany(data)
   }
 
   async deleteMany(
@@ -43,14 +39,11 @@ export class PrismaChurchDepartmentMembersRepository
       },
     )
 
-    await this.prisma.churchDepartmentMember.updateMany({
+    await this.prisma.churchDepartmentMember.deleteMany({
       where: {
         id: {
           in: churchDepartmentMembersIds,
         },
-      },
-      data: {
-        deletedAt: new Date(),
       },
     })
   }

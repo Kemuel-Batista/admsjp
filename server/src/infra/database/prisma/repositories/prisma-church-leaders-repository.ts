@@ -15,13 +15,9 @@ export class PrismaChurchLeadersRepository implements ChurchLeadersRepository {
       return
     }
 
-    churchLeaders.map(async (churchLeader) => {
-      const data = PrismaChurchLeaderMapper.toPersistency(churchLeader)
+    const data = PrismaChurchLeaderMapper.toPersistencyMany(churchLeaders)
 
-      await this.prisma.churchLeader.create({
-        data,
-      })
-    })
+    await this.prisma.churchLeader.createMany(data)
   }
 
   async deleteMany(churchLeaders: ChurchLeader[]): Promise<void> {
@@ -33,14 +29,11 @@ export class PrismaChurchLeadersRepository implements ChurchLeadersRepository {
       return churchLeader.id.toString()
     })
 
-    await this.prisma.churchLeader.updateMany({
+    await this.prisma.churchLeader.deleteMany({
       where: {
         id: {
           in: churchLeadersIds,
         },
-      },
-      data: {
-        deletedAt: new Date(),
       },
     })
   }

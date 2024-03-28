@@ -23,6 +23,8 @@ import { Input } from '@/components/ui/input'
 import { queryClient } from '@/lib/react-query'
 import { maskCep } from '@/utils/masks'
 
+import MapDisabled from '../map-disabled'
+
 const ChurchBodySchema = z.object({
   name: z.string({ required_error: 'Nome da igreja não pode estar vazio.' }),
   description: z.string({ required_error: 'Descrição não pode estar vazio.' }),
@@ -49,17 +51,29 @@ interface CepResponse {
 
 interface ChurchFormProps {
   church?: ChurchDetailsProps
+  formType?: string
 }
 
-export function ChurchForm({ church }: ChurchFormProps) {
+export function ChurchForm({ church, formType }: ChurchFormProps) {
   const navigate = useNavigate()
+  const isChurchFormView = formType === 'view'
 
   const form = useForm<ChurchFormData>({
     resolver: zodResolver(ChurchBodySchema),
     values: {
       name: church?.name ?? '',
+      description: church?.description ?? '',
+      postalCode: church?.postalCode ?? '',
+      number: church?.number ?? '',
+      street: church?.street ?? '',
+      neighborhood: church?.neighborhood ?? '',
+      latitude: church?.latitude ?? 0,
+      longitude: church?.longitude ?? 0,
     },
   })
+
+  const latitude = form.watch('latitude')
+  const longitude = form.watch('longitude')
 
   async function handleGetCepResponse(cep: string) {
     await axios
@@ -124,7 +138,7 @@ export function ChurchForm({ church }: ChurchFormProps) {
                     <Input
                       placeholder="Nome da Igreja"
                       autoComplete="off"
-                      disabled={isPending}
+                      disabled={isPending || isChurchFormView}
                       {...field}
                     />
                   </FormControl>
@@ -145,7 +159,7 @@ export function ChurchForm({ church }: ChurchFormProps) {
                     <Input
                       placeholder="Descrição"
                       autoComplete="off"
-                      disabled={isPending}
+                      disabled={isPending || isChurchFormView}
                       {...field}
                     />
                   </FormControl>
@@ -167,7 +181,7 @@ export function ChurchForm({ church }: ChurchFormProps) {
                       placeholder="CEP"
                       autoComplete="off"
                       maxLength={9}
-                      disabled={isPending}
+                      disabled={isPending || isChurchFormView}
                       {...field}
                       onChange={(event) =>
                         field.onChange(maskCep(event.target.value))
@@ -190,7 +204,7 @@ export function ChurchForm({ church }: ChurchFormProps) {
                       placeholder="Número do endereço"
                       autoComplete="off"
                       maxLength={6}
-                      disabled={isPending}
+                      disabled={isPending || isChurchFormView}
                       {...field}
                     />
                   </FormControl>
@@ -208,7 +222,7 @@ export function ChurchForm({ church }: ChurchFormProps) {
                     <Input
                       placeholder="Rua"
                       autoComplete="off"
-                      disabled={isPending}
+                      disabled={isPending || isChurchFormView}
                       {...field}
                     />
                   </FormControl>
@@ -226,7 +240,7 @@ export function ChurchForm({ church }: ChurchFormProps) {
                     <Input
                       placeholder="Bairro"
                       autoComplete="off"
-                      disabled={isPending}
+                      disabled={isPending || isChurchFormView}
                       {...field}
                     />
                   </FormControl>
@@ -235,21 +249,34 @@ export function ChurchForm({ church }: ChurchFormProps) {
               )}
             />
           </div>
-          <Map onPositionMarkerChange={handlePositionMarkerChange} />
+          {isChurchFormView ? (
+            <MapDisabled latitude={latitude} longitude={longitude} />
+          ) : (
+            <Map
+              onPositionMarkerChange={handlePositionMarkerChange}
+              latitude={latitude}
+              longitude={longitude}
+            />
+          )}
         </div>
 
         <div className="grid grid-cols-4">
           <div></div>
           <div></div>
           <div></div>
-          <div className="grid grid-cols-2 gap-4">
-            <Button type="submit" disabled={isPending}>
-              Salvar
-            </Button>
-            <Button variant="secondary" disabled={isPending}>
-              Voltar
-            </Button>
-          </div>
+          {!isChurchFormView && (
+            <div className="grid grid-cols-2 gap-4">
+              <Button type="submit" disabled={isPending || isChurchFormView}>
+                Salvar
+              </Button>
+              <Button
+                variant="secondary"
+                disabled={isPending || isChurchFormView}
+              >
+                Voltar
+              </Button>
+            </div>
+          )}
         </div>
       </form>
     </Form>

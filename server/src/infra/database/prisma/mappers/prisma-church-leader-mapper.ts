@@ -25,20 +25,24 @@ export class PrismaChurchLeaderMapper {
     )
   }
 
-  static toPersistency(
-    raw: ChurchLeader,
-  ): Prisma.ChurchLeaderUncheckedCreateInput {
+  static toPersistencyMany(
+    raw: ChurchLeader[],
+  ): Prisma.ChurchLeaderCreateManyArgs {
+    const data = raw.map((item) => ({
+      id: item.id.toString(),
+      churchId: item.churchId.toString(),
+      name: item.name,
+      functionName: item.functionName,
+      phone: item.phone,
+      email: item.email,
+      birthday: item.birthday,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+      deletedAt: item.deletedAt,
+    }))
+
     return {
-      id: raw.id.toString(),
-      churchId: raw.churchId.toString(),
-      name: raw.name,
-      functionName: raw.functionName,
-      phone: raw.phone,
-      email: raw.email,
-      birthday: raw.birthday,
-      createdAt: raw.createdAt,
-      updatedAt: raw.updatedAt,
-      deletedAt: raw.deletedAt,
+      data,
     }
   }
 }

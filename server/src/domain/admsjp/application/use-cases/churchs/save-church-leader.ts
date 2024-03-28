@@ -6,6 +6,7 @@ import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-e
 import { ChurchLeader } from '@/domain/admsjp/enterprise/entities/church-leader'
 import { ChurchLeaderList } from '@/domain/admsjp/enterprise/entities/church-leaders-list'
 
+import { ChurchLeadersRepository } from '../../repositories/church-leaders-repository'
 import { ChurchsRepository } from '../../repositories/churchs-repository'
 
 interface SaveChurchLeaderUseCaseRequest {
@@ -23,7 +24,10 @@ type SaveChurchLeaderUseCaseResponse = Either<ResourceNotFoundError, null>
 
 @Injectable()
 export class SaveChurchLeaderUseCase {
-  constructor(private churchsRepository: ChurchsRepository) {}
+  constructor(
+    private churchsRepository: ChurchsRepository,
+    private churchLeadersRepository: ChurchLeadersRepository,
+  ) {}
 
   async execute({
     churchId,
@@ -34,6 +38,11 @@ export class SaveChurchLeaderUseCase {
     if (!church) {
       return failure(new ResourceNotFoundError('Church'))
     }
+
+    const currentChurchLeaders =
+      await this.churchLeadersRepository.findManyByChurchId(churchId)
+
+    const churchDepartmentsList = new ChurchLeaderList(currentChurchLeaders)
 
     const churchLeaders = leaders.map((leader) => {
       return ChurchLeader.create({
@@ -46,7 +55,9 @@ export class SaveChurchLeaderUseCase {
       })
     })
 
-    church.leaders = new ChurchLeaderList(churchLeaders)
+    churchDepartmentsList.update(churchLeaders)
+
+    church.leaders = churchDepartmentsList
 
     await this.churchsRepository.save(church)
 

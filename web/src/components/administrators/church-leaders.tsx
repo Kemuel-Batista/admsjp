@@ -6,8 +6,8 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-import { ChurchDeparmentMemberProps } from '@/api/get-church-details'
-import { saveChurchDepartmentMember } from '@/api/save-church-department-member'
+import { ChurchLeaderProps } from '@/api/get-church-details'
+import { saveChurchLeaders } from '@/api/save-church-leaders'
 import { Calendar } from '@/components/ui/calendar'
 import {
   Form,
@@ -36,51 +36,48 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 
-const SaveChurchDepartmentMemberFormSchema = z.object({
-  members: z.array(
+const SaveChurchLeadersFormSchema = z.object({
+  leaders: z.array(
     z.object({
       name: z.string(),
       email: z.string().email(),
       functionName: z.string(),
-      subFunction: z.string(),
       phone: z.string(),
       birthday: z.date({ required_error: 'Selecione a data de nascimento' }),
     }),
   ),
 })
 
-type SaveChurchDepartmentMemberFormData = z.infer<
-  typeof SaveChurchDepartmentMemberFormSchema
->
+type SaveChurchLeadersFormData = z.infer<typeof SaveChurchLeadersFormSchema>
 
-interface ChurchDeparmentMembersInterfaceProps {
-  churchDepartmentId: string
-  members: ChurchDeparmentMemberProps[]
+interface ChurchLeadersInterfaceProps {
+  churchId?: string
+  leaders: ChurchLeaderProps[]
   formType: string
 }
 
-export function ChurchDeparmentMembers({
-  churchDepartmentId,
-  members,
+export function ChurchLeaders({
+  churchId,
+  leaders,
   formType,
-}: ChurchDeparmentMembersInterfaceProps) {
+}: ChurchLeadersInterfaceProps) {
   const isChurchFormView = formType === 'view'
 
-  const form = useForm<SaveChurchDepartmentMemberFormData>({
-    resolver: zodResolver(SaveChurchDepartmentMemberFormSchema),
+  const form = useForm<SaveChurchLeadersFormData>({
+    resolver: zodResolver(SaveChurchLeadersFormSchema),
     values: {
-      members: members.map((member) => ({
-        ...member,
-        birthday: new Date(member.birthday),
+      leaders: leaders.map((leader) => ({
+        ...leader,
+        birthday: new Date(leader.birthday),
       })),
     },
   })
 
   const control = form.control
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append } = useFieldArray({
     control,
-    name: 'members',
+    name: 'leaders',
   })
 
   function handleAddMember() {
@@ -90,40 +87,46 @@ export function ChurchDeparmentMembers({
       phone: '',
       birthday: new Date(),
       functionName: '',
-      subFunction: '',
     })
   }
 
   function handleRemoveMember(index: number) {
-    remove(index)
+    const currentValues = form.getValues()
+
+    form.setValue(
+      'leaders',
+      currentValues.leaders.filter((_, idx) => idx !== index),
+    )
   }
 
-  const { mutateAsync: saveChurchDepartmentMemberFn, isPending } = useMutation({
-    mutationFn: saveChurchDepartmentMember,
+  const { mutateAsync: saveChurchLeadersFn, isPending } = useMutation({
+    mutationFn: saveChurchLeaders,
     onSuccess() {
       queryClient.invalidateQueries({
         queryKey: ['church_details'],
       })
 
-      toast.success('Departamento atualizado com sucesso!')
+      toast.success('Liderança atualizada com sucesso!')
     },
   })
 
-  async function onSubmit(data: SaveChurchDepartmentMemberFormData) {
-    const departmentMemberInfo = {
-      churchDepartmentId,
-      members: data.members,
+  async function onSubmit(data: SaveChurchLeadersFormData) {
+    const leadersInfo = {
+      churchId,
+      leaders: data.leaders,
     }
 
-    await saveChurchDepartmentMemberFn(departmentMemberInfo)
+    await saveChurchLeadersFn(leadersInfo)
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-5 p-1">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-5 mt-3">
         <div className="flex items-center justify-between space-y-2">
           <div>
-            <h4 className="text-base font-medium tracking-tight">Liderança</h4>
+            <h4 className="text-base tracking-tight">
+              Lista de líderes da congregação
+            </h4>
           </div>
           {!isChurchFormView && (
             <div className="flex items-center space-x-2">
@@ -133,11 +136,10 @@ export function ChurchDeparmentMembers({
         </div>
 
         <div className="grid grid-cols-[29fr_1fr]">
-          <div className="grid grid-cols-6 gap-2">
+          <div className="grid grid-cols-5 gap-2">
             <Label>Nome</Label>
             <Label>Email</Label>
             <Label>Função na Igreja</Label>
-            <Label>Função no Departamento</Label>
             <Label>Número de celular</Label>
             <Label>Data de nascimento</Label>
           </div>
@@ -146,10 +148,10 @@ export function ChurchDeparmentMembers({
         {fields.map((field, index) => {
           return (
             <div className="grid grid-cols-[29fr_1fr] gap-2" key={field.id}>
-              <div className="grid grid-cols-6 gap-2">
+              <div className="grid grid-cols-5 gap-2">
                 <FormField
                   control={form.control}
-                  name={`members.${index}.name`}
+                  name={`leaders.${index}.name`}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -166,7 +168,7 @@ export function ChurchDeparmentMembers({
                 />
                 <FormField
                   control={form.control}
-                  name={`members.${index}.email`}
+                  name={`leaders.${index}.email`}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -183,7 +185,7 @@ export function ChurchDeparmentMembers({
                 />
                 <FormField
                   control={form.control}
-                  name={`members.${index}.functionName`}
+                  name={`leaders.${index}.functionName`}
                   render={({ field }) => (
                     <FormItem>
                       <Select
@@ -210,35 +212,7 @@ export function ChurchDeparmentMembers({
                 />
                 <FormField
                   control={form.control}
-                  name={`members.${index}.subFunction`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        disabled={isPending}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Função no departamento" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="LD">Líder</SelectItem>
-                          <SelectItem value="VL">Vice Líder</SelectItem>
-                          <SelectItem value="PS">
-                            Primeiro Secretário
-                          </SelectItem>
-                          <SelectItem value="SS">Segundo Secretário</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name={`members.${index}.phone`}
+                  name={`leaders.${index}.phone`}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -259,7 +233,7 @@ export function ChurchDeparmentMembers({
                 />
                 <FormField
                   control={form.control}
-                  name={`members.${index}.birthday`}
+                  name={`leaders.${index}.birthday`}
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
                       <Popover>

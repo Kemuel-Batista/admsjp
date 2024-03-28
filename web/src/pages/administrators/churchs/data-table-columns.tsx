@@ -40,8 +40,9 @@ export const DataTableChurchColumns: ColumnDef<ChurchProps>[] = [
     cell: ({ row }) => {
       const church = row.original
 
-      function handleNavigateToChurchDetails() {
+      function handleNavigateToChurchDetails(type: string) {
         setCookie(undefined, 'admsjp_church_id', church.id)
+        setCookie(undefined, 'admsjp_church_type', type)
         window.location.assign('/administrators/church/details')
       }
 
@@ -56,13 +57,13 @@ export const DataTableChurchColumns: ColumnDef<ChurchProps>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Ações</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => handleNavigateToChurchDetails()}>
+            <DropdownMenuItem
+              onClick={() => handleNavigateToChurchDetails('view')}
+            >
               Visualizar
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() =>
-                toast.info('Funcionalidade ainda em desenvolvimento')
-              }
+              onClick={() => handleNavigateToChurchDetails('edit')}
             >
               Editar
             </DropdownMenuItem>

@@ -122,9 +122,8 @@ export class PrismaChurchsRepository implements ChurchsRepository {
         },
         data,
       }),
-      this.churchLeadersRepository.createMany(church.leaders.getItems()),
-      this.churchLeadersRepository.createMany(church.leaders.getNewItems()),
       this.churchLeadersRepository.deleteMany(church.leaders.getRemovedItems()),
+      this.churchLeadersRepository.createMany(church.leaders.getNewItems()),
       this.churchDepartmentsRepository.createMany(
         church.departments.getNewItems(),
       ),
