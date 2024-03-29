@@ -20,6 +20,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { CepResponse } from '@/interfaces/cep-response'
 import { queryClient } from '@/lib/react-query'
 import { maskCep } from '@/utils/masks'
 
@@ -41,13 +42,6 @@ const ChurchBodySchema = z.object({
 })
 
 type ChurchFormData = z.infer<typeof ChurchBodySchema>
-
-interface CepResponse {
-  logradouro: string
-  bairro: string
-  ibge: string
-  ddd: string
-}
 
 interface ChurchFormProps {
   church?: ChurchDetailsProps

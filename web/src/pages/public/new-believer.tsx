@@ -1,11 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
 import { format } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { fetchChurchs } from '@/api/fetch-churchs'
+import { getCities, getStates } from '@/api/ibge'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -30,8 +32,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { CepResponse } from '@/interfaces/cep-response'
 import { cn } from '@/lib/utils'
-import { maskPhone } from '@/utils/masks'
+import { maskCep, maskPhone } from '@/utils/masks'
 
 const createNewBelieverBodySchema = z.object({
   churchId: z.string().uuid(),
@@ -63,35 +66,63 @@ export function NewBeliever() {
 
   const churchs = result?.churchs || []
 
+  const { data: states } = useQuery({
+    queryKey: ['list_states'],
+    queryFn: () => getStates(),
+  })
+  const ufs = states || []
+
+  const state = form.watch('state')
+  const { data } = useQuery({
+    queryKey: ['list_cities', state],
+    queryFn: () => getCities(state),
+  })
+  const cities = data || []
+
+  async function handleGetCepResponse(cep: string) {
+    await axios
+      .get<CepResponse>(`https://viacep.com.br/ws/${cep}/json/`)
+      .then((response) => {
+        form.setValue('street', response.data.logradouro)
+        form.setValue('neighborhood', response.data.bairro)
+      })
+  }
+
   return (
     <Form {...form}>
       <form className="flex-1 flex-col space-y-4 p-8">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome</FormLabel>
-              <FormControl>
-                <Input placeholder="Nome" autoComplete="off" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="lastName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Sobrenome</FormLabel>
-              <FormControl>
-                <Input placeholder="Sobrenome" autoComplete="off" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-2 gap-2">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nome</FormLabel>
+                <FormControl>
+                  <Input placeholder="Nome" autoComplete="off" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Sobrenome</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Sobrenome"
+                    autoComplete="off"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <div className="grid grid-cols-2 gap-2">
           <FormField
@@ -154,7 +185,6 @@ export function NewBeliever() {
                       mode="single"
                       selected={field.value}
                       onSelect={field.onChange}
-                      disabled={(date) => date > new Date()}
                       initialFocus
                     />
                   </PopoverContent>
@@ -197,6 +227,134 @@ export function NewBeliever() {
                     }
                   />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className="grid grid-cols-3 gap-2">
+          <FormField
+            control={form.control}
+            name="postalCode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>CEP</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="CEP"
+                    autoComplete="off"
+                    maxLength={9}
+                    {...field}
+                    onChange={(event) =>
+                      field.onChange(maskCep(event.target.value))
+                    }
+                    onBlur={(e) => handleGetCepResponse(e.target.value)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="number"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Número</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Número do endereço"
+                    autoComplete="off"
+                    maxLength={6}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="neighborhood"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Bairro</FormLabel>
+                <FormControl>
+                  <Input placeholder="Bairro" autoComplete="off" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <FormField
+          control={form.control}
+          name="street"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Rua</FormLabel>
+              <FormControl>
+                <Input placeholder="Rua" autoComplete="off" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="grid grid-cols-2 gap-2">
+          <FormField
+            control={form.control}
+            name="state"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Estado</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o estado" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {ufs.map((uf) => (
+                      <SelectItem key={uf} value={uf}>
+                        {uf}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="city"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Cidade</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione a cidade" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {cities.map((city) => (
+                      <SelectItem key={city.id} value={city.nome}>
+                        {city.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
