@@ -7,6 +7,7 @@ import { ChurchsRepository } from '@/domain/admsjp/application/repositories/chur
 import { DepartmentsRepository } from '@/domain/admsjp/application/repositories/departments-repository'
 import { NewBelieversRepository } from '@/domain/admsjp/application/repositories/new-believers-repository'
 import { UsersRepository } from '@/domain/admsjp/application/repositories/users-repository'
+import { NotificationsRepository } from '@/domain/notification/application/repositories/notifications-repository'
 
 import { PrismaService } from './prisma/prisma.service'
 import { PrismaChurchDepartmentMembersRepository } from './prisma/repositories/prisma-church-department-members-repository'
@@ -15,6 +16,7 @@ import { PrismaChurchLeadersRepository } from './prisma/repositories/prisma-chur
 import { PrismaChurchsRepository } from './prisma/repositories/prisma-churchs-repository'
 import { PrismaDepartmentsRepository } from './prisma/repositories/prisma-departments-repository'
 import { PrismaNewBelieversRepository } from './prisma/repositories/prisma-new-believers-repository'
+import { PrismaNotificationsRepository } from './prisma/repositories/prisma-notifications-repository'
 import { PrismaUsersRepository } from './prisma/repositories/prisma-users-repository'
 
 @Module({
@@ -48,6 +50,10 @@ import { PrismaUsersRepository } from './prisma/repositories/prisma-users-reposi
       provide: NewBelieversRepository,
       useClass: PrismaNewBelieversRepository,
     },
+    {
+      provide: NotificationsRepository,
+      useClass: PrismaNotificationsRepository,
+    },
   ],
   exports: [
     PrismaService,
@@ -58,6 +64,7 @@ import { PrismaUsersRepository } from './prisma/repositories/prisma-users-reposi
     ChurchDepartmentsRepository,
     ChurchDepartmentMembersRepository,
     NewBelieversRepository,
+    NotificationsRepository,
   ],
 })
 export class DatabaseModule {}

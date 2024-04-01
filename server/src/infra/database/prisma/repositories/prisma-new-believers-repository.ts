@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 
+import { DomainEvents } from '@/core/events/domain-events'
 import { NewBelieversRepository } from '@/domain/admsjp/application/repositories/new-believers-repository'
 import { NewBeliever } from '@/domain/admsjp/enterprise/entities/new-believer'
 
@@ -58,5 +59,7 @@ export class PrismaNewBelieversRepository implements NewBelieversRepository {
     await this.prisma.newBeliever.create({
       data,
     })
+
+    DomainEvents.dispatchEventsForAggregate(newBeliever.id)
   }
 }

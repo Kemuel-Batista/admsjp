@@ -1,6 +1,8 @@
-import { Entity } from '@/core/entities/entity'
+import { AggregateRoot } from '@/core/entities/aggregate-root'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { Optional } from '@/core/types/optional'
+
+import { NewBelieverCreatedEvent } from '../events/new-believer-created'
 
 export interface NewBelieverProps {
   churchId: UniqueEntityID
@@ -22,7 +24,7 @@ export interface NewBelieverProps {
   deletedAt?: Date | null
 }
 
-export class NewBeliever extends Entity<NewBelieverProps> {
+export class NewBeliever extends AggregateRoot<NewBelieverProps> {
   get churchId() {
     return this.props.churchId
   }
@@ -183,6 +185,12 @@ export class NewBeliever extends Entity<NewBelieverProps> {
       },
       id,
     )
+
+    const isNewBeliever = !id
+
+    if (isNewBeliever) {
+      newBeliever.addDomainEvent(new NewBelieverCreatedEvent(newBeliever))
+    }
 
     return newBeliever
   }

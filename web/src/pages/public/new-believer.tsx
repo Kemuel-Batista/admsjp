@@ -1,15 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { format } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { fetchChurchs } from '@/api/fetch-churchs'
 import { getCities, getStates } from '@/api/ibge'
+import { saveNewBeliever } from '@/api/save-new-believer'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Form,
   FormControl,
@@ -88,9 +91,23 @@ export function NewBeliever() {
       })
   }
 
+  const { mutateAsync: saveNewBelieverFn, isPending } = useMutation({
+    mutationFn: saveNewBeliever,
+    onSuccess() {
+      toast.success('Novo convertido cadastrado com sucesso!')
+    },
+  })
+
+  async function onSubmit(data: CreateNewBelieverFormData) {
+    await saveNewBelieverFn(data)
+  }
+
   return (
     <Form {...form}>
-      <form className="flex-1 flex-col space-y-4 p-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex-1 flex-col space-y-4 p-8"
+      >
         <div className="grid grid-cols-2 gap-2">
           <FormField
             control={form.control}
@@ -99,7 +116,12 @@ export function NewBeliever() {
               <FormItem>
                 <FormLabel>Nome</FormLabel>
                 <FormControl>
-                  <Input placeholder="Nome" autoComplete="off" {...field} />
+                  <Input
+                    placeholder="Nome"
+                    autoComplete="off"
+                    {...field}
+                    disabled={isPending}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -116,6 +138,7 @@ export function NewBeliever() {
                     placeholder="Sobrenome"
                     autoComplete="off"
                     {...field}
+                    disabled={isPending}
                   />
                 </FormControl>
                 <FormMessage />
@@ -124,7 +147,7 @@ export function NewBeliever() {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-2 mobile:grid-cols-1">
           <FormField
             control={form.control}
             name="churchId"
@@ -134,6 +157,7 @@ export function NewBeliever() {
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  disabled={isPending}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -170,6 +194,7 @@ export function NewBeliever() {
                           'w-full pl-3 text-left font-normal',
                           !field.value && 'text-muted-foreground',
                         )}
+                        disabled={isPending}
                       >
                         {field.value ? (
                           format(field.value, 'dd LLL, y')
@@ -195,7 +220,7 @@ export function NewBeliever() {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-2 mobile:grid-cols-1">
           <FormField
             control={form.control}
             name="email"
@@ -203,7 +228,12 @@ export function NewBeliever() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Email" autoComplete="off" {...field} />
+                  <Input
+                    placeholder="Email"
+                    autoComplete="off"
+                    {...field}
+                    disabled={isPending}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -222,6 +252,7 @@ export function NewBeliever() {
                     autoComplete="off"
                     maxLength={15}
                     {...field}
+                    disabled={isPending}
                     onChange={(event) =>
                       field.onChange(maskPhone(event.target.value))
                     }
@@ -233,7 +264,7 @@ export function NewBeliever() {
           />
         </div>
 
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2 mobile:grid-cols-2">
           <FormField
             control={form.control}
             name="postalCode"
@@ -246,6 +277,7 @@ export function NewBeliever() {
                     autoComplete="off"
                     maxLength={9}
                     {...field}
+                    disabled={isPending}
                     onChange={(event) =>
                       field.onChange(maskCep(event.target.value))
                     }
@@ -268,6 +300,7 @@ export function NewBeliever() {
                     autoComplete="off"
                     maxLength={6}
                     {...field}
+                    disabled={isPending}
                   />
                 </FormControl>
                 <FormMessage />
@@ -281,7 +314,12 @@ export function NewBeliever() {
               <FormItem>
                 <FormLabel>Bairro</FormLabel>
                 <FormControl>
-                  <Input placeholder="Bairro" autoComplete="off" {...field} />
+                  <Input
+                    placeholder="Bairro"
+                    autoComplete="off"
+                    {...field}
+                    disabled={isPending}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -296,7 +334,12 @@ export function NewBeliever() {
             <FormItem>
               <FormLabel>Rua</FormLabel>
               <FormControl>
-                <Input placeholder="Rua" autoComplete="off" {...field} />
+                <Input
+                  placeholder="Rua"
+                  autoComplete="off"
+                  {...field}
+                  disabled={isPending}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -313,6 +356,7 @@ export function NewBeliever() {
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  disabled={isPending}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -341,6 +385,7 @@ export function NewBeliever() {
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  disabled={isPending}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -360,6 +405,29 @@ export function NewBeliever() {
             )}
           />
         </div>
+
+        <FormField
+          control={form.control}
+          name="lgpd"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                  disabled={isPending}
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel>Aceita receber notificações via WhatsApp?</FormLabel>
+              </div>
+            </FormItem>
+          )}
+        />
+
+        <Button className="w-full" type="submit">
+          Salvar novo convertido
+        </Button>
       </form>
     </Form>
   )
