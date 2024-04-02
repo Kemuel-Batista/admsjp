@@ -40,7 +40,6 @@ describe('On NewBeliever Created', () => {
 
     new OnNewBelieverCreated(
       inMemoryNewBelieversRepository,
-      inMemoryChurchsRepository,
       sendNotificationUseCase,
       fakeNotifier,
     )
