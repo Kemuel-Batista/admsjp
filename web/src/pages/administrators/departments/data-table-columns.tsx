@@ -24,7 +24,7 @@ export const DataTableDepartmentColumns: ColumnDef<DepartmentProps>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => {
+    cell: () => {
       // const department = row.original
 
       return (
