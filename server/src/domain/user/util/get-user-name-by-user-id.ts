@@ -1,5 +1,5 @@
 import { UsersRepository } from '../repositories/users-repository'
-import { FindUserByIdService } from '../use-cases/find/by-id/FindUserByIdService'
+import { FindUserByIdUseCase } from '../use-cases/find/by-id/find-user-by-id'
 
 interface User {
   id: number
@@ -15,7 +15,7 @@ export async function getUserNameByUserId<T extends IRecord>(
   records: T[],
   userRepository: UsersRepository,
 ): Promise<T[]> {
-  const findUserByIdService = new FindUserByIdService(userRepository)
+  const findUserByIdUseCase = new FindUserByIdUseCase(userRepository)
 
   const usersToFetch: Array<User['id']> = []
   const userIdsMap: Record<number, string | null> = {}
@@ -33,7 +33,7 @@ export async function getUserNameByUserId<T extends IRecord>(
   }
 
   for (const userId of usersToFetch) {
-    const user = await findUserByIdService.execute(userId)
+    const user = await findUserByIdUseCase.execute(userId)
 
     if (user !== null) {
       userIdsMap[user.id] = user.name

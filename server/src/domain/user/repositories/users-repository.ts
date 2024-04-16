@@ -8,14 +8,14 @@ import { type IListUserWithCountDTO } from '../dtos/list-user-dto'
 import { type IUpdateUserDTO } from '../dtos/update-user-dto'
 
 export abstract class UsersRepository {
-  abstract create: (data: ICreateUserDTO) => Promise<User>
-  abstract update: (data: IUpdateUserDTO) => Promise<User>
-  abstract list: (
+  abstract create(data: ICreateUserDTO): Promise<User>
+  abstract update(data: IUpdateUserDTO): Promise<User>
+  abstract list(
     options?: IListOptions,
     searchParams?: ISearchParamDTO[],
-  ) => Promise<IListUserWithCountDTO>
+  ): Promise<IListUserWithCountDTO>
 
-  abstract findById: (id: User['id']) => Promise<User | null>
-  abstract findByUsername: (username: User['username']) => Promise<User | null>
-  abstract delete: (userId: User['id']) => Promise<void>
+  abstract findById(id: User['id']): Promise<User | null>
+  abstract findByUsername(username: User['username']): Promise<User | null>
+  abstract delete(userId: User['id']): Promise<void>
 }

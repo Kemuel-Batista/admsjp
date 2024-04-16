@@ -6,7 +6,7 @@ import HttpStatusCode from '@shared/enums/HttpStatusCode'
 import { LogLevel } from '@shared/enums/LogLevel'
 import { injectable } from '@nestjs/common'
 
-import { CompareHashUserPassword } from '../../auth/compare-hash-user-password/CompareHashUserPassword'
+import { CompareHashUserPassword } from '../../auth/compare-hash-user-password/compare-hash-user-password'
 import { FindUserByIdUseCase } from '../../find/by-id/FindUserByIdUseCase'
 import { UpdateUserUseCase } from '../default/UpdateUserUseCase'
 
