@@ -11,151 +11,60 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(uuid())
-  name     String
-  email    String @unique
-  password String
+  id        Int     @id @default(autoincrement())
+  uuid      String  @unique @default(uuid())
+  name      String
+  username  String  @unique
+  status    Int
+  profileId Int     @default(1)
+  profile   Profile @relation("UserProfile", fields: [profileId], references: [id])
+  email     String  @unique
+  password  String
 
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  @@map("users")
+  createdAt  DateTime    @default(now()) @map("created_at")
+  createdBy  Int
+  updatedAt  DateTime?   @updatedAt @map("updated_at")
+  updatedBy  Int
+  deletedAt  DateTime?   @map("deleted_at")
+  userTokens UserToken[]
 }
 
-model Department {
-  id          String @id @default(uuid())
-  name        String @unique
-  description String
-
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  churchDepartments ChurchDepartment[]
-
-  @@map("departments")
+model UserToken {
+  id           Int      @id @default(autoincrement())
+  uuid         String   @unique @default(uuid())
+  token        String
+  refreshToken String
+  expiresAt    DateTime
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id])
+  createdAt    DateTime @default(now())
 }
 
-model Church {
-  id           String  @id @default(uuid())
-  name         String  @unique
-  description  String
-  street       String
-  neighborhood String
-  city         String
-  state        String
-  postalCode   String  @map("postal_code")
-  number       String
-  latitude     Decimal
-  longitude    Decimal
-  username     String  @unique
-  password     String
+model Profile {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique @default(uuid())
+  name      String   @unique
+  status    Int
+  visible   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int
+  updatedBy Int
 
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  leaders      ChurchLeader[]
-  departments  ChurchDepartment[]
-  newBelievers NewBeliever[]
-
-  @@map("churchs")
+  users              User[]              @relation("UserProfile")
+  profilePermissions ProfilePermission[] @relation("ProfilePermission")
 }
 
-model ChurchLeader {
-  id           String   @id @default(uuid())
-  churchId     String   @map("church_id")
-  name         String
-  functionName String
-  phone        String
-  email        String   @unique
-  birthday     DateTime
+model ProfilePermission {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique @default(uuid())
+  profileId Int
+  key       String
+  profile   Profile  @relation("ProfilePermission", fields: [profileId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int
+  updatedBy Int
 
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  church Church @relation(fields: [churchId], references: [id])
-
-  @@map("church_leaders")
-}
-
-model ChurchDepartment {
-  id           String @id @default(uuid())
-  churchId     String @map("church_id")
-  departmentId String @map("department_id")
-  username     String @unique
-  password     String
-
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  church     Church     @relation(fields: [churchId], references: [id])
-  department Department @relation(fields: [departmentId], references: [id])
-
-  members ChurchDepartmentMember[]
-
-  @@map("church_departments")
-}
-
-model ChurchDepartmentMember {
-  id                 String   @id @default(uuid())
-  churchDepartmentId String   @map("church_department_id")
-  name               String
-  functionName       String   @map("function_name")
-  subFunction        String   @map("sub_function")
-  phone              String
-  email              String   @unique
-  birthday           DateTime
-
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  churchDepartment ChurchDepartment @relation(fields: [churchDepartmentId], references: [id])
-
-  @@map("church_department_members")
-}
-
-model NewBeliever {
-  id       String   @id @default(uuid())
-  churchId String   @map("church_id")
-  name     String
-  lastName String
-  phone    String   @unique
-  email    String?  @unique
-  birthday DateTime
-
-  street       String
-  neighborhood String
-  city         String
-  state        String
-  postalCode   String @map("postal_code")
-  number       String
-
-  status Int
-  lgpd   Boolean
-
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  church       Church         @relation(fields: [churchId], references: [id])
-  Notification Notification[]
-
-  @@map("new_believers")
-}
-
-model Notification {
-  id          String   @id @default(uuid())
-  recipientId String   @map("recipient_id")
-  title       String
-  content     String
-  createdAt   DateTime @default(now()) @map("created_at")
-
-  recipient NewBeliever? @relation(fields: [recipientId], references: [id])
-
-  @@map("notifications")
+  @@unique(name: "KeyProfileId", [key, profileId])
 }
