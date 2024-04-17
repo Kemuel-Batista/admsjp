@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 
-import { ProfileHttpModule } from '@/domain/profile/http/profile-http.module'
+import { ProfileDatabaseModule } from '@/domain/profile/database/profile-database.module'
+import { FindProfileByIdUseCase } from '@/domain/profile/use-cases/find/by-id/find-profile-by-id'
 
 import { ProfilePermissionsDatabaseModule } from '../database/profile-permission-database.module'
 import { CreateProfilePermissionUseCase } from '../use-cases/create/create-profile-permission'
@@ -16,21 +17,22 @@ import { ListProfilePermissionUseCase } from '../use-cases/list/default/list-pro
 import { ListProfilePermissionController } from '../use-cases/list/default/list-profile-permission.controller'
 
 @Module({
-  imports: [ProfilePermissionsDatabaseModule, ProfileHttpModule],
+  imports: [ProfilePermissionsDatabaseModule, ProfileDatabaseModule],
   controllers: [
+    ListProfilePermissionController,
+    ListProfilePermissionByProfileIdController,
     FindProfilePermissionByIdController,
     CreateProfilePermissionController,
     DeleteProfilePermissionByIdController,
-    ListProfilePermissionController,
-    ListProfilePermissionByProfileIdController,
   ],
   providers: [
-    FindProfilePermissionByIdUseCase,
-    FindProfilePermissionByKeyProfileIdUseCase,
-    CreateProfilePermissionUseCase,
-    DeleteProfilePermissionByIdUseCase,
     ListProfilePermissionUseCase,
     ListProfilePermissionByProfileIdUseCase,
+    FindProfilePermissionByIdUseCase,
+    CreateProfilePermissionUseCase,
+    DeleteProfilePermissionByIdUseCase,
+    FindProfilePermissionByKeyProfileIdUseCase,
+    FindProfileByIdUseCase,
   ],
 })
 export class ProfilePermissionHttpModule {}
