@@ -1,38 +1,51 @@
-import { UserProfile } from '@modules/user/enums/UserProfile'
-import { UserStatus } from '@modules/user/enums/UserStatus'
-import { createUserSchema } from '@modules/user/schemas/userSchema'
-import { type UserWithoutPassword } from '@modules/user/types/UserWithoutPassword'
-import HttpStatusCode from '@shared/enums/HttpStatusCode'
-import { zodSchemaValidation } from '@shared/util/zod/zodSchemaValidation'
-import { type Request, type Response } from 'express'
-import { container } from 'tsyringe'
+import { Body, Controller, HttpCode, Post, Req } from '@nestjs/common'
+import { Request } from 'express'
+import { z } from 'zod'
 
-import { CreateUserUseCase } from './CreateUserUseCase'
+import HttpStatusCode from '@/core/enums/HttpStatusCode'
+import { UserStatus } from '@/domain/user/enums/user-status'
+import { UserWithoutPassword } from '@/domain/user/types/UserWithoutPassword'
+import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 
-class CreateUserController {
-  async handle(request: Request, response: Response): Promise<Response> {
+import { CreateUserUseCase } from './create-user'
+
+const createUserSchema = z.object({
+  username: z.string().min(3).max(20),
+  email: z.string().email(),
+  password: z.string().min(6).max(20),
+  name: z.string().min(3).max(50),
+  status: z.nativeEnum(UserStatus),
+  profileId: z.number().int().positive(),
+})
+
+type CreateUserBodySchema = z.infer<typeof createUserSchema>
+
+const bodyValidationPipe = new ZodValidationPipe(createUserSchema)
+
+@Controller('/')
+export class CreateUserController {
+  constructor(private createUser: CreateUserUseCase) {}
+
+  @Post()
+  @HttpCode(HttpStatusCode.CREATED)
+  async handle(
+    @Body(bodyValidationPipe) body: CreateUserBodySchema,
+    @Req() request: Request,
+  ) {
     const {
       username,
+      email,
       name,
       password,
       status = UserStatus.ACTIVE,
       profileId,
-    } = request.body
+    } = body
     const { user } = request
 
-    const createUserUseCase = container.resolve(CreateUserUseCase)
-
-    zodSchemaValidation(createUserSchema, {
-      username,
-      name,
-      password,
-      status,
-      profileId,
-    })
-
     const userWithoutPassword: UserWithoutPassword =
-      await createUserUseCase.execute({
+      await this.createUser.execute({
         username,
+        email,
         name,
         password,
         status,
@@ -40,8 +53,6 @@ class CreateUserController {
         createdBy: user.id,
       })
 
-    return response.status(HttpStatusCode.CREATED).json(userWithoutPassword)
+    return userWithoutPassword
   }
 }
-
-export { CreateUserController }

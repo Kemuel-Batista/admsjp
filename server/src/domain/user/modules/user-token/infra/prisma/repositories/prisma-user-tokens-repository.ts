@@ -1,6 +1,6 @@
 import { UserToken } from '@prisma/client'
 
-import { ICreateUserTokenDTO } from '@/domain/user/dtos/create-user-token-dto'
+import { CreateUserTokenDTO } from '@/domain/user/dtos/create-user-token.dto'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 
 import { UserTokensRepository } from '../../../repositories/user-tokens-repository'
@@ -12,7 +12,7 @@ export class UserTokensRepositoryPrisma implements UserTokensRepository {
     refreshToken,
     expiresAt,
     userId,
-  }: ICreateUserTokenDTO): Promise<UserToken> {
+  }: CreateUserTokenDTO): Promise<UserToken> {
     const newToken = await this.prisma.userToken.create({
       data: {
         token,

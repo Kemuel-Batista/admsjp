@@ -1,17 +1,12 @@
-import { type IAuthUserDTO } from '@modules/user/dtos/IAuthUserDTO'
-import { UserStatus } from '@modules/user/enums/UserStatus'
-import { IUserTokenRepository } from '@modules/user/modules/user-token/repositories/IUserTokenRepository'
-import { IHashProvider } from '@modules/user/providers/hash-provider/models/IHashProvider'
-import { UsersRepository } from '@modules/user/repositories/UsersRepository'
 import { Injectable } from '@nestjs/common'
-import { IDateProvider } from '@shared/container/providers/date-provider/models/IDateProvider'
-import { ILogProvider } from '@shared/container/providers/log-provider/model/ILogProvider'
-import HttpStatusCode from '@shared/enums/HttpStatusCode'
-import { LogLevel } from '@shared/enums/LogLevel'
-import { AuthError } from '@shared/errors/AuthError'
 
-import { GenerateUserTokenUseCase } from '../../../modules/user-token/usecases/generate/GenerateUserTokenUseCase'
-import { FindUserByUsernameUseCase } from '../../find/by-username/FindUserByUsernameUseCase'
+import HttpStatusCode from '@/core/enums/HttpStatusCode'
+import { AuthError } from '@/core/errors/AuthError'
+import { AuthUserDTO } from '@/domain/user/dtos/auth-user.dto'
+import { UserStatus } from '@/domain/user/enums/user-status'
+import { GenerateUserTokenUseCase } from '@/domain/user/modules/user-token/use-cases/generate/generate-user-token'
+
+import { FindUserByUsernameUseCase } from '../../find/by-username/find-user-by-username'
 import { CompareHashUserPassword } from '../compare-hash-user-password/compare-hash-user-password'
 
 interface IResponse {
@@ -20,35 +15,16 @@ interface IResponse {
 }
 
 @Injectable()
-class AuthUserUseCase {
-  private readonly findUserByUsernameUseCase: FindUserByUsernameUseCase
-  private readonly compareHashUserPassword: CompareHashUserPassword
-  private readonly generateUserTokenUseCase: GenerateUserTokenUseCase
-
+export class AuthUserUseCase {
   constructor(
-    private userRepository: UsersRepository,
-    private userTokenRepository: IUserTokenRepository,
-    private hashProvider: IHashProvider,
-    private dateProvider: IDateProvider,
-    private logProvider: ILogProvider,
-  ) {
-    this.findUserByUsernameUseCase = new FindUserByUsernameUseCase(
-      this.userRepository,
-    )
+    private findUserByUsername: FindUserByUsernameUseCase,
+    private compareHashUserPassword: CompareHashUserPassword,
+    private generateUserToken: GenerateUserTokenUseCase,
+  ) {}
 
-    this.compareHashUserPassword = new CompareHashUserPassword(
-      this.hashProvider,
-    )
-
-    this.generateUserTokenUseCase = new GenerateUserTokenUseCase(
-      this.userTokenRepository,
-      this.dateProvider,
-    )
-  }
-
-  async execute({ username, password }: IAuthUserDTO): Promise<IResponse> {
+  async execute({ username, password }: AuthUserDTO): Promise<IResponse> {
     // Verifica se o usuário existe no sistema
-    const user = await this.findUserByUsernameUseCase.execute(username)
+    const user = await this.findUserByUsername.execute(username)
 
     if (user === null) {
       throw new AuthError(
@@ -65,19 +41,8 @@ class AuthUserUseCase {
     await this.compareHashUserPassword.execute(password, user.password)
 
     // Gera o token e o refresh token
-    const tokenAndRefreshToken =
-      await this.generateUserTokenUseCase.execute(user)
-
-    await this.logProvider.log({
-      process: 'user.auth-user',
-      level: LogLevel.TRACE,
-      userId: user.id,
-      value: `${user.username}`,
-      note: `user.id: ${user.id} | user.username: ${user.username}`,
-    })
+    const tokenAndRefreshToken = await this.generateUserToken.execute(user)
 
     return tokenAndRefreshToken
   }
 }
-
-export { AuthUserUseCase }

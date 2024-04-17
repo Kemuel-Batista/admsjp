@@ -1,6 +1,6 @@
 import { type UserToken } from '@prisma/client'
 
-import { ICreateUserTokenDTO } from '@/domain/user/dtos/create-user-token-dto'
+import { CreateUserTokenDTO } from '@/domain/user/dtos/create-user-token.dto'
 
 import { UserTokensRepository } from '../user-tokens-repository'
 
@@ -12,7 +12,7 @@ export class InMemoryUserTokensRepository implements UserTokensRepository {
     refreshToken,
     expiresAt,
     userId,
-  }: ICreateUserTokenDTO): Promise<UserToken> {
+  }: CreateUserTokenDTO): Promise<UserToken> {
     throw new Error('Method not implemented.')
   }
 

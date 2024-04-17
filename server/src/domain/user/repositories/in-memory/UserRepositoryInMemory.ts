@@ -3,26 +3,26 @@ import { User } from '@prisma/client'
 import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { IListOptions } from '@/core/repositories/list-options'
 
-import { ICreateUserDTO } from '../../dtos/create-user-dto'
-import { IListUserWithCountDTO } from '../../dtos/list-user-dto'
-import { IUpdateUserDTO } from '../../dtos/update-user-dto'
+import { CreateUserDTO } from '../../dtos/create-user.dto'
+import { ListUserWithCountDTO } from '../../dtos/list-user.dto'
+import { UpdateUserDTO } from '../../dtos/update-user.dto'
 import { UsersRepository } from '../users-repository'
 
 export class UserRepositoryInMemory implements UsersRepository {
   private readonly users: User[] = []
 
-  async create(data: ICreateUserDTO): Promise<User> {
+  async create(data: CreateUserDTO): Promise<User> {
     throw new Error('Method not implemented.')
   }
 
-  async update(data: IUpdateUserDTO): Promise<User> {
+  async update(data: UpdateUserDTO): Promise<User> {
     throw new Error('Method not implemented.')
   }
 
   async list(
     options?: IListOptions | undefined,
     searchParams?: ISearchParamDTO[] | undefined,
-  ): Promise<IListUserWithCountDTO> {
+  ): Promise<ListUserWithCountDTO> {
     throw new Error('Method not implemented.')
   }
 

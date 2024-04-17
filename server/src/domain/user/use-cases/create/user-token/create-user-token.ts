@@ -1,22 +1,20 @@
-import { type ICreateUserTokenDTO } from '@modules/user/dtos/ICreateUserTokenDTO'
-import { IUserTokenRepository } from '@modules/user/modules/user-token/repositories/IUserTokenRepository'
 import { Injectable } from '@nestjs/common'
 import { type UserToken } from '@prisma/client'
 
+import { CreateUserTokenDTO } from '@/domain/user/dtos/create-user-token.dto'
+import { UserTokensRepository } from '@/domain/user/modules/user-token/repositories/user-tokens-repository'
+
 @Injectable()
-class CreateUserTokenUseCase {
-  constructor(
-    @inject('UserTokenRepository')
-    private readonly userTokenRepository: IUserTokenRepository,
-  ) {}
+export class CreateUserTokenUseCase {
+  constructor(private userTokensRepository: UserTokensRepository) {}
 
   async execute({
     token,
     refreshToken,
     expiresAt,
     userId,
-  }: ICreateUserTokenDTO): Promise<UserToken> {
-    const userToken = await this.userTokenRepository.create({
+  }: CreateUserTokenDTO): Promise<UserToken> {
+    const userToken = await this.userTokensRepository.create({
       token,
       refreshToken,
       expiresAt,
@@ -26,5 +24,3 @@ class CreateUserTokenUseCase {
     return userToken
   }
 }
-
-export { CreateUserTokenUseCase }

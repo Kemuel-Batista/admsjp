@@ -1,41 +1,31 @@
-import { type ICreateUserDTO } from '@modules/user/dtos/ICreateUserDTO'
-import { UserStatus } from '@modules/user/enums/UserStatus'
-import { IHashProvider } from '@modules/user/providers/hash-provider/models/IHashProvider'
-import { UsersRepository } from '@modules/user/repositories/UsersRepository'
-import { type UserWithoutPassword } from '@modules/user/types/UserWithoutPassword'
 import { Injectable } from '@nestjs/common'
-import { type User } from '@prisma/client'
-import { ILogProvider } from '@shared/container/providers/log-provider/model/ILogProvider'
-import { LogLevel } from '@shared/enums/LogLevel'
 
-import { FindUserByUsernameUseCase } from '../../find/by-username/FindUserByUsernameUseCase'
+import { IHashProvider } from '@/domain/user/cryptography/models/hash-provider'
+import { CreateUserDTO } from '@/domain/user/dtos/create-user.dto'
+import { UserStatus } from '@/domain/user/enums/user-status'
+import { UsersRepository } from '@/domain/user/repositories/users-repository'
+import { UserWithoutPassword } from '@/domain/user/types/UserWithoutPassword'
+
+import { FindUserByUsernameUseCase } from '../../find/by-username/find-user-by-username'
 
 @Injectable()
 class CreateUserUseCase {
-  private readonly findUserByUsernameUseCase: FindUserByUsernameUseCase
-
   constructor(
-    @inject('UserRepository')
-    private readonly userRepository: UsersRepository,
-    @inject('HashProvider')
-    private readonly hashProvider: IHashProvider,
-    @inject('LogProvider')
-    private readonly logProvider: ILogProvider,
-  ) {
-    this.findUserByUsernameUseCase = new FindUserByUsernameUseCase(
-      userRepository,
-    )
-  }
+    private userRepository: UsersRepository,
+    private hashProvider: IHashProvider,
+    private findUserByUsername: FindUserByUsernameUseCase,
+  ) {}
 
   async execute({
     username,
+    email,
     name,
     password,
     status = UserStatus.ACTIVE,
     profileId,
     createdBy,
-  }: ICreateUserDTO): Promise<UserWithoutPassword> {
-    await this.findUserByUsernameUseCase.execute(username, {
+  }: CreateUserDTO): Promise<UserWithoutPassword> {
+    await this.findUserByUsername.execute(username, {
       throwIfFound: true,
     })
 
@@ -43,19 +33,12 @@ class CreateUserUseCase {
 
     const user: UserWithoutPassword = await this.userRepository.create({
       username,
+      email,
       name,
       password: hashedPassword,
       status,
       profileId,
       createdBy,
-    })
-
-    await this.logProvider.log({
-      process: 'user.create-user',
-      level: LogLevel.INFO,
-      userId: createdBy,
-      value: `${user.username}`,
-      note: `user.id: ${user.id} | user.username: ${user.username} | user.name: ${user.name}`,
     })
 
     return user

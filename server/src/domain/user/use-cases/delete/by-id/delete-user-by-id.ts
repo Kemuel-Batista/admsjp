@@ -1,39 +1,27 @@
-import { UsersRepository } from '@modules/user/repositories/UsersRepository'
+import { Injectable } from '@nestjs/common'
 import { type User } from '@prisma/client'
-import { ILogProvider } from '@shared/container/providers/log-provider/model/ILogProvider'
-import { LogLevel } from '@shared/enums/LogLevel'
-import { injectable } from '@nestjs/common'
 
-import { FindUserByIdUseCase } from '../../find/by-id/FindUserByIdUseCase'
+import { UsersRepository } from '@/domain/user/repositories/users-repository'
 
-@injectable()
-class DeleteUserByIdUseCase {
-  private readonly findUserbyIdUseCase: FindUserByIdUseCase
+import { FindUserByIdUseCase } from '../../find/by-id/find-user-by-id'
 
+interface DeleteUserByIdUseCaseRequest {
+  userId: User['id']
+  deletedBy: User['id']
+}
+
+@Injectable()
+export class DeleteUserByIdUseCase {
   constructor(
-    @inject('UserRepository')
-    private readonly userRepository: UsersRepository,
-    @inject('LogProvider')
-    private readonly logProvider: ILogProvider,
-  ) {
-    this.findUserbyIdUseCase = new FindUserByIdUseCase(userRepository)
-  }
+    private userRepository: UsersRepository,
+    private findUserbyId: FindUserByIdUseCase,
+  ) {}
 
-  async execute(userId: User['id'], deletedBy: User['id']): Promise<void> {
-    const user = await this.findUserbyIdUseCase.execute(userId, {
+  async execute({ userId }: DeleteUserByIdUseCaseRequest): Promise<void> {
+    await this.findUserbyId.execute(userId, {
       throwIfNotFound: true,
     })
 
     await this.userRepository.delete(userId)
-
-    await this.logProvider.log({
-      process: 'user.delete-user',
-      level: LogLevel.INFO,
-      userId: deletedBy,
-      value: `${user.username}`,
-      note: `user.id: ${user.id} | user.username: ${user.username}`,
-    })
   }
 }
-
-export { DeleteUserByIdUseCase }

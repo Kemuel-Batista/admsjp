@@ -1,28 +1,29 @@
-import { deleteUserSchema } from '@modules/user/schemas/userSchema'
-import HttpStatusCode from '@shared/enums/HttpStatusCode'
-import { zodSchemaValidation } from '@shared/util/zod/zodSchemaValidation'
-import { type Request, type Response } from 'express'
-import { container } from 'tsyringe'
+import { Controller, Delete, HttpCode, Param, Req } from '@nestjs/common'
+import { Request } from 'express'
 
-import { DeleteUserByIdUseCase } from './DeleteUserByIdUseCase'
+import HttpStatusCode from '@/core/enums/HttpStatusCode'
+import {
+  ParamsSchema,
+  paramsValidationPipe,
+} from '@/core/schemas/params-schema'
 
-class DeleteUserByIdController {
-  async handle(request: Request, response: Response): Promise<Response> {
-    const { userId } = request.params
+import { DeleteUserByIdUseCase } from './delete-user-by-id'
+
+@Controller('')
+export class DeleteUserByIdController {
+  constructor(private deleteUserById: DeleteUserByIdUseCase) {}
+
+  @Delete()
+  @HttpCode(HttpStatusCode.NO_CONTENT)
+  async handle(
+    @Param('userId', paramsValidationPipe) userId: ParamsSchema,
+    @Req() request: Request,
+  ) {
     const { user } = request
 
-    const parsedUserId = Number(userId)
-
-    zodSchemaValidation(deleteUserSchema, {
-      userId: parsedUserId,
+    await this.deleteUserById.execute({
+      userId,
+      deletedBy: user.id,
     })
-
-    const deleteUserByIdUseCase = container.resolve(DeleteUserByIdUseCase)
-
-    await deleteUserByIdUseCase.execute(parsedUserId, user.id)
-
-    return response.status(HttpStatusCode.NO_CONTENT).send()
   }
 }
-
-export { DeleteUserByIdController }

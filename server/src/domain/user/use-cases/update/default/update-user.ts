@@ -1,39 +1,34 @@
-import { type IUpdateUserDTO } from '@modules/user/dtos/IUpdateUserDTO'
-import { IHashProvider } from '@modules/user/providers/hash-provider/models/IHashProvider'
-import { UsersRepository } from '@modules/user/repositories/UsersRepository'
-import { injectable } from '@nestjs/common'
-import { type User } from '@prisma/client'
-import { ILogProvider } from '@shared/container/providers/log-provider/model/ILogProvider'
-import HttpStatusCode from '@shared/enums/HttpStatusCode'
-import { LogLevel } from '@shared/enums/LogLevel'
+import { Injectable } from '@nestjs/common'
+import { User } from '@prisma/client'
 
-import { FindUserByIdUseCase } from '../../find/by-id/FindUserByIdUseCase'
-import { FindUserByUsernameUseCase } from '../../find/by-username/FindUserByUsernameUseCase'
+import HttpStatusCode from '@/core/enums/HttpStatusCode'
+import { IHashProvider } from '@/domain/user/cryptography/models/hash-provider'
+import { UpdateUserDTO } from '@/domain/user/dtos/update-user.dto'
+import { UsersRepository } from '@/domain/user/repositories/users-repository'
 
-@injectable()
-class UpdateUserUseCase {
-  private readonly findUserByIdUseCase: FindUserByIdUseCase
-  private readonly findUserByUsernameUseCase: FindUserByUsernameUseCase
+import { FindUserByIdUseCase } from '../../find/by-id/find-user-by-id'
+import { FindUserByUsernameUseCase } from '../../find/by-username/find-user-by-username'
 
+@Injectable()
+export class UpdateUserUseCase {
   constructor(
-    @inject('UserRepository')
-    private readonly userRepository: UsersRepository,
-    @inject('HashProvider')
-    private readonly hashProvider: IHashProvider,
-    @inject('LogProvider')
-    private readonly logProvider: ILogProvider,
+    private usersRepository: UsersRepository,
+    private hashProvider: IHashProvider,
+    private findUserById: FindUserByIdUseCase,
+    private findUserByUsername: FindUserByUsernameUseCase,
   ) {}
 
   async execute({
     id,
     name,
     username,
+    email,
     password,
     status,
     profileId,
     updatedBy,
-  }: IUpdateUserDTO): Promise<User> {
-    const currentUser = await this.findUserByIdUseCase.execute(id, {
+  }: UpdateUserDTO): Promise<User> {
+    const currentUser = await this.findUserById.execute(id, {
       throwIfNotFound: true,
       errorKeyNotFound: 'user.update.id.notFound',
       errorCodeNotFound: HttpStatusCode.NOT_FOUND,
@@ -41,7 +36,7 @@ class UpdateUserUseCase {
 
     if (username && username !== null) {
       if (currentUser.username !== username) {
-        await this.findUserByUsernameUseCase.execute(username, {
+        await this.findUserByUsername.execute(username, {
           throwIfFound: true,
           errorKeyFound: 'user.update.username.alreadyExists',
           errorCodeFound: HttpStatusCode.BAD_REQUEST,
@@ -53,26 +48,17 @@ class UpdateUserUseCase {
       password = await this.hashProvider.generateHash(password)
     }
 
-    const user = await this.userRepository.update({
+    const user = await this.usersRepository.update({
       id,
       name,
       username,
+      email,
       password,
       status,
       profileId,
       updatedBy,
     })
 
-    await this.logProvider.log({
-      process: 'user.update-user',
-      level: LogLevel.INFO,
-      userId: updatedBy,
-      value: `${user.username}`,
-      note: `user.id: ${user.id} | user.username: ${user.username} | user.status | ${user.status} | user.profileId | ${user.profileId}`,
-    })
-
     return user
   }
 }
-
-export { UpdateUserUseCase }
