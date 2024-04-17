@@ -16,7 +16,7 @@ export const paramsValidationPipe = new ZodValidationPipe(updateStatusUser)
 
 export type ParamsParamSchema = z.infer<typeof updateStatusUser>
 
-@Controller('/:userId/:status')
+@Controller('/:userId/status/:status')
 export class UpdateStatusUserController {
   constructor(private updateStatusUser: UpdateStatusUserUseCase) {}
 

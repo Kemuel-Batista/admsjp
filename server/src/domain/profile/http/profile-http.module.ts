@@ -9,5 +9,6 @@ import { ListProfileController } from '../use-cases/list/default/list-profile.co
   imports: [ProfileDatabaseModule],
   controllers: [ListProfileController],
   providers: [ListProfileUseCase, FindProfileByIdUseCase],
+  exports: [ListProfileUseCase, FindProfileByIdUseCase],
 })
 export class ProfileHttpModule {}

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { User } from '@prisma/client'
 
 import HttpStatusCode from '@/core/enums/HttpStatusCode'
-import { IHashProvider } from '@/domain/user/cryptography/models/hash-provider'
+import { HashProvider } from '@/domain/user/cryptography/models/hash-provider'
 import { UsersRepository } from '@/domain/user/repositories/users-repository'
 
 import { FindUserByIdUseCase } from '../../find/by-id/find-user-by-id'
@@ -11,7 +11,7 @@ import { FindUserByIdUseCase } from '../../find/by-id/find-user-by-id'
 export class UpdateUserPasswordUseCase {
   constructor(
     private usersRepository: UsersRepository,
-    private hashProvider: IHashProvider,
+    private hashProvider: HashProvider,
     private findUserByIdUseCase: FindUserByIdUseCase,
   ) {}
 

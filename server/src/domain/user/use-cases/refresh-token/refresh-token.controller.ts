@@ -5,7 +5,7 @@ import HttpStatusCode from '@/core/enums/HttpStatusCode'
 
 import { RefreshTokenUseCase } from './refresh-token'
 
-@Controller('')
+@Controller('/refresh-token')
 export class RefreshTokenController {
   constructor(private refreshToken: RefreshTokenUseCase) {}
 

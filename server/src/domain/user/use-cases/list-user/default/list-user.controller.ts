@@ -9,7 +9,7 @@ import {
 
 import { ListUserUseCase } from './list-user'
 
-@Controller()
+@Controller('/')
 export class ListUserController {
   constructor(private listUser: ListUserUseCase) {}
 

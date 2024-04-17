@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 
 import HttpStatusCode from '@/core/enums/HttpStatusCode'
 import { AuthError } from '@/core/errors/AuthError'
-import { IHashProvider } from '@/domain/user/cryptography/models/hash-provider'
+import { HashProvider } from '@/domain/user/cryptography/models/hash-provider'
 
 interface ICompareHashUserPasswordOptions {
   throwIfPasswordNotMatch?: boolean
@@ -12,7 +12,7 @@ interface ICompareHashUserPasswordOptions {
 
 @Injectable()
 export class CompareHashUserPassword {
-  constructor(private hashProvider: IHashProvider) {}
+  constructor(private hashProvider: HashProvider) {}
 
   async execute(
     password: string,

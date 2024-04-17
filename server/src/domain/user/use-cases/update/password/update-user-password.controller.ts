@@ -16,7 +16,7 @@ type UpdateUserPasswordBodySchema = z.infer<typeof updateUserPasswordSchema>
 
 const bodyValidationPipe = new ZodValidationPipe(updateUserPasswordSchema)
 
-@Controller('')
+@Controller('/password')
 class UpdateUserPasswordController {
   constructor(private updateUserPassword: UpdateUserPasswordUseCase) {}
 

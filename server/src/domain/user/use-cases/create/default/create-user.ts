@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 
-import { IHashProvider } from '@/domain/user/cryptography/models/hash-provider'
+import { HashProvider } from '@/domain/user/cryptography/models/hash-provider'
 import { CreateUserDTO } from '@/domain/user/dtos/create-user.dto'
 import { UserStatus } from '@/domain/user/enums/user-status'
 import { UsersRepository } from '@/domain/user/repositories/users-repository'
@@ -12,7 +12,7 @@ import { FindUserByUsernameUseCase } from '../../find/by-username/find-user-by-u
 class CreateUserUseCase {
   constructor(
     private userRepository: UsersRepository,
-    private hashProvider: IHashProvider,
+    private hashProvider: HashProvider,
     private findUserByUsername: FindUserByUsernameUseCase,
   ) {}
 

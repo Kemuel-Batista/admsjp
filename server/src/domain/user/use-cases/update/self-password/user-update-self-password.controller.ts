@@ -18,7 +18,7 @@ type UserUpdateSelfPasswordBodySchema = z.infer<
 
 const bodyValidationPipe = new ZodValidationPipe(userUpdateSelfPasswordSchema)
 
-@Controller('')
+@Controller('/self-password')
 export class UserUpdateSelfPasswordController {
   constructor(private userUpdateSelfPassword: UserUpdateSelfPasswordUseCase) {}
 

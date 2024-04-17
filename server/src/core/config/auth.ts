@@ -1,6 +1,4 @@
-import dotenv from 'dotenv'
-
-dotenv.config()
+import 'dotenv/config'
 
 const authConfig = {
   secretToken: process.env.APP_SECRET || 'defaultSecretToken',

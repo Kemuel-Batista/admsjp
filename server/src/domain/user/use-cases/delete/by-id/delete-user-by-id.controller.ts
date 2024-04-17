@@ -9,7 +9,7 @@ import {
 
 import { DeleteUserByIdUseCase } from './delete-user-by-id'
 
-@Controller('')
+@Controller('/:userId')
 export class DeleteUserByIdController {
   constructor(private deleteUserById: DeleteUserByIdUseCase) {}
 
