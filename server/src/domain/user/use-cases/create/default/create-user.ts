@@ -4,7 +4,7 @@ import { HashProvider } from '@/domain/user/cryptography/models/hash-provider'
 import { CreateUserDTO } from '@/domain/user/dtos/create-user.dto'
 import { UserStatus } from '@/domain/user/enums/user-status'
 import { UsersRepository } from '@/domain/user/repositories/users-repository'
-import { UserWithoutPassword } from '@/domain/user/types/UserWithoutPassword'
+import { UserWithoutPassword } from '@/domain/user/types/user-without-password'
 
 import { FindUserByUsernameUseCase } from '../../find/by-username/find-user-by-username'
 

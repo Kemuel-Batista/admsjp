@@ -8,7 +8,7 @@ import {
   ListUserWithCountDTO,
 } from '@/domain/user/dtos/list-user.dto'
 import { UsersRepository } from '@/domain/user/repositories/users-repository'
-import { UserWithoutPassword } from '@/domain/user/types/UserWithoutPassword'
+import { UserWithoutPassword } from '@/domain/user/types/user-without-password'
 import { getUserNameByUserId } from '@/domain/user/util/get-user-name-by-user-id'
 import { getUserStatusDescription } from '@/domain/user/util/get-user-status-description'
 

@@ -1,8 +1,9 @@
 enum UserProfile {
   ADMINISTRADOR = 1,
-  CONSULTA = 2,
-  OPERATOR = 3,
-  SUPERVISOR = 4,
+  ADMSJP_DIRETORIA = 2,
+  UMADSJP_DIRETORIA = 3,
+  UMADSJP_LEADERS = 4,
+  UMADSJP_DEPARTMENT_LEADERS = 5,
 }
 
 export { UserProfile }

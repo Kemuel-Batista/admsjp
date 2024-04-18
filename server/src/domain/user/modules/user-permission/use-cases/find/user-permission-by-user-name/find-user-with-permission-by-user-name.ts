@@ -5,7 +5,7 @@ import { IFindOptions } from '@/core/repositories/find-options'
 import { ListProfilePermissionByProfileIdUseCase } from '@/domain/profile/modules/profile-permission/use-cases/list/by-profile-Id/list-profile-permission-by-profile-id'
 import { FindUserByUsernameUseCase } from '@/domain/user/use-cases/find/by-username/find-user-by-username'
 
-import { UserWithPermission } from '../../../types/user-with-permission'
+import { UserWithPermission } from '../../../../../types/user-with-permission'
 
 type TFindUserWithPermissionByUserNameUseCase<Options extends IFindOptions> =
   | UserWithPermission

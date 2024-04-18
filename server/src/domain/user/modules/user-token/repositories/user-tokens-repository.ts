@@ -1,9 +1,9 @@
 import { UserToken } from '@prisma/client'
 
-import { ICreateUserTokenDTO } from '../dtos/create-user-token-dto'
+import { CreateUserTokenDTO } from '../dtos/create-user-token.dto'
 
 export abstract class UserTokensRepository {
-  abstract create(data: ICreateUserTokenDTO): Promise<UserToken>
+  abstract create(data: CreateUserTokenDTO): Promise<UserToken>
   abstract findByUserId(userId: UserToken['userId']): Promise<UserToken | null>
   abstract findByUserIdAndRefreshToken(
     userId: UserToken['userId'],

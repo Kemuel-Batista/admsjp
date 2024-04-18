@@ -5,7 +5,7 @@ import { IListOptions } from '@/core/repositories/list-options'
 import { ListProfileDTO } from '@/domain/profile/dtos/list-profile.dto'
 import { ProfileRepository } from '@/domain/profile/repositories/profile-repository'
 import { UserProfile } from '@/domain/user/enums/user-profile'
-import { UserWithPermission } from '@/domain/user/modules/user-permission/types/user-with-permission'
+import { UserWithPermission } from '@/domain/user/types/user-with-permission'
 
 @Injectable()
 export class ListProfileUseCase {

@@ -5,16 +5,16 @@ import { FindProfileByIdUseCase } from '@/domain/profile/use-cases/find/by-id/fi
 
 import { ProfilePermissionsDatabaseModule } from '../database/profile-permission-database.module'
 import { CreateProfilePermissionUseCase } from '../use-cases/create/create-profile-permission'
-import { CreateProfilePermissionController } from '../use-cases/create/create-profile-permission.controller'
 import { DeleteProfilePermissionByIdUseCase } from '../use-cases/delete/by-id/delete-profile-permission-by-id'
-import { DeleteProfilePermissionByIdController } from '../use-cases/delete/by-id/delete-profile-permission-by-id.controller'
 import { FindProfilePermissionByIdUseCase } from '../use-cases/find/by-id/find-profile-permission-by-id'
-import { FindProfilePermissionByIdController } from '../use-cases/find/by-id/find-profile-permission-by-id.controller'
 import { FindProfilePermissionByKeyProfileIdUseCase } from '../use-cases/find/by-key-profile-id/find-profile-permission-by-key-profile-id'
 import { ListProfilePermissionByProfileIdUseCase } from '../use-cases/list/by-profile-Id/list-profile-permission-by-profile-id'
-import { ListProfilePermissionByProfileIdController } from '../use-cases/list/by-profile-Id/list-profile-permission-by-profile-id.controller'
 import { ListProfilePermissionUseCase } from '../use-cases/list/default/list-profile-permission'
-import { ListProfilePermissionController } from '../use-cases/list/default/list-profile-permission.controller'
+import { CreateProfilePermissionController } from './controllers/create-profile-permission.controller'
+import { DeleteProfilePermissionByIdController } from './controllers/delete-profile-permission-by-id.controller'
+import { FindProfilePermissionByIdController } from './controllers/find-profile-permission-by-id.controller'
+import { ListProfilePermissionController } from './controllers/list-profile-permission.controller'
+import { ListProfilePermissionByProfileIdController } from './controllers/list-profile-permission-by-profile-id.controller'
 
 @Module({
   imports: [ProfilePermissionsDatabaseModule, ProfileDatabaseModule],

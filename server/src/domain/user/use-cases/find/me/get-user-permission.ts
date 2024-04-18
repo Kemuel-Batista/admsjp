@@ -3,7 +3,7 @@ import { User } from '@prisma/client'
 
 import HttpStatusCode from '@/core/enums/HttpStatusCode'
 import { FindUserWithPermissionByUserNameUseCase } from '@/domain/user/modules/user-permission/use-cases/find/user-permission-by-user-name/find-user-with-permission-by-user-name'
-import { UserWithoutPassword } from '@/domain/user/types/UserWithoutPassword'
+import { UserWithoutPassword } from '@/domain/user/types/user-without-password'
 
 import { FindUserByIdUseCase } from '../by-id/find-user-by-id'
 

@@ -6,7 +6,7 @@ import { ProfilePermissionHttpModule } from '@/domain/profile/modules/profile-pe
 import { AuthHttpModule } from '@/domain/user/http/auth-http.module'
 import { UserHttpModule } from '@/domain/user/http/user-http.module'
 import { GetUserPermissionsUseCase } from '@/domain/user/use-cases/find/me/get-user-permission'
-import { GetUserPermissionController } from '@/domain/user/use-cases/find/me/get-user-permission.controller'
+import { GetUserPermissionController } from '@/domain/user/http/controllers/get-user-permission.controller'
 
 @Module({
   imports: [

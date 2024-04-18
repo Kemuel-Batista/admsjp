@@ -1,6 +1,6 @@
 import { type User } from '@prisma/client'
 
-import { type UserWithoutPassword } from '../types/UserWithoutPassword'
+import { UserWithoutPassword } from '../types/user-without-password'
 
 interface ListUserDTO {
   id: User['id']

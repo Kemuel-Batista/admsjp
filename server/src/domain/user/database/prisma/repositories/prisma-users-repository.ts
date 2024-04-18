@@ -8,7 +8,6 @@ import { calcPagination } from '@/core/util/pagination/calcPagination'
 import { CreateUserDTO } from '@/domain/user/dtos/create-user.dto'
 import { ListUserWithCountDTO } from '@/domain/user/dtos/list-user.dto'
 import { UpdateUserDTO } from '@/domain/user/dtos/update-user.dto'
-import { UserVisible } from '@/domain/user/enums/user-visible'
 import { UsersRepository } from '@/domain/user/repositories/users-repository'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 
@@ -71,13 +70,6 @@ export class PrismaUsersRepository implements UsersRepository {
     searchParams: ISearchParamDTO[] = [],
   ): Promise<ListUserWithCountDTO> {
     const { skip, take } = calcPagination(options)
-
-    // search only visibles
-    searchParams.push({
-      field: 'visible',
-      condition: 'equals',
-      value: UserVisible.VISIBLE,
-    })
 
     const search = buildSearchFilter<User>(searchParams)
 

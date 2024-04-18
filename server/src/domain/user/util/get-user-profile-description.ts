@@ -9,8 +9,8 @@ export function getUserProfileDescription(
 ): string | null {
   // TODO: Implements profile
   const keys = {
-    [UserProfile.SUPERVISOR]: 'user.profile.supervisor',
-    [UserProfile.ADMINISTRADOR]: 'user.profile.operator',
+    [UserProfile.ADMINISTRADOR]: 'user.profile.administrator',
+    [UserProfile.ADMSJP_DIRETORIA]: 'user.profile.admsjp_diretoria',
   }
 
   const key = keys[profileId]
