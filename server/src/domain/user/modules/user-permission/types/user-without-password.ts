@@ -1,5 +1,3 @@
-import { type User } from '@prisma/client'
+import { User } from '@prisma/client'
 
-type UserWithoutPassword = Omit<User, 'password'>
-
-export type { UserWithoutPassword }
+export type UserWithoutPassword = Omit<User, 'password'>

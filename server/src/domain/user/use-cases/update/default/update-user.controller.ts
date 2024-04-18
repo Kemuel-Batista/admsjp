@@ -1,9 +1,10 @@
-import { Body, Controller, HttpCode, Put, Req } from '@nestjs/common'
-import { Request } from 'express'
+import { Body, Controller, HttpCode, Put } from '@nestjs/common'
 import { z } from 'zod'
 
 import HttpStatusCode from '@/core/enums/HttpStatusCode'
 import { UserStatus } from '@/domain/user/enums/user-status'
+import { CurrentUser } from '@/infra/auth/current-user-decorator'
+import { UserPayload } from '@/infra/auth/jwt.strategy'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 
 import { UpdateUserUseCase } from './update-user'
@@ -30,10 +31,9 @@ export class UpdateUserController {
   @HttpCode(HttpStatusCode.OK)
   async handle(
     @Body(bodyValidationPipe) body: UpdateUserBodySchema,
-    @Req() request: Request,
+    @CurrentUser() user: UserPayload,
   ) {
     const { id, name, username, password, status, profileId } = body
-    const { user } = request
 
     const { ...userWithoutPassword } = await this.updateUser.execute({
       id,
@@ -42,7 +42,7 @@ export class UpdateUserController {
       password,
       status,
       profileId,
-      updatedBy: user.id,
+      updatedBy: user.sub.id,
     })
 
     delete userWithoutPassword.password

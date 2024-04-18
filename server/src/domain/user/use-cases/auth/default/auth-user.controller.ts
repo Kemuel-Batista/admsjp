@@ -1,5 +1,4 @@
-import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common'
-import { Response } from 'express'
+import { Body, Controller, HttpCode, Post } from '@nestjs/common'
 import { z } from 'zod'
 
 import HttpStatusCode from '@/core/enums/HttpStatusCode'
@@ -23,14 +22,16 @@ export class AuthUserController {
   constructor(private authUser: AuthUserUseCase) {}
   @Post()
   @HttpCode(HttpStatusCode.OK)
-  async handle(
-    @Body(bodyValidationPipe) body: AuthUserBodySchema,
-    @Res() response: Response,
-  ) {
+  async handle(@Body(bodyValidationPipe) body: AuthUserBodySchema) {
     const { username, password } = body
 
-    const token = await this.authUser.execute({ username, password })
+    const auth = await this.authUser.execute({ username, password })
 
-    return response.json(token)
+    const { token, refreshToken } = auth
+
+    return {
+      token,
+      refreshToken,
+    }
   }
 }

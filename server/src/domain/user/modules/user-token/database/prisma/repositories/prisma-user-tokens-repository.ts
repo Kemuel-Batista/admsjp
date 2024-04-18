@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common'
 import { UserToken } from '@prisma/client'
 
 import { CreateUserTokenDTO } from '@/domain/user/dtos/create-user-token.dto'
@@ -5,7 +6,8 @@ import { PrismaService } from '@/infra/database/prisma/prisma.service'
 
 import { UserTokensRepository } from '../../../repositories/user-tokens-repository'
 
-export class UserTokensRepositoryPrisma implements UserTokensRepository {
+@Injectable()
+export class PrismaUserTokensRepository implements UserTokensRepository {
   constructor(private prisma: PrismaService) {}
   async create({
     token,

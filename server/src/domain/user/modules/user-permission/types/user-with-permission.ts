@@ -1,7 +1,5 @@
-import { type UserWithoutPassword } from './user-without-password'
+import { UserWithoutPassword } from './user-without-password'
 
-type UserWithPermission = UserWithoutPassword & {
+export type UserWithPermission = UserWithoutPassword & {
   permissions: string[]
 }
-
-export type { UserWithPermission }

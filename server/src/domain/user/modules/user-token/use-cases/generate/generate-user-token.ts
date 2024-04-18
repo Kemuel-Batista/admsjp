@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { User, UserToken } from '@prisma/client'
-import { sign } from 'jsonwebtoken'
 
 import { authConfig } from '@/core/config/auth'
 import { IDateProvider } from '@/core/providers/date-provider/models/date-provider'
+import { Encrypter } from '@/domain/user/cryptography/models/encrypter'
 import { CreateUserTokenUseCase } from '@/domain/user/use-cases/create/user-token/create-user-token'
 
 interface IGenerateTokenAndRefreshTokenResponse {
@@ -16,25 +16,18 @@ export class GenerateUserTokenUseCase {
   constructor(
     private dateProvider: IDateProvider,
     private createUserTokenUseCase: CreateUserTokenUseCase,
+    private encrypter: Encrypter,
   ) {}
 
   async execute(user: User): Promise<IGenerateTokenAndRefreshTokenResponse> {
-    const {
-      secretToken,
-      secretRefreshToken,
-      expiresInToken,
-      expiresInRefreshToken,
-      expiresInRefreshTokenInDays,
-    } = authConfig
+    const { expiresInRefreshTokenInDays } = authConfig
 
-    const token = sign({}, secretToken, {
-      subject: user.username,
-      expiresIn: expiresInToken,
+    const token = await this.encrypter.encrypt({
+      sub: user,
     })
 
-    const refreshToken = sign({}, secretRefreshToken, {
-      subject: user.username,
-      expiresIn: expiresInRefreshToken,
+    const refreshToken = await this.encrypter.encrypt({
+      sub: user,
     })
 
     const refreshTokenExpiresAt = this.dateProvider.addDays(

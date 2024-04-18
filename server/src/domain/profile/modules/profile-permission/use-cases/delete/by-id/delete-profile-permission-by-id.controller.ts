@@ -1,8 +1,9 @@
-import { Controller, Delete, HttpCode, Param, Req } from '@nestjs/common'
-import { Request } from 'express'
+import { Controller, Delete, HttpCode, Param } from '@nestjs/common'
 import { z } from 'zod'
 
 import HttpStatusCode from '@/core/enums/HttpStatusCode'
+import { CurrentUser } from '@/infra/auth/current-user-decorator'
+import { UserPayload } from '@/infra/auth/jwt.strategy'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 
 import { deleteProfilePermissionSchema } from '../../../schema/profile-permission-schema'
@@ -22,13 +23,11 @@ export class DeleteProfilePermissionByIdController {
   @HttpCode(HttpStatusCode.OK)
   async handle(
     @Param('id', paramValidationPipe) id: ParamSchema,
-    @Req() request: Request,
+    @CurrentUser() user: UserPayload,
   ) {
-    const { user } = request
-
     await this.deleteProfilePermissionById.execute({
       id,
-      deletedBy: user.id,
+      deletedBy: user.sub.id,
     })
   }
 }

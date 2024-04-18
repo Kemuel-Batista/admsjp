@@ -1,8 +1,9 @@
-import { Body, Controller, HttpCode, Put, Req } from '@nestjs/common'
-import { Request } from 'express'
+import { Body, Controller, HttpCode, Put } from '@nestjs/common'
 import { z } from 'zod'
 
 import HttpStatusCode from '@/core/enums/HttpStatusCode'
+import { CurrentUser } from '@/infra/auth/current-user-decorator'
+import { UserPayload } from '@/infra/auth/jwt.strategy'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 
 import { UserUpdateSelfPasswordUseCase } from './user-update-self-password'
@@ -26,11 +27,14 @@ export class UserUpdateSelfPasswordController {
   @HttpCode(HttpStatusCode.NO_CONTENT)
   async handle(
     @Body(bodyValidationPipe) body: UserUpdateSelfPasswordBodySchema,
-    @Req() request: Request,
+    @CurrentUser() user: UserPayload,
   ) {
     const { oldPassword, newPassword } = body
-    const { user } = request
 
-    await this.userUpdateSelfPassword.execute(user.id, oldPassword, newPassword)
+    await this.userUpdateSelfPassword.execute(
+      user.sub.id,
+      oldPassword,
+      newPassword,
+    )
   }
 }

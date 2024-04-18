@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common'
 
 import { ProfileHttpModule } from '@/domain/profile/http/profile-http.module'
+import { ProfilePermissionHttpModule } from '@/domain/profile/modules/profile-permission/http/profile-permission-http.module'
 
 import { UserCryptographyModule } from '../cryptography/user-cryptography.module'
 import { UserDatabaseModule } from '../database/user-database.module'
+import { FindUserWithPermissionByUserNameUseCase } from '../modules/user-permission/use-cases/find/user-permission-by-user-name/find-user-with-permission-by-user-name'
+import { FindUserWithPermissionByUserNameController } from '../modules/user-permission/use-cases/find/user-permission-by-user-name/find-user-with-permission-by-user-name.controller'
 import { CompareHashUserPassword } from '../use-cases/auth/compare-hash-user-password/compare-hash-user-password'
 import { CreateUserController } from '../use-cases/create/default/create-use.controller'
 import { CreateUserUseCase } from '../use-cases/create/default/create-user'
@@ -24,7 +27,12 @@ import { UpdateStatusUserUseCase } from '../use-cases/update/status/update-statu
 import { UpdateStatusUserController } from '../use-cases/update/status/update-status-user.controller'
 
 @Module({
-  imports: [UserDatabaseModule, UserCryptographyModule, ProfileHttpModule],
+  imports: [
+    UserDatabaseModule,
+    UserCryptographyModule,
+    ProfileHttpModule,
+    ProfilePermissionHttpModule,
+  ],
   controllers: [
     ListUserController,
     FindUserByIdController,
@@ -34,6 +42,7 @@ import { UpdateStatusUserController } from '../use-cases/update/status/update-st
     UpdateUserPasswordController,
     UpdateStatusUserController,
     DeleteUserByIdController,
+    FindUserWithPermissionByUserNameController,
   ],
   providers: [
     ListUserUseCase,
@@ -46,6 +55,8 @@ import { UpdateStatusUserController } from '../use-cases/update/status/update-st
     UpdateStatusUserUseCase,
     DeleteUserByIdUseCase,
     CompareHashUserPassword,
+    FindUserWithPermissionByUserNameUseCase,
   ],
+  exports: [FindUserByIdUseCase, FindUserWithPermissionByUserNameUseCase],
 })
 export class UserHttpModule {}

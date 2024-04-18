@@ -1,10 +1,11 @@
-import { Body, Controller, HttpCode, Post, Req } from '@nestjs/common'
-import { Request } from 'express'
+import { Body, Controller, HttpCode, Post } from '@nestjs/common'
 import { z } from 'zod'
 
 import HttpStatusCode from '@/core/enums/HttpStatusCode'
 import { UserStatus } from '@/domain/user/enums/user-status'
 import { UserWithoutPassword } from '@/domain/user/types/UserWithoutPassword'
+import { CurrentUser } from '@/infra/auth/current-user-decorator'
+import { UserPayload } from '@/infra/auth/jwt.strategy'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 
 import { CreateUserUseCase } from './create-user'
@@ -30,7 +31,7 @@ export class CreateUserController {
   @HttpCode(HttpStatusCode.CREATED)
   async handle(
     @Body(bodyValidationPipe) body: CreateUserBodySchema,
-    @Req() request: Request,
+    @CurrentUser() user: UserPayload,
   ) {
     const {
       username,
@@ -40,7 +41,6 @@ export class CreateUserController {
       status = UserStatus.ACTIVE,
       profileId,
     } = body
-    const { user } = request
 
     const userWithoutPassword: UserWithoutPassword =
       await this.createUser.execute({
@@ -50,7 +50,7 @@ export class CreateUserController {
         password,
         status,
         profileId,
-        createdBy: user.id,
+        createdBy: user.sub.id,
       })
 
     return userWithoutPassword

@@ -34,5 +34,6 @@ import { ListProfilePermissionController } from '../use-cases/list/default/list-
     FindProfilePermissionByKeyProfileIdUseCase,
     FindProfileByIdUseCase,
   ],
+  exports: [ListProfilePermissionByProfileIdUseCase],
 })
 export class ProfilePermissionHttpModule {}

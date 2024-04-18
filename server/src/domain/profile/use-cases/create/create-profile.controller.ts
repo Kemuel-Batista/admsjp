@@ -1,8 +1,9 @@
-import { Body, Controller, HttpCode, Post, Req } from '@nestjs/common'
-import { Request } from 'express'
+import { Body, Controller, HttpCode, Post } from '@nestjs/common'
 import { z } from 'zod'
 
 import HttpStatusCode from '@/core/enums/HttpStatusCode'
+import { CurrentUser } from '@/infra/auth/current-user-decorator'
+import { UserPayload } from '@/infra/auth/jwt.strategy'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 
 import { CreateProfileUseCase } from './create-profile'
@@ -25,16 +26,15 @@ export class CreateProfileController {
   @HttpCode(HttpStatusCode.OK)
   async handle(
     @Body(bodyValidationPipe) body: CreateProfileSchema,
-    @Req() request: Request,
+    @CurrentUser() user: UserPayload,
   ) {
     const { name, status, visible } = body
-    const { user } = request
 
     const profile = await this.createProfile.execute({
       name,
       visible,
       status,
-      createdBy: user.id,
+      createdBy: user.sub.id,
     })
 
     return profile

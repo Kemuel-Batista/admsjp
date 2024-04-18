@@ -1,8 +1,9 @@
-import { Controller, HttpCode, Param, Put, Req } from '@nestjs/common'
-import { Request } from 'express'
+import { Controller, HttpCode, Param, Put } from '@nestjs/common'
 import { z } from 'zod'
 
 import HttpStatusCode from '@/core/enums/HttpStatusCode'
+import { CurrentUser } from '@/infra/auth/current-user-decorator'
+import { UserPayload } from '@/infra/auth/jwt.strategy'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 
 import { UpdateStatusUserUseCase } from './update-status-user'
@@ -24,15 +25,14 @@ export class UpdateStatusUserController {
   @HttpCode(HttpStatusCode.OK)
   async handle(
     @Param(paramsValidationPipe) params: ParamsParamSchema,
-    @Req() request: Request,
+    @CurrentUser() user: UserPayload,
   ) {
     const { userId, status } = params
-    const { user } = request
 
     await this.updateStatusUser.execute({
       id: userId,
       status,
-      updatedBy: user.id,
+      updatedBy: user.sub.id,
     })
   }
 }

@@ -14,9 +14,9 @@ export class ListProfileUseCase {
   async execute(
     options: IListOptions = {},
     searchParams: ISearchParamDTO[] = [],
-    requestedBy: UserWithPermission,
+    profileId: UserWithPermission['profileId'],
   ): Promise<ListProfileDTO> {
-    if (requestedBy.profileId !== UserProfile.ADMINISTRADOR) {
+    if (profileId !== UserProfile.ADMINISTRADOR) {
       searchParams.push({
         condition: 'equals',
         field: 'visible',
