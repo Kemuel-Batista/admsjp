@@ -22,6 +22,7 @@ class CreateUserUseCase {
     name,
     password,
     status = UserStatus.ACTIVE,
+    departmentId,
     profileId,
     createdBy,
   }: CreateUserDTO): Promise<UserWithoutPassword> {
@@ -37,6 +38,7 @@ class CreateUserUseCase {
       name,
       password: hashedPassword,
       status,
+      departmentId,
       profileId,
       createdBy,
     })

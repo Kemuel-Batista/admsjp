@@ -21,6 +21,9 @@ model User {
   email     String  @unique
   password  String
 
+  departmentId Int
+  department   Department @relation("UserDepartment", fields: [departmentId], references: [id])
+
   createdAt  DateTime    @default(now()) @map("created_at")
   createdBy  Int
   updatedAt  DateTime?   @updatedAt @map("updated_at")
@@ -67,4 +70,80 @@ model ProfilePermission {
   updatedBy Int
 
   @@unique(name: "KeyProfileId", [key, profileId])
+}
+
+model Department {
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(uuid())
+
+  name        String @unique
+  description String
+  status      Int
+  visible     Int
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  createdBy Int
+  updatedBy Int
+
+  User  User[]  @relation("UserDepartment")
+  Event Event[] @relation("DepartmentEvent")
+}
+
+model Event {
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(uuid())
+
+  title       String   @unique
+  slug        String   @unique
+  description String
+  value       Int
+  initialDate DateTime
+  finalDate   DateTime
+
+  status  Int
+  visible Int
+
+  departmentId Int
+  department   Department @relation("DepartmentEvent", fields: [departmentId], references: [id])
+  eventType    String
+
+  imagePath String
+
+  street       String?
+  number       String?
+  complement   String?
+  neighborhood String?
+  state        Int?
+  city         Int?
+  latitude     Decimal?
+  longitude    Decimal?
+
+  message String?
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  createdBy Int
+  updatedBy Int
+
+  EventSubscription EventSubscription[]
+}
+
+model EventSubscription {
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(uuid())
+
+  eventId  Int
+  ticket   String @unique
+  fullName String
+  email    String
+  phone    String
+
+  status        Int
+  paymentMethod Int
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  event Event @relation(fields: [eventId], references: [id])
 }

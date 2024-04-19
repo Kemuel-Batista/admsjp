@@ -9,6 +9,7 @@ interface ListUserDTO {
   username: User['username']
   email: User['email']
   status: User['status']
+  departmentId: User['departmentId']
   profileId: User['profileId']
   createdAt: User['createdAt']
   updatedAt: User['updatedAt']

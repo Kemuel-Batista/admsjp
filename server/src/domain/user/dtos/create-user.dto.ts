@@ -6,6 +6,7 @@ interface CreateUserDTO {
   name: User['name']
   password: User['password']
   status: User['status']
+  departmentId: User['departmentId']
   profileId: User['profileId']
   createdBy: User['createdBy']
 }

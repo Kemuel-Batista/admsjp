@@ -7,6 +7,7 @@ interface UpdateUserDTO {
   email?: User['email']
   password?: User['password']
   status?: User['status']
+  departmentId?: User['departmentId']
   profileId?: User['profileId']
   updatedBy: User['updatedBy']
 }

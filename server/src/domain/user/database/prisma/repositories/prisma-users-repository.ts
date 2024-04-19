@@ -20,6 +20,7 @@ export class PrismaUsersRepository implements UsersRepository {
     name,
     password,
     status,
+    departmentId,
     profileId,
     createdBy,
   }: CreateUserDTO): Promise<User> {
@@ -30,6 +31,7 @@ export class PrismaUsersRepository implements UsersRepository {
         name,
         password,
         status,
+        departmentId,
         profileId,
         createdBy,
         updatedBy: createdBy,
@@ -42,9 +44,11 @@ export class PrismaUsersRepository implements UsersRepository {
   async update({
     id,
     username,
+    email,
     name,
     password,
     status,
+    departmentId,
     profileId,
     updatedBy,
   }: UpdateUserDTO): Promise<User> {
@@ -54,9 +58,11 @@ export class PrismaUsersRepository implements UsersRepository {
       },
       data: {
         username: username ?? undefined,
+        email: email ?? undefined,
         name: name ?? undefined,
         password: password ?? undefined,
         status: status ?? undefined,
+        departmentId: departmentId ?? undefined,
         profileId: profileId ?? undefined,
         updatedBy,
       },
@@ -84,6 +90,7 @@ export class PrismaUsersRepository implements UsersRepository {
           email: true,
           password: false,
           status: true,
+          departmentId: true,
           profileId: true,
           createdAt: true,
           updatedAt: true,

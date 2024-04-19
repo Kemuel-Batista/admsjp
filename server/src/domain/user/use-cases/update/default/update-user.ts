@@ -25,6 +25,7 @@ export class UpdateUserUseCase {
     email,
     password,
     status,
+    departmentId,
     profileId,
     updatedBy,
   }: UpdateUserDTO): Promise<User> {
@@ -55,6 +56,7 @@ export class UpdateUserUseCase {
       email,
       password,
       status,
+      departmentId,
       profileId,
       updatedBy,
     })

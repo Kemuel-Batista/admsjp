@@ -19,6 +19,7 @@ const createUserSchema = z.object({
   password: z.string().min(6).max(20),
   name: z.string().min(3).max(50),
   status: z.nativeEnum(UserStatus),
+  departmentId: z.number().int().positive(),
   profileId: z.number().int().positive(),
 })
 
@@ -44,6 +45,7 @@ export class CreateUserController {
       name,
       password,
       status = UserStatus.ACTIVE,
+      departmentId,
       profileId,
     } = body
 
@@ -54,6 +56,7 @@ export class CreateUserController {
         name,
         password,
         status,
+        departmentId,
         profileId,
         createdBy: user.sub.id,
       })

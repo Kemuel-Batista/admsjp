@@ -19,6 +19,7 @@ const updateUserSchema = z.object({
   name: z.string().min(3).max(50),
   password: z.string().min(6).max(20),
   status: z.nativeEnum(UserStatus),
+  departmentId: z.number().int().positive(),
   profileId: z.number().int().positive(),
 })
 
@@ -38,7 +39,8 @@ export class UpdateUserController {
     @Body(bodyValidationPipe) body: UpdateUserBodySchema,
     @CurrentUser() user: UserPayload,
   ) {
-    const { id, name, username, password, status, profileId } = body
+    const { id, name, username, password, status, departmentId, profileId } =
+      body
 
     const { ...userWithoutPassword } = await this.updateUser.execute({
       id,
@@ -46,6 +48,7 @@ export class UpdateUserController {
       username,
       password,
       status,
+      departmentId,
       profileId,
       updatedBy: user.sub.id,
     })

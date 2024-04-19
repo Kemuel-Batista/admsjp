@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import { PrismaClient, User } from '@prisma/client'
+import { Department, PrismaClient, User } from '@prisma/client'
 import { config } from 'dotenv'
 
 import BCryptHashProvider from '@/domain/user/cryptography/implementations/brcrypt-hash-provider'
@@ -121,6 +121,30 @@ async function execute(enviroment: string): Promise<void> {
     console.timeEnd('clearDatabase')
   }
 
+  async function createDepartment(): Promise<Department> {
+    console.time('createDepartment')
+
+    const department = await prisma.department.upsert({
+      where: {
+        name: 'UMADJSP',
+      },
+      create: {
+        name: 'UMADJSP',
+        description:
+          'Departamento de Jovens da Assembléia de Deus São José dos Pinhais',
+        status: 1,
+        visible: 1,
+        createdBy: 0,
+        updatedBy: 0,
+      },
+      update: {},
+    })
+
+    console.timeEnd('createDepartment')
+
+    return department
+  }
+
   async function createAdmin(): Promise<User> {
     console.time('createAdmin')
 
@@ -157,6 +181,21 @@ async function execute(enviroment: string): Promise<void> {
       })
     }
 
+    const adminDepartment = await prisma.department.upsert({
+      where: {
+        name: 'ADMINISTRACAO',
+      },
+      create: {
+        name: 'ADMINISTRACAO',
+        description: 'Administração',
+        status: 1,
+        visible: 0,
+        createdBy: 0,
+        updatedBy: 0,
+      },
+      update: {},
+    })
+
     const admin = await prisma.user.upsert({
       where: {
         username: env.ADMIN_USERNAME,
@@ -166,6 +205,7 @@ async function execute(enviroment: string): Promise<void> {
         name: env.ADMIN_NAME,
         email: env.ADMIN_EMAIL,
         password: hashedPassword,
+        departmentId: adminDepartment.id,
         status: UserStatus.ACTIVE,
         profileId: profileAdmin.id,
         createdBy: 0,
@@ -181,6 +221,8 @@ async function execute(enviroment: string): Promise<void> {
 
   async function createFakeUsers(flagDeleteUsers = false): Promise<void> {
     console.time('createFakeUsers')
+
+    const department = await createDepartment()
 
     for (let index = 0; index < 5; index++) {
       const name = faker.person.firstName()
@@ -203,6 +245,7 @@ async function execute(enviroment: string): Promise<void> {
           name: `${name} ${lastName}`,
           email,
           password,
+          departmentId: department.id,
           status: UserStatus.ACTIVE,
           createdBy: admin.id,
           updatedBy: admin.id,
