@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 
-import { DateProviderModule } from '@/core/providers/date-provider/date-provider.module'
+import { DateProviderModule } from '@/infra/providers/date-provider.module'
 
 import { UserCryptographyModule } from '../cryptography/user-cryptography.module'
 import { UserDatabaseModule } from '../database/user-database.module'

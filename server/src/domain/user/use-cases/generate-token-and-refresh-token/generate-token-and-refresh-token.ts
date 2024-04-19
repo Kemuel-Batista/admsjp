@@ -3,7 +3,7 @@ import { User, UserToken } from '@prisma/client'
 import { sign } from 'jsonwebtoken'
 
 import { authConfig } from '@/core/config/auth'
-import { IDateProvider } from '@/core/providers/date-provider/models/date-provider'
+import { IDateProvider } from '@/core/providers/date-provider'
 
 import { CreateUserTokenUseCase } from '../create/user-token/create-user-token'
 
