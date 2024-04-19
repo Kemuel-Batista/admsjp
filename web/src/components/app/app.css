@@ -1,0 +1,8 @@
+.app-header {
+  @apply bg-white h-12 border-b px-4 flex items-center justify-between;
+}
+
+.app-sidebar {
+  @apply w-60 border-r flex;
+  background: hsl(229, 58%, 38%)
+}

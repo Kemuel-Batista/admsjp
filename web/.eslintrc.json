@@ -1,14 +1,8 @@
 {
   "extends": [
-    "@rocketseat/eslint-config/react"
+    "@rocketseat/eslint-config/next"
   ],
   "plugins": [
     "simple-import-sort"
-  ],
-  "rules": {
-    "camelcase": "off",
-    "@typescript-eslint/no-explicit-any": "error",
-    "no-useless-constructor": "off",
-    "simple-import-sort/imports": "error"
-  }
+  ]
 }
