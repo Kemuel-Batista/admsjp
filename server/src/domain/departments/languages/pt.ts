@@ -1,16 +1,16 @@
 const pt = {
-  profile: {
+  department: {
     create: {
-      keyAlreadyExists: 'Profile {{name}} já existe no sistema',
+      keyAlreadyExists: 'Department {{name}} já existe no sistema',
     },
     find: {
-      notFound: 'Não foi possível localizar o profile {{profile}}',
+      notFound: 'Não foi possível localizar o department {{department}}',
       invalidStatus:
         'Status inválido, esperado {{expectedStatus}} recebido {{receivedStatus}}',
-      disable: 'Profile está desativado',
+      disable: 'Department está desativado',
     },
     update: {
-      keyAlreadyExists: 'Profile {{key}} já existe no sistema',
+      keyAlreadyExists: 'Department {{key}} já existe no sistema',
       value: 'Alterado valor do prametro',
     },
   },
