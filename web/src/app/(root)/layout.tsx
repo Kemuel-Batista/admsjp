@@ -5,6 +5,8 @@ import { useAuth } from '@/contexts/auth-context'
 import { ReactNode, useEffect, useState } from 'react'
 
 import { App, AppContent, AppNavbar, AppWrapper } from '@/components/app'
+import { Nav } from '@/components/navigation'
+import { UserNav } from '@/components/user-nav'
 
 export default function LayoutBase({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
@@ -29,10 +31,13 @@ export default function LayoutBase({ children }: { children: ReactNode }) {
           <AppNavbar>
             <div className="flex w-full justify-between">
               <div className="flex gap-4 items-center">
-                <div className="">{/* <LogoIcon /> */}</div>
-                <div className="py-2 flex">{/* <Nav /> */}</div>
+                <div className="py-2 flex">
+                  <Nav />
+                </div>
               </div>
-              <div className="p-4">{/* <UserNav /> */}</div>
+              <div className="p-4">
+                <UserNav />
+              </div>
             </div>
           </AppNavbar>
 
