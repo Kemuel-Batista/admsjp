@@ -1,4 +1,15 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  FileTypeValidator,
+  HttpCode,
+  MaxFileSizeValidator,
+  ParseFilePipe,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common'
+import { FileInterceptor } from '@nestjs/platform-express'
 import { Decimal } from '@prisma/client/runtime/library'
 import { z } from 'zod'
 
@@ -19,7 +30,6 @@ const createEventSchema = z.object({
   visible: z.number().int().min(0).max(1).optional(),
   eventType,
   departmentId: z.number().positive().min(1),
-  imagePath,
   street: z.string().optional(),
   number: z.string().optional(),
   complement: z.string().optional(),
@@ -51,7 +61,19 @@ export class CreateEventController {
 
   @Post()
   @HttpCode(HttpStatusCode.OK)
+  @UseInterceptors(FileInterceptor('file'))
   async handle(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({
+            maxSize: 1024 * 1024 * 5, // 5mb
+          }),
+          new FileTypeValidator({ fileType: '.(png|jpg|jpeg)' }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
     @Body(bodyValidationPipe) body: CreateEventSchema,
     @CurrentUser() user: UserPayload,
   ) {
