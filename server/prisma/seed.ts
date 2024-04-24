@@ -2,8 +2,8 @@ import { faker } from '@faker-js/faker'
 import { Department, PrismaClient, User } from '@prisma/client'
 import { config } from 'dotenv'
 
-import BCryptHashProvider from '@/domain/user/cryptography/implementations/brcrypt-hash-provider'
-import { UserStatus } from '@/domain/user/enums/user-status'
+import BCryptHashProvider from '@/infra/cryptography/brcrypt-hash-provider'
+import { UserStatus } from '@/domain/admsjp/enums/user/user-status'
 import { envSchema } from '@/infra/env/env'
 
 const permissions = [

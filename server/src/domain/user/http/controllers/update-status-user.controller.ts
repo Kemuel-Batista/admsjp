@@ -1,8 +1,8 @@
 import { Controller, HttpCode, Param, Patch, UseGuards } from '@nestjs/common'
 import { z } from 'zod'
 
-import HttpStatusCode from '@/core/enums/HttpStatusCode'
-import { UserProfile } from '@/domain/user/enums/user-profile'
+import HttpStatusCode from '@/core/enums/http-status-code'
+import { UserProfile } from '@/domain/admsjp/enums/user/user-profile'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
 import { ProfileGuard } from '@/infra/auth/profile.guard'

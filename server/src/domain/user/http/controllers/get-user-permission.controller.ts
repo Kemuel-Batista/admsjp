@@ -1,6 +1,6 @@
 import { Controller, Get, HttpCode } from '@nestjs/common'
 
-import HttpStatusCode from '@/core/enums/HttpStatusCode'
+import HttpStatusCode from '@/core/enums/http-status-code'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
 

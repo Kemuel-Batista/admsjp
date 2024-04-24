@@ -3,8 +3,8 @@ import { ProfilePermission } from '@prisma/client'
 
 import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { IListOptions } from '@/core/repositories/list-options'
-import { buildSearchFilter } from '@/core/util/filtering/buildSearchFilter'
-import { calcPagination } from '@/core/util/pagination/calcPagination'
+import { buildSearchFilter } from '@/core/util/filtering/build-search-filter'
+import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 
 import { CreateProfilePermissionDTO } from '../../../dtos/create-profile-permission.dto'

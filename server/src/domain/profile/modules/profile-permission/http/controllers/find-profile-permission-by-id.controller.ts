@@ -1,7 +1,7 @@
 import { Controller, Get, HttpCode, Param } from '@nestjs/common'
 import { z } from 'zod'
 
-import HttpStatusCode from '@/core/enums/HttpStatusCode'
+import HttpStatusCode from '@/core/enums/http-status-code'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 
 import { FindProfilePermissionByIdUseCase } from '../../use-cases/find/by-id/find-profile-permission-by-id'

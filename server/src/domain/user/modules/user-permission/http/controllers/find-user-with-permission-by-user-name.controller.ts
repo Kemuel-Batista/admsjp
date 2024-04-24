@@ -1,6 +1,6 @@
 import { Controller, Get, HttpCode, Param } from '@nestjs/common'
 
-import HttpStatusCode from '@/core/enums/HttpStatusCode'
+import HttpStatusCode from '@/core/enums/http-status-code'
 
 import { FindUserWithPermissionByUserNameUseCase } from '../../use-cases/find/user-permission-by-user-name/find-user-with-permission-by-user-name'
 

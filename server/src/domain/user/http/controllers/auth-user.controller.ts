@@ -1,7 +1,7 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common'
 import { z } from 'zod'
 
-import HttpStatusCode from '@/core/enums/HttpStatusCode'
+import HttpStatusCode from '@/core/enums/http-status-code'
 import { Public } from '@/infra/auth/public'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 

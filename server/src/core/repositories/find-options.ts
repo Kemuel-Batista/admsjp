@@ -1,4 +1,4 @@
-import HttpStatusCode from '../enums/HttpStatusCode'
+import HttpStatusCode from '../enums/http-status-code'
 
 interface IFindOptions {
   throwIfFound?: boolean // Se verdadeiro, lança um erro se o registro for encontrado.

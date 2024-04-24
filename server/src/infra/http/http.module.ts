@@ -9,8 +9,11 @@ import { GetUserPermissionController } from '@/domain/user/http/controllers/get-
 import { UserHttpModule } from '@/domain/user/http/user-http.module'
 import { GetUserPermissionsUseCase } from '@/domain/user/use-cases/find/me/get-user-permission'
 
+import { DatabaseModule } from '../database/database.module'
+
 @Module({
   imports: [
+    DatabaseModule,
     AuthHttpModule,
     RouterModule.register([{ path: 'auth', module: AuthHttpModule }]),
     UserHttpModule,

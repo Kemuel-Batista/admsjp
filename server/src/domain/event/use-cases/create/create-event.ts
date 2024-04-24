@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Event } from '@prisma/client'
 
-import HttpStatusCode from '@/core/enums/HttpStatusCode'
+import HttpStatusCode from '@/core/enums/http-status-code'
 import { AppError } from '@/core/errors/AppError'
 import { i18n } from '@/core/i18n/i18n'
 import { Uploader } from '@/core/storage/uploader'

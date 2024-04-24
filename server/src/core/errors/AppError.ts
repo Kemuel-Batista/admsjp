@@ -1,6 +1,6 @@
 import { type Response } from 'express'
 
-import HttpStatusCode from '../enums/HttpStatusCode'
+import HttpStatusCode from '../enums/http-status-code'
 
 export class AppError extends Error {
   public readonly statusCode: number

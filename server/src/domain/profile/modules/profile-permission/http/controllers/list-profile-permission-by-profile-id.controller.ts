@@ -1,7 +1,7 @@
 import { Controller, Get, HttpCode, Param, Query, Req } from '@nestjs/common'
 import { Request } from 'express'
 
-import HttpStatusCode from '@/core/enums/HttpStatusCode'
+import HttpStatusCode from '@/core/enums/http-status-code'
 import {
   ParamsSchema,
   paramsValidationPipe,

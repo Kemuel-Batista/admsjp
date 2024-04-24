@@ -1,6 +1,6 @@
 import { Response } from 'express'
 
-import HttpStatusCode from '../enums/HttpStatusCode'
+import HttpStatusCode from '../enums/http-status-code'
 import { i18n } from '../i18n/i18n'
 
 export class AuthError extends Error {

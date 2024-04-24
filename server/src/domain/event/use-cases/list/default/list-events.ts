@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common'
 
 import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { IListOptions } from '@/core/repositories/list-options'
+import { UserProfile } from '@/domain/admsjp/enums/user/user-profile'
 import { ListEventDTO } from '@/domain/event/dtos/list-event.dto'
 import { EventsRepository } from '@/domain/event/repositories/events-repository'
-import { UserProfile } from '@/domain/user/enums/user-profile'
-import { UserWithPermission } from '@/domain/user/types/user-with-permission'
+import { UserWithPermission } from '@/domain/admsjp/types/user/user-with-permission'
 
 @Injectable()
 export class ListEventsUseCase {

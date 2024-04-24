@@ -1,12 +1,12 @@
 import { Controller, Get, Query, Req, Res, UseGuards } from '@nestjs/common'
 import { type Request, type Response } from 'express'
 
-import HttpStatusCode from '@/core/enums/HttpStatusCode'
+import HttpStatusCode from '@/core/enums/http-status-code'
 import {
   PageQueryParamSchema,
   queryValidationPipe,
 } from '@/core/schemas/query-params-schema'
-import { UserProfile } from '@/domain/user/enums/user-profile'
+import { UserProfile } from '@/domain/admsjp/enums/user/user-profile'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
 import { ProfileGuard } from '@/infra/auth/profile.guard'

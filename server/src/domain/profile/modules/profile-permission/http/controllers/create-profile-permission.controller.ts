@@ -2,7 +2,7 @@ import { Body, Controller, HttpCode, Post } from '@nestjs/common'
 import { Response } from 'express'
 import { z } from 'zod'
 
-import HttpStatusCode from '@/core/enums/HttpStatusCode'
+import HttpStatusCode from '@/core/enums/http-status-code'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'

@@ -147,3 +147,17 @@ model EventSubscription {
 
   event Event @relation(fields: [eventId], references: [id])
 }
+
+model Log {
+  id           Int      @id @default(autoincrement())
+  uuid         String   @unique @default(uuid())
+  process      String
+  value        String
+  oldValue     String?
+  timestamp    DateTime @default(now())
+  level        Int
+  userId       Int
+  note         String?
+  jsonRequest  String?  @db.Text
+  jsonResponse String?  @db.Text
+}
