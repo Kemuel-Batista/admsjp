@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common'
 import { RouterModule } from '@nestjs/core'
 
+import { EventHttpModule } from '@/domain/event/http/event-http.module'
 import { ProfileHttpModule } from '@/domain/profile/http/profile-http.module'
 import { ProfilePermissionHttpModule } from '@/domain/profile/modules/profile-permission/http/profile-permission-http.module'
 import { AuthHttpModule } from '@/domain/user/http/auth-http.module'
+import { GetUserPermissionController } from '@/domain/user/http/controllers/get-user-permission.controller'
 import { UserHttpModule } from '@/domain/user/http/user-http.module'
 import { GetUserPermissionsUseCase } from '@/domain/user/use-cases/find/me/get-user-permission'
-import { GetUserPermissionController } from '@/domain/user/http/controllers/get-user-permission.controller'
 
 @Module({
   imports: [
@@ -28,6 +29,8 @@ import { GetUserPermissionController } from '@/domain/user/http/controllers/get-
         ],
       },
     ]),
+    EventHttpModule,
+    RouterModule.register([{ path: 'events', module: EventHttpModule }]),
   ],
   controllers: [GetUserPermissionController],
   providers: [GetUserPermissionsUseCase],

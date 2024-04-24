@@ -7,6 +7,7 @@ import {
   ParseFilePipe,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
@@ -14,8 +15,11 @@ import { Decimal } from '@prisma/client/runtime/library'
 import { z } from 'zod'
 
 import HttpStatusCode from '@/core/enums/HttpStatusCode'
+import { UserProfile } from '@/domain/user/enums/user-profile'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
+import { ProfileGuard } from '@/infra/auth/profile.guard'
+import { Profiles } from '@/infra/auth/profiles'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 
 import { CreateEventUseCase } from '../../use-cases/create/create-event'
@@ -23,26 +27,26 @@ import { CreateEventUseCase } from '../../use-cases/create/create-event'
 const createEventSchema = z.object({
   title: z.string(),
   description: z.string(),
-  value: z.number(),
-  initialDate: z.date(),
-  finalDate: z.date(),
-  status: z.number().int().min(0).max(1).optional(),
-  visible: z.number().int().min(0).max(1).optional(),
-  eventType,
-  departmentId: z.number().positive().min(1),
+  value: z.coerce.number(),
+  initialDate: z.string().transform((arg) => new Date(arg)),
+  finalDate: z.string().transform((arg) => new Date(arg)),
+  status: z.coerce.number().int().min(0).max(1).optional(),
+  visible: z.coerce.number().int().min(0).max(1).optional(),
+  eventType: z.coerce.number().min(0).max(20),
+  departmentId: z.coerce.number().positive().min(1),
   street: z.string().optional(),
   number: z.string().optional(),
   complement: z.string().optional(),
   neighborhood: z.string().optional(),
-  state: z.number().positive().min(1).optional(),
-  city: z.number().positive().min(1).optional(),
-  latitude: z
+  state: z.coerce.number().positive().min(1).optional(),
+  city: z.coerce.number().positive().min(1).optional(),
+  latitude: z.coerce
     .number()
     .refine((value) => {
       return Math.abs(value) <= 90
     })
     .optional(),
-  longitude: z
+  longitude: z.coerce
     .number()
     .refine((value) => {
       return Math.abs(value) <= 180
@@ -59,6 +63,8 @@ const bodyValidationPipe = new ZodValidationPipe(createEventSchema)
 export class CreateEventController {
   constructor(private createEvent: CreateEventUseCase) {}
 
+  @Profiles(UserProfile.ADMINISTRADOR, UserProfile.EVENTS)
+  @UseGuards(ProfileGuard)
   @Post()
   @HttpCode(HttpStatusCode.OK)
   @UseInterceptors(FileInterceptor('file'))
@@ -69,7 +75,7 @@ export class CreateEventController {
           new MaxFileSizeValidator({
             maxSize: 1024 * 1024 * 5, // 5mb
           }),
-          new FileTypeValidator({ fileType: '.(png|jpg|jpeg)' }),
+          new FileTypeValidator({ fileType: '.(png|jpg|jpeg|webp)' }),
         ],
       }),
     )
@@ -87,7 +93,6 @@ export class CreateEventController {
       visible,
       eventType,
       departmentId,
-      imagePath,
       street,
       number,
       complement,
@@ -101,7 +106,6 @@ export class CreateEventController {
 
     const event = await this.createEvent.execute({
       title,
-      slug: '',
       description,
       value,
       initialDate,
@@ -110,15 +114,17 @@ export class CreateEventController {
       visible,
       eventType,
       departmentId,
-      imagePath,
+      fileName: file.originalname,
+      fileType: file.mimetype,
+      body: file.buffer,
       street,
       number,
       complement,
       neighborhood,
       state,
       city,
-      latitude: new Decimal(latitude),
-      longitude: new Decimal(longitude),
+      latitude: latitude === undefined ? undefined : new Decimal(latitude),
+      longitude: longitude === undefined ? undefined : new Decimal(longitude),
       message,
       createdBy: user.sub.id,
     })

@@ -6,19 +6,18 @@ import {
   PageQueryParamSchema,
   queryValidationPipe,
 } from '@/core/schemas/query-params-schema'
-import { CurrentUser } from '@/infra/auth/current-user-decorator'
-import { UserPayload } from '@/infra/auth/jwt.strategy'
+import { Public } from '@/infra/auth/public'
 
-import { ListDepartmentUseCase } from '../../use-cases/list/default/list-department'
+import { ListPublicEventsUseCase } from '../../use-cases/list/public/list-public-events'
 
-@Controller()
-export class ListDepartmentsController {
-  constructor(private listDepartmentsUseCase: ListDepartmentUseCase) {}
+@Controller('/')
+@Public()
+export class ListPublicEventsController {
+  constructor(private listPublicEventsUseCase: ListPublicEventsUseCase) {}
 
   @Get()
   async handle(
     @Query(queryValidationPipe) query: PageQueryParamSchema,
-    @CurrentUser() user: UserPayload,
     @Req() request: Request,
     @Res() response: Response,
   ): Promise<Response> {
@@ -34,14 +33,13 @@ export class ListDepartmentsController {
       allRecords: parsedAllRecords,
     }
 
-    const { departments, count } = await this.listDepartmentsUseCase.execute(
+    const { events, count } = await this.listPublicEventsUseCase.execute(
       options,
       parsedSearch,
-      user.sub.profileId,
     )
 
     response.setHeader('X-Total-Count', count)
 
-    return response.status(HttpStatusCode.OK).json(departments)
+    return response.status(HttpStatusCode.OK).json(events)
   }
 }

@@ -4,6 +4,7 @@ import { Event } from '@prisma/client'
 import HttpStatusCode from '@/core/enums/HttpStatusCode'
 import { AppError } from '@/core/errors/AppError'
 import { i18n } from '@/core/i18n/i18n'
+import { Uploader } from '@/core/storage/uploader'
 import { Slug } from '@/core/util/slug/slug'
 
 import { EventsRepository } from '../../repositories/events-repository'
@@ -12,7 +13,6 @@ import { FindEventByTitleUseCase } from '../find/by-title/find-event-by-title'
 
 interface CreateEventUseCaseRequest {
   title: Event['title']
-  slug: Event['slug']
   description: Event['description']
   value: Event['value']
   initialDate: Event['initialDate']
@@ -42,6 +42,7 @@ export class CreateEventUseCase {
     private eventsRepository: EventsRepository,
     private findEventByTitleUseCase: FindEventByTitleUseCase,
     private findEventBySlugUseCase: FindEventBySlugUseCase,
+    private uploader: Uploader,
   ) {}
 
   async execute({
@@ -72,7 +73,9 @@ export class CreateEventUseCase {
     const errorCodeFound = HttpStatusCode.BAD_REQUEST
 
     if (
-      !/^(image\/(jpeg|png))$|^application\/pdf$|^video\/mp4$/.test(fileType)
+      !/^(image\/(jpeg|png|webp))$|^application\/pdf$|^video\/mp4$/.test(
+        fileType,
+      )
     ) {
       throw new AppError(
         i18n.t(errorInvalidAttachmentType, { fileType }),
@@ -101,7 +104,7 @@ export class CreateEventUseCase {
       visible,
       eventType,
       departmentId,
-      imagePath,
+      imagePath: '', // Inicialmente vazia, após cadastro fazer upload
       street,
       number,
       complement,
@@ -113,6 +116,16 @@ export class CreateEventUseCase {
       message,
       createdBy,
     })
+
+    const { url } = await this.uploader.upload({
+      fileName,
+      fileType,
+      body,
+    })
+
+    event.imagePath = url
+
+    await this.eventsRepository.update(event)
 
     return event
   }

@@ -13,6 +13,7 @@ const tokenPayloadSchema = z.object({
     username: z.string(),
     status: z.number(),
     profileId: z.number(),
+    departmentId: z.number(),
     email: z.string().email(),
     permissions: z.array(z.string()).optional(),
   }),

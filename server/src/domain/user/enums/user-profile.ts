@@ -4,6 +4,7 @@ enum UserProfile {
   UMADSJP_DIRETORIA = 3,
   UMADSJP_LEADERS = 4,
   UMADSJP_DEPARTMENT_LEADERS = 5,
+  EVENTS = 6,
 }
 
 export { UserProfile }

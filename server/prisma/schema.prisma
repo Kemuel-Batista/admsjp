@@ -106,7 +106,7 @@ model Event {
 
   departmentId Int
   department   Department @relation("DepartmentEvent", fields: [departmentId], references: [id])
-  eventType    String
+  eventType    Int
 
   imagePath String
 

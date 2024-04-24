@@ -21,8 +21,6 @@ export class ProfileGuard implements CanActivate {
       context.getHandler(),
     )
 
-    console.log(profiles)
-
     if (!profiles) {
       return true
     }
