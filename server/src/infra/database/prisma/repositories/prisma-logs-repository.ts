@@ -6,7 +6,7 @@ import { IListOptions } from '@/core/repositories/list-options'
 import {
   ListLogByDateWithCount,
   LogsRepository,
-} from '@/core/repositories/logs-repository'
+} from '@/domain/admsjp/repositories/logs-repository'
 import { buildSearchFilter } from '@/core/util/filtering/build-search-filter'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
 

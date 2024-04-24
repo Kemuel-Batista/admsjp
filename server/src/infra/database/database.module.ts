@@ -1,13 +1,19 @@
 import { Module } from '@nestjs/common'
 
-import { LogsRepository } from '@/core/repositories/logs-repository'
 import { DepartmentsRepository } from '@/domain/admsjp/repositories/departments-repository'
+import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
+import { LogsRepository } from '@/domain/admsjp/repositories/logs-repository'
+import { ProfilePermissionsRepository } from '@/domain/admsjp/repositories/profile-permissions-repository'
+import { ProfilesRepository } from '@/domain/admsjp/repositories/profiles-repository'
 import { UserTokensRepository } from '@/domain/admsjp/repositories/user-tokens-repository'
 import { UsersRepository } from '@/domain/admsjp/repositories/users-repository'
 
 import { PrismaService } from './prisma/prisma.service'
 import { PrismaDepartmentRepository } from './prisma/repositories/prisma-departments-repository'
+import { PrismaEventsRepository } from './prisma/repositories/prisma-events-repository'
 import { PrismaLogsRepository } from './prisma/repositories/prisma-logs-repository'
+import { PrismaProfilePermissionsRepository } from './prisma/repositories/prisma-profile-permissions-repository'
+import { PrismaProfilesRepository } from './prisma/repositories/prisma-profiles-repository'
 import { PrismaUserTokensRepository } from './prisma/repositories/prisma-user-tokens-repository'
 import { PrismaUsersRepository } from './prisma/repositories/prisma-users-repository'
 
@@ -30,6 +36,18 @@ import { PrismaUsersRepository } from './prisma/repositories/prisma-users-reposi
       provide: UserTokensRepository,
       useClass: PrismaUserTokensRepository,
     },
+    {
+      provide: ProfilesRepository,
+      useClass: PrismaProfilesRepository,
+    },
+    {
+      provide: ProfilePermissionsRepository,
+      useClass: PrismaProfilePermissionsRepository,
+    },
+    {
+      provide: EventsRepository,
+      useClass: PrismaEventsRepository,
+    },
   ],
   exports: [
     PrismaService,
@@ -37,6 +55,9 @@ import { PrismaUsersRepository } from './prisma/repositories/prisma-users-reposi
     DepartmentsRepository,
     UsersRepository,
     UserTokensRepository,
+    ProfilesRepository,
+    ProfilePermissionsRepository,
+    EventsRepository,
   ],
 })
 export class DatabaseModule {}

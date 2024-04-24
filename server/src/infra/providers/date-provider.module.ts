@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 
-import { IDateProvider } from '../../core/providers/date-provider'
+import { IDateProvider } from '../../domain/admsjp/providers/date-provider'
 import { DateProvider } from './date-provider'
 
 @Module({

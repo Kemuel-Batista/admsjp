@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { User, UserToken } from '@prisma/client'
 
 import { authConfig } from '@/core/config/auth'
-import { IDateProvider } from '@/core/providers/date-provider'
+import { IDateProvider } from '@/domain/admsjp/providers/date-provider'
 import { Encrypter } from '@/domain/admsjp/cryptography/encrypter'
 
 import { CreateUserTokenUseCase } from '../create/create-user-token'

@@ -1,4 +1,4 @@
-import { IDateProvider } from '@/core/providers/date-provider'
+import { IDateProvider } from '@/domain/admsjp/providers/date-provider'
 
 export class DateProvider implements IDateProvider {
   addDays(days: number, date?: Date): Date {

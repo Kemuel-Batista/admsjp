@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto'
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { Injectable } from '@nestjs/common'
 
-import { Uploader, UploadParams } from '@/core/storage/uploader'
+import { Uploader, UploadParams } from '@/domain/admsjp/storage/uploader'
 
 import { EnvService } from '../env/env.service'
 

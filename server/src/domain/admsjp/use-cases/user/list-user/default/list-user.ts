@@ -7,7 +7,8 @@ import { UsersRepository } from '@/domain/admsjp/repositories/users-repository'
 import { UserWithoutPassword } from '@/domain/admsjp/types/user/user-without-password'
 import { getUserNameByUserId } from '@/domain/admsjp/utils/user/get-user-name-by-user-id'
 import { getUserStatusDescription } from '@/domain/admsjp/utils/user/get-user-status-description'
-import { FindProfileByIdUseCase } from '@/domain/profile/use-cases/find/by-id/find-profile-by-id'
+
+import { FindProfileByIdUseCase } from '../../../profile/find/by-id/find-profile-by-id'
 
 @Injectable()
 export class ListUserUseCase {

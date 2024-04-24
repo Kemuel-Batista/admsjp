@@ -3,9 +3,9 @@ import { User, UserToken } from '@prisma/client'
 import { sign } from 'jsonwebtoken'
 
 import { authConfig } from '@/core/config/auth'
-import { IDateProvider } from '@/core/providers/date-provider'
+import { IDateProvider } from '@/domain/admsjp/providers/date-provider'
 
-import { CreateUserTokenUseCase } from '../create/user-token/create-user-token'
+import { CreateUserTokenUseCase } from '../../user-token/create/create-user-token'
 
 interface IGenerateTokenAndRefreshTokenResponse {
   token: string

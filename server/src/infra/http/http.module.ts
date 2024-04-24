@@ -1,15 +1,16 @@
 import { Module } from '@nestjs/common'
 import { RouterModule } from '@nestjs/core'
 
-import { EventHttpModule } from '@/domain/event/http/event-http.module'
-import { ProfileHttpModule } from '@/domain/profile/http/profile-http.module'
-import { ProfilePermissionHttpModule } from '@/domain/profile/modules/profile-permission/http/profile-permission-http.module'
-import { AuthHttpModule } from '@/domain/user/http/auth-http.module'
-import { GetUserPermissionController } from '@/domain/user/http/controllers/get-user-permission.controller'
-import { UserHttpModule } from '@/domain/user/http/user-http.module'
-import { GetUserPermissionsUseCase } from '@/domain/user/use-cases/find/me/get-user-permission'
+import { GetUserPermissionsUseCase } from '@/domain/admsjp/use-cases/user/find/me/get-user-permission'
+import { EventHttpModule } from '@/infra/http/events/event-http.module'
+import { ProfileHttpModule } from '@/infra/http/profile/profile-http.module'
+import { ProfilePermissionHttpModule } from '@/infra/http/profile-permission/profile-permission-http.module'
+import { AuthHttpModule } from '@/infra/http/user/auth-http.module'
+import { GetUserPermissionController } from '@/infra/http/user/controllers/get-user-permission.controller'
+import { UserHttpModule } from '@/infra/http/user/user-http.module'
 
 import { DatabaseModule } from '../database/database.module'
+import { DepartmentsHttpModule } from './departments/departments-http.module'
 
 @Module({
   imports: [
@@ -31,6 +32,10 @@ import { DatabaseModule } from '../database/database.module'
           },
         ],
       },
+    ]),
+    DepartmentsHttpModule,
+    RouterModule.register([
+      { path: 'departments', module: DepartmentsHttpModule },
     ]),
     EventHttpModule,
     RouterModule.register([{ path: 'events', module: EventHttpModule }]),

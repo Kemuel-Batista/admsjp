@@ -1,6 +1,7 @@
-import profile from '@/domain/profile/languages/pt'
-import profilePermission from '@/domain/profile/modules/profile-permission/languages/pt'
-import user from '@/domain/user/languages/pt'
+import event from '@/domain/admsjp/languages/event.pt'
+import profile from '@/domain/admsjp/languages/profile.pt'
+import profilePermission from '@/domain/admsjp/languages/profile-permission.pt'
+import user from '@/domain/admsjp/languages/user.pt'
 
 const messages = {
   pt: {
@@ -8,6 +9,7 @@ const messages = {
       ...user,
       ...profile,
       ...profilePermission,
+      ...event,
     },
   },
 }

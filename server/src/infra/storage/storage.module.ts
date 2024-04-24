@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 
-import { Uploader } from '@/core/storage/uploader'
+import { Uploader } from '@/domain/admsjp/storage/uploader'
 
 import { EnvModule } from '../env/env.module'
 import { R2Storage } from './r2-storage'
