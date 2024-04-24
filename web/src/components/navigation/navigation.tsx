@@ -19,7 +19,7 @@ export function Categories() {
           <NavigationMenuContent>
             <div className="ease-in duration-300 bg-white w-screen">
               <div className="p-8 bg-white">
-                <ul className="grid grid-cols-5 gap-10">
+                <ul className="grid grid-cols-5 gap-10 mobile:grid-cols-1 mobile:gap-2">
                   {(item.subnav &&
                     item.subnav.map((subitem) => {
                       return (

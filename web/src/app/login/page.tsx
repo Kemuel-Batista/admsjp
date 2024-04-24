@@ -51,7 +51,7 @@ export default function LoginPage() {
             {/* <img src={ADMSJPLogo} alt="ADMSJP" height="96px" className="h-24" /> */}
           </div>
 
-          <footer className="text-sm mobile:hidden">
+          <footer className="text-sm">
             <blockquote className="space-y-2">
               <p className="text-lg">
                 &ldquo;Até aqui nos ajudou o senhor&rdquo;
@@ -64,7 +64,7 @@ export default function LoginPage() {
           </footer>
         </div>
 
-        <div className="relative flex flex-col items-center justify-center">
+        <div className="relative flex flex-col items-center justify-center p-10">
           <div className="grid gap-6">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">Login</h1>
