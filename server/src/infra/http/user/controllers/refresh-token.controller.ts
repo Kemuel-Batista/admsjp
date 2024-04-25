@@ -3,6 +3,8 @@ import { Request, Response } from 'express'
 
 import HttpStatusCode from '@/core/enums/http-status-code'
 import { RefreshTokenUseCase } from '@/domain/admsjp/use-cases/user/refresh-token/refresh-token'
+import { CurrentUser } from '@/infra/auth/current-user-decorator'
+import { UserPayload } from '@/infra/auth/jwt.strategy'
 
 @Controller('/refresh-token')
 export class RefreshTokenController {
@@ -10,6 +12,7 @@ export class RefreshTokenController {
 
   @Post()
   async handle(
+    @CurrentUser() user: UserPayload,
     @Req() request: Request,
     @Res() response: Response,
   ): Promise<Response> {
@@ -18,7 +21,10 @@ export class RefreshTokenController {
       request.headers['x-access-token'] ||
       request.query.token
 
-    const token = await this.refreshTokenUseCase.execute(refreshToken)
+    const token = await this.refreshTokenUseCase.execute(
+      refreshToken,
+      user.sub.username,
+    )
 
     return response.status(HttpStatusCode.OK).json(token)
   }

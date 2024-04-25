@@ -9,7 +9,7 @@ import {
 import { ListPublicEventsUseCase } from '@/domain/admsjp/use-cases/events/list/public/list-public-events'
 import { Public } from '@/infra/auth/public'
 
-@Controller('/')
+@Controller('/public')
 @Public()
 export class ListPublicEventsController {
   constructor(private listPublicEventsUseCase: ListPublicEventsUseCase) {}

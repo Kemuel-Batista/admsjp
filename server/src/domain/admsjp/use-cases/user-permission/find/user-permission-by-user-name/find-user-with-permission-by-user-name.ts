@@ -20,31 +20,29 @@ export class FindUserWithPermissionByUserNameUseCase {
 
   async execute<Options extends IFindOptions>(
     userName: User['username'],
-    options: Partial<Options> = {},
   ): Promise<TFindUserWithPermissionByUserNameUseCase<Options>> {
     let userPermissions: UserWithPermission | null = null
 
-    const user = await this.findUserByUsernameUseCase.execute(userName, options)
+    const user = await this.findUserByUsernameUseCase.execute(userName)
 
-    if (user) {
-      const profilePermissions =
-        await this.listProfilePermissionByProfileId.execute(user.profileId, {
-          allRecords: true,
-        })
+    const profilePermissions =
+      await this.listProfilePermissionByProfileId.execute(user.profileId, {
+        allRecords: true,
+      })
 
-      const permissions = new Set<string>([])
+    const permissions = new Set<string>([])
 
-      for (const profilePermission of profilePermissions) {
-        permissions.add(profilePermission.key)
-      }
-
-      delete user.password
-
-      userPermissions = {
-        ...user,
-        permissions: [...permissions],
-      }
+    for (const profilePermission of profilePermissions) {
+      permissions.add(profilePermission.key)
     }
+
+    delete user.password
+
+    userPermissions = {
+      ...user,
+      permissions: [...permissions],
+    }
+
     return userPermissions as TFindUserWithPermissionByUserNameUseCase<Options>
   }
 }

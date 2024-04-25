@@ -20,7 +20,7 @@ type UpdateUserPasswordBodySchema = z.infer<typeof updateUserPasswordSchema>
 const bodyValidationPipe = new ZodValidationPipe(updateUserPasswordSchema)
 
 @Controller('/password')
-class UpdateUserPasswordController {
+export class UpdateUserPasswordController {
   constructor(private updateUserPassword: UpdateUserPasswordUseCase) {}
 
   @Profiles(UserProfile.ADMINISTRADOR)
@@ -36,5 +36,3 @@ class UpdateUserPasswordController {
     await this.updateUserPassword.execute(id, password, user.sub.id)
   }
 }
-
-export { UpdateUserPasswordController }

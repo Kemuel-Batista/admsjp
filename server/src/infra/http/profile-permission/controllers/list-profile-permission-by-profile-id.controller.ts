@@ -1,4 +1,12 @@
-import { Controller, Get, HttpCode, Param, Query, Req } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common'
 import { Request } from 'express'
 
 import HttpStatusCode from '@/core/enums/http-status-code'
@@ -10,14 +18,19 @@ import {
   PageQueryParamSchema,
   queryValidationPipe,
 } from '@/core/schemas/query-params-schema'
+import { UserProfile } from '@/domain/admsjp/enums/user'
 import { ListProfilePermissionByProfileIdUseCase } from '@/domain/admsjp/use-cases/profile-permission/list/by-profile-Id/list-profile-permission-by-profile-id'
+import { ProfileGuard } from '@/infra/auth/profile.guard'
+import { Profiles } from '@/infra/auth/profiles'
 
-@Controller('/:profileId')
+@Controller('/by-profile-id/:profileId')
 class ListProfilePermissionByProfileIdController {
   constructor(
     private listProfilePermissionByProfileId: ListProfilePermissionByProfileIdUseCase,
   ) {}
 
+  @Profiles(UserProfile.ADMINISTRADOR)
+  @UseGuards(ProfileGuard)
   @Get()
   @HttpCode(HttpStatusCode.OK)
   async handle(

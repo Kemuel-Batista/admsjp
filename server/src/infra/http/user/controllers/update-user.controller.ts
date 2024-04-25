@@ -37,14 +37,23 @@ export class UpdateUserController {
     @Body(bodyValidationPipe) body: UpdateUserBodySchema,
     @CurrentUser() user: UserPayload,
   ) {
-    const { id, name, username, password, status, departmentId, profileId } =
-      body
+    const {
+      id,
+      name,
+      username,
+      password,
+      email,
+      status,
+      departmentId,
+      profileId,
+    } = body
 
     const { ...userWithoutPassword } = await this.updateUser.execute({
       id,
       name,
       username,
       password,
+      email,
       status,
       departmentId,
       profileId,

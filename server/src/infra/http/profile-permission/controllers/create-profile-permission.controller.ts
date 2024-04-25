@@ -1,11 +1,14 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common'
+import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common'
 import { Response } from 'express'
 import { z } from 'zod'
 
 import HttpStatusCode from '@/core/enums/http-status-code'
+import { UserProfile } from '@/domain/admsjp/enums/user'
 import { CreateProfilePermissionUseCase } from '@/domain/admsjp/use-cases/profile-permission/create/create-profile-permission'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
+import { ProfileGuard } from '@/infra/auth/profile.guard'
+import { Profiles } from '@/infra/auth/profiles'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 
 const createProfilePermissionSchema = z.object({
@@ -25,6 +28,8 @@ export class CreateProfilePermissionController {
     private createProfilePermission: CreateProfilePermissionUseCase,
   ) {}
 
+  @Profiles(UserProfile.ADMINISTRADOR)
+  @UseGuards(ProfileGuard)
   @Post()
   @HttpCode(HttpStatusCode.CREATED)
   async handle(
@@ -40,6 +45,6 @@ export class CreateProfilePermissionController {
       createdBy: user.sub.id,
     })
 
-    return response.status(HttpStatusCode.OK).json(profilePermission)
+    return response.json(profilePermission)
   }
 }
