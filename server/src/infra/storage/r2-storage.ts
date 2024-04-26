@@ -1,6 +1,10 @@
 import { randomUUID } from 'node:crypto'
 
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3'
 import { Injectable } from '@nestjs/common'
 
 import { Uploader, UploadParams } from '@/domain/admsjp/storage/uploader'
@@ -45,5 +49,14 @@ export class R2Storage implements Uploader {
     return {
       url: uniqueFileName,
     }
+  }
+
+  async delete(url: string): Promise<void> {
+    await this.client.send(
+      new DeleteObjectCommand({
+        Bucket: this.envService.get('AWS_BUCKET_NAME'),
+        Key: url,
+      }),
+    )
   }
 }
