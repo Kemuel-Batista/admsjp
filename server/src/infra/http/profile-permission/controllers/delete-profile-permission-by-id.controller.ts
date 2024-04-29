@@ -1,7 +1,13 @@
-import { Controller, Delete, HttpCode, Param, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  Param,
+  UseGuards,
+} from '@nestjs/common'
 import { z } from 'zod'
 
-import HttpStatusCode from '@/core/enums/http-status-code'
 import { UserProfile } from '@/domain/admsjp/enums/user'
 import { DeleteProfilePermissionByIdUseCase } from '@/domain/admsjp/use-cases/profile-permission/delete/by-id/delete-profile-permission-by-id'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
@@ -25,7 +31,7 @@ export class DeleteProfilePermissionByIdController {
   @Profiles(UserProfile.ADMINISTRADOR)
   @UseGuards(ProfileGuard)
   @Delete()
-  @HttpCode(HttpStatusCode.OK)
+  @HttpCode(HttpStatus.OK)
   async handle(
     @Param('id', paramValidationPipe) id: ParamSchema,
     @CurrentUser() user: UserPayload,

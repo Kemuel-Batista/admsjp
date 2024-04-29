@@ -1,7 +1,6 @@
-import { Body, Controller, HttpCode, Put } from '@nestjs/common'
+import { Body, Controller, HttpCode, HttpStatus, Put } from '@nestjs/common'
 import { z } from 'zod'
 
-import HttpStatusCode from '@/core/enums/http-status-code'
 import { UserUpdateSelfPasswordUseCase } from '@/domain/admsjp/use-cases/user/update/self-password/user-update-self-password'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
@@ -23,7 +22,7 @@ export class UserUpdateSelfPasswordController {
   constructor(private userUpdateSelfPassword: UserUpdateSelfPasswordUseCase) {}
 
   @Put()
-  @HttpCode(HttpStatusCode.NO_CONTENT)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async handle(
     @Body(bodyValidationPipe) body: UserUpdateSelfPasswordBodySchema,
     @CurrentUser() user: UserPayload,

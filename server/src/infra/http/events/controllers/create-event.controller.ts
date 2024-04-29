@@ -3,6 +3,7 @@ import {
   Controller,
   FileTypeValidator,
   HttpCode,
+  HttpStatus,
   MaxFileSizeValidator,
   ParseFilePipe,
   Post,
@@ -14,7 +15,6 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { Decimal } from '@prisma/client/runtime/library'
 import { z } from 'zod'
 
-import HttpStatusCode from '@/core/enums/http-status-code'
 import { UserProfile } from '@/domain/admsjp/enums/user'
 import { CreateEventUseCase } from '@/domain/admsjp/use-cases/events/create/create-event'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
@@ -65,7 +65,7 @@ export class CreateEventController {
   @Profiles(UserProfile.ADMINISTRADOR, UserProfile.EVENTS)
   @UseGuards(ProfileGuard)
   @Post()
-  @HttpCode(HttpStatusCode.OK)
+  @HttpCode(HttpStatus.OK)
   @UseInterceptors(FileInterceptor('file'))
   async handle(
     @UploadedFile(

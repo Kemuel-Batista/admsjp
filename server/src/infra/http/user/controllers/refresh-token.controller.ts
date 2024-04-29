@@ -1,7 +1,6 @@
-import { Controller, Post, Req, Res } from '@nestjs/common'
+import { Controller, HttpStatus, Post, Req, Res } from '@nestjs/common'
 import { Request, Response } from 'express'
 
-import HttpStatusCode from '@/core/enums/http-status-code'
 import { RefreshTokenUseCase } from '@/domain/admsjp/use-cases/user/refresh-token/refresh-token'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
@@ -26,6 +25,6 @@ export class RefreshTokenController {
       user.sub.username,
     )
 
-    return response.status(HttpStatusCode.OK).json(token)
+    return response.status(HttpStatus.OK).json(token)
   }
 }

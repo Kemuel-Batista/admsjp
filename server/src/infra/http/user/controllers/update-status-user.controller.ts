@@ -1,7 +1,13 @@
-import { Controller, HttpCode, Param, Patch, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  UseGuards,
+} from '@nestjs/common'
 import { z } from 'zod'
 
-import HttpStatusCode from '@/core/enums/http-status-code'
 import { UserProfile } from '@/domain/admsjp/enums/user'
 import { UpdateStatusUserUseCase } from '@/domain/admsjp/use-cases/user/update/status/update-status-user'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
@@ -26,7 +32,7 @@ export class UpdateStatusUserController {
   @Profiles(UserProfile.ADMINISTRADOR)
   @UseGuards(ProfileGuard)
   @Patch()
-  @HttpCode(HttpStatusCode.OK)
+  @HttpCode(HttpStatus.OK)
   async handle(
     @Param(paramsValidationPipe) params: ParamsParamSchema,
     @CurrentUser() user: UserPayload,

@@ -1,8 +1,14 @@
-import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
 import { Response } from 'express'
 import { z } from 'zod'
 
-import HttpStatusCode from '@/core/enums/http-status-code'
 import { UserProfile } from '@/domain/admsjp/enums/user'
 import { CreateProfilePermissionUseCase } from '@/domain/admsjp/use-cases/profile-permission/create/create-profile-permission'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
@@ -31,7 +37,7 @@ export class CreateProfilePermissionController {
   @Profiles(UserProfile.ADMINISTRADOR)
   @UseGuards(ProfileGuard)
   @Post()
-  @HttpCode(HttpStatusCode.CREATED)
+  @HttpCode(HttpStatus.CREATED)
   async handle(
     @Body(bodyValidationPipe) body: CreateProfilePermissionSchema,
     @CurrentUser() user: UserPayload,

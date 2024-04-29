@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   HttpCode,
+  HttpStatus,
   Param,
   Query,
   Req,
@@ -9,7 +10,6 @@ import {
 } from '@nestjs/common'
 import { Request } from 'express'
 
-import HttpStatusCode from '@/core/enums/http-status-code'
 import {
   ParamsSchema,
   paramsValidationPipe,
@@ -32,7 +32,7 @@ class ListProfilePermissionByProfileIdController {
   @Profiles(UserProfile.ADMINISTRADOR)
   @UseGuards(ProfileGuard)
   @Get()
-  @HttpCode(HttpStatusCode.OK)
+  @HttpCode(HttpStatus.OK)
   async handle(
     @Query(queryValidationPipe) query: PageQueryParamSchema,
     @Param('profileId', paramsValidationPipe) profileId: ParamsSchema,

@@ -1,7 +1,13 @@
-import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
 import { z } from 'zod'
 
-import HttpStatusCode from '@/core/enums/http-status-code'
 import { UserProfile, UserStatus } from '@/domain/admsjp/enums/user'
 import { UserWithoutPassword } from '@/domain/admsjp/types/user/user-without-password'
 import { CreateUserUseCase } from '@/domain/admsjp/use-cases/user/create/default/create-user'
@@ -32,7 +38,7 @@ export class CreateUserController {
   @Profiles(UserProfile.ADMINISTRADOR)
   @UseGuards(ProfileGuard)
   @Post()
-  @HttpCode(HttpStatusCode.CREATED)
+  @HttpCode(HttpStatus.CREATED)
   async handle(
     @Body(bodyValidationPipe) body: CreateUserBodySchema,
     @CurrentUser() user: UserPayload,

@@ -1,6 +1,5 @@
-import { Controller, Get, HttpCode } from '@nestjs/common'
+import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common'
 
-import HttpStatusCode from '@/core/enums/http-status-code'
 import { GetUserPermissionsUseCase } from '@/domain/admsjp/use-cases/user/find/me/get-user-permission'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
@@ -10,7 +9,7 @@ export class GetUserPermissionController {
   constructor(private getUserPermission: GetUserPermissionsUseCase) {}
 
   @Get()
-  @HttpCode(HttpStatusCode.OK)
+  @HttpCode(HttpStatus.OK)
   async handle(@CurrentUser() user: UserPayload) {
     const userPermission = await this.getUserPermission.execute(user.sub.id)
 

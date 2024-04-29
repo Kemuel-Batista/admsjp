@@ -1,7 +1,13 @@
-import { Controller, Get, HttpCode, Param, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  UseGuards,
+} from '@nestjs/common'
 import { z } from 'zod'
 
-import HttpStatusCode from '@/core/enums/http-status-code'
 import { UserProfile } from '@/domain/admsjp/enums/user'
 import { FindProfilePermissionByIdUseCase } from '@/domain/admsjp/use-cases/profile-permission/find/by-id/find-profile-permission-by-id'
 import { ProfileGuard } from '@/infra/auth/profile.guard'
@@ -23,7 +29,7 @@ export class FindProfilePermissionByIdController {
   @Profiles(UserProfile.ADMINISTRADOR)
   @UseGuards(ProfileGuard)
   @Get()
-  @HttpCode(HttpStatusCode.OK)
+  @HttpCode(HttpStatus.OK)
   async handle(@Param('id', paramValidationPipe) id: ParamSchema) {
     const profilePermission = await this.findProfilePermissionById.execute(id)
 

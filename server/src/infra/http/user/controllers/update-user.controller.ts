@@ -1,7 +1,13 @@
-import { Body, Controller, HttpCode, Put, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Put,
+  UseGuards,
+} from '@nestjs/common'
 import { z } from 'zod'
 
-import HttpStatusCode from '@/core/enums/http-status-code'
 import { UserProfile, UserStatus } from '@/domain/admsjp/enums/user'
 import { UpdateUserUseCase } from '@/domain/admsjp/use-cases/user/update/default/update-user'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
@@ -32,7 +38,7 @@ export class UpdateUserController {
   @Profiles(UserProfile.ADMINISTRADOR)
   @UseGuards(ProfileGuard)
   @Put()
-  @HttpCode(HttpStatusCode.OK)
+  @HttpCode(HttpStatus.OK)
   async handle(
     @Body(bodyValidationPipe) body: UpdateUserBodySchema,
     @CurrentUser() user: UserPayload,

@@ -1,6 +1,12 @@
-import { Controller, Delete, HttpCode, Param, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  Param,
+  UseGuards,
+} from '@nestjs/common'
 
-import HttpStatusCode from '@/core/enums/http-status-code'
 import {
   ParamsSchema,
   paramsValidationPipe,
@@ -19,7 +25,7 @@ export class DeleteUserByIdController {
   @Profiles(UserProfile.ADMINISTRADOR)
   @UseGuards(ProfileGuard)
   @Delete()
-  @HttpCode(HttpStatusCode.NO_CONTENT)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async handle(
     @Param('userId', paramsValidationPipe) userId: ParamsSchema,
     @CurrentUser() user: UserPayload,

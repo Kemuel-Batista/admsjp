@@ -1,7 +1,14 @@
-import { Controller, Get, Query, Req, Res, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  HttpStatus,
+  Query,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common'
 import { type Request, type Response } from 'express'
 
-import HttpStatusCode from '@/core/enums/http-status-code'
 import {
   PageQueryParamSchema,
   queryValidationPipe,
@@ -46,6 +53,6 @@ export class ListDepartmentsController {
 
     response.setHeader('X-Total-Count', count)
 
-    return response.status(HttpStatusCode.OK).json(departments)
+    return response.status(HttpStatus.OK).json(departments)
   }
 }

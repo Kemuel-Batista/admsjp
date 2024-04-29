@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   HttpCode,
+  HttpStatus,
   Query,
   Req,
   Res,
@@ -9,7 +10,6 @@ import {
 } from '@nestjs/common'
 import { Request, Response } from 'express'
 
-import HttpStatusCode from '@/core/enums/http-status-code'
 import {
   PageQueryParamSchema,
   queryValidationPipe,
@@ -26,7 +26,7 @@ export class ListUserController {
   @Profiles(UserProfile.ADMINISTRADOR)
   @UseGuards(ProfileGuard)
   @Get()
-  @HttpCode(HttpStatusCode.OK)
+  @HttpCode(HttpStatus.OK)
   async handle(
     @Query(queryValidationPipe) query: PageQueryParamSchema,
     @Req() request: Request,

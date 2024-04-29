@@ -1,7 +1,6 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common'
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common'
 import { z } from 'zod'
 
-import HttpStatusCode from '@/core/enums/http-status-code'
 import { AuthUserUseCase } from '@/domain/admsjp/use-cases/user/auth/default/auth-user'
 import { Public } from '@/infra/auth/public'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
@@ -20,7 +19,7 @@ const bodyValidationPipe = new ZodValidationPipe(authUserSchema)
 export class AuthUserController {
   constructor(private authUser: AuthUserUseCase) {}
   @Post()
-  @HttpCode(HttpStatusCode.OK)
+  @HttpCode(HttpStatus.OK)
   async handle(@Body(bodyValidationPipe) body: AuthUserBodySchema) {
     const { username, password } = body
 
