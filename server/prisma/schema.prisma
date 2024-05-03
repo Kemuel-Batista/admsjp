@@ -16,60 +16,77 @@ model User {
   name      String
   username  String  @unique
   status    Int
-  profileId Int     @default(1)
-  profile   Profile @relation("UserProfile", fields: [profileId], references: [id])
+  profileId Int     @default(1) @map("profile_id")
+  profile   Profile @relation(fields: [profileId], references: [id])
   email     String  @unique
   password  String
 
-  departmentId Int
-  department   Department @relation("UserDepartment", fields: [departmentId], references: [id])
+  departmentId Int        @map("department_id")
+  department   Department @relation(fields: [departmentId], references: [id])
 
-  createdAt  DateTime    @default(now()) @map("created_at")
-  createdBy  Int
-  updatedAt  DateTime?   @updatedAt @map("updated_at")
-  updatedBy  Int
-  deletedAt  DateTime?   @map("deleted_at")
-  userTokens UserToken[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  createdBy Int       @map("created_by")
+  updatedAt DateTime? @map("updated_at")
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at")
+  deletedBy Int?      @map("deleted_by")
+
+  userTokens   UserToken[]
+  eventTickets EventTickets[]
+  logs         Log[]
+
+  @@map("users")
 }
 
 model UserToken {
   id           Int      @id @default(autoincrement())
   uuid         String   @unique @default(uuid())
   token        String
-  refreshToken String
-  expiresAt    DateTime
-  userId       Int
+  refreshToken String   @map("refresh_token")
+  expiresAt    DateTime @map("expires_at")
+  userId       Int      @map("user_id")
   user         User     @relation(fields: [userId], references: [id])
   createdAt    DateTime @default(now())
+
+  @@map("users_tokens")
 }
 
 model Profile {
-  id        Int      @id @default(autoincrement())
-  uuid      String   @unique @default(uuid())
-  name      String   @unique
-  status    Int
-  visible   Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  createdBy Int
-  updatedBy Int
+  id      Int    @id @default(autoincrement())
+  uuid    String @unique @default(uuid())
+  name    String @unique
+  status  Int
+  visible Int
 
-  users              User[]              @relation("UserProfile")
-  profilePermissions ProfilePermission[] @relation("ProfilePermission")
+  createdAt DateTime  @default(now()) @map("created_at")
+  createdBy Int       @map("created_by")
+  updatedAt DateTime? @map("updated_at")
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at")
+  deletedBy Int?      @map("deleted_by")
+
+  users              User[]
+  profilePermissions ProfilePermission[]
+
+  @@map("profiles")
 }
 
 model ProfilePermission {
-  id        Int      @id @default(autoincrement())
-  uuid      String   @unique @default(uuid())
-  profileId Int
+  id        Int     @id @default(autoincrement())
+  uuid      String  @unique @default(uuid())
+  profileId Int     @map("profile_id")
+  profile   Profile @relation(fields: [profileId], references: [id])
   key       String
-  profile   Profile  @relation("ProfilePermission", fields: [profileId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  createdBy Int
-  updatedBy Int
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  createdBy Int       @map("created_by")
+  updatedAt DateTime? @map("updated_at")
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at")
+  deletedBy Int?      @map("deleted_by")
 
   @@unique(name: "KeyProfileId", [key, profileId])
+  @@map("profiles_permissions")
 }
 
 model Department {
@@ -82,70 +99,131 @@ model Department {
   visible     Int
 
   createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
-  createdBy Int
-  updatedBy Int
+  createdBy Int       @map("created_by")
+  updatedAt DateTime? @map("updated_at")
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at")
+  deletedBy Int?      @map("deleted_by")
 
-  User  User[]  @relation("UserDepartment")
-  Event Event[] @relation("DepartmentEvent")
+  users  User[]
+  events Event[]
 }
 
 model Event {
-  id   Int    @id @default(autoincrement())
-  uuid String @unique @default(uuid())
-
-  title       String   @unique
-  slug        String   @unique
-  description String
-  value       Int
-  initialDate DateTime
-  finalDate   DateTime
-
-  status  Int
-  visible Int
-
-  departmentId Int
-  department   Department @relation("DepartmentEvent", fields: [departmentId], references: [id])
-  eventType    Int
-
-  imagePath String
-
-  street       String?
-  number       String?
-  complement   String?
-  neighborhood String?
-  state        Int?
-  city         Int?
-  latitude     Decimal?
-  longitude    Decimal?
-
-  message String?
+  id           Int        @id @default(autoincrement())
+  uuid         String     @unique @default(uuid())
+  title        String     @unique
+  slug         String     @unique
+  description  String
+  initialDate  DateTime   @map("initial_date")
+  finalDate    DateTime   @map("final_date")
+  status       Int
+  visible      Int
+  departmentId Int        @map("department_id")
+  department   Department @relation(fields: [departmentId], references: [id])
+  eventType    Int        @map("event_type")
+  imagePath    String     @map("image_path")
+  message      String?
 
   createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
-  createdBy Int
-  updatedBy Int
+  createdBy Int       @map("created_by")
+  updatedAt DateTime? @map("updated_at")
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at")
+  deletedBy Int?      @map("deleted_by")
 
-  EventSubscription EventSubscription[]
+  eventTickets EventTickets[]
+  eventAddress EventAddress?
+  eventLots    EventLot[]
+
+  @@map("events")
 }
 
-model EventSubscription {
-  id   Int    @id @default(autoincrement())
-  uuid String @unique @default(uuid())
-
-  eventId  Int
-  ticket   String @unique
-  fullName String
-  email    String
-  phone    String
-
-  status        Int
-  paymentMethod Int
+model EventAddress {
+  id           Int     @id @default(autoincrement())
+  uuid         String  @unique @default(uuid())
+  eventId      Int     @unique @map("event_id")
+  event        Event   @relation(fields: [eventId], references: [id])
+  street       String
+  number       String
+  complement   String
+  neighborhood String
+  state        Int
+  city         Int
+  latitude     Decimal
+  longitude    Decimal
 
   createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
+  createdBy Int       @map("created_by")
+  updatedAt DateTime? @map("updated_at")
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at")
+  deletedBy Int?      @map("deleted_by")
 
-  event Event @relation(fields: [eventId], references: [id])
+  @@map("events_addresses")
+}
+
+model EventLot {
+  id       Int    @id @default(autoincrement())
+  uuid     String @unique @default(uuid())
+  eventId  Int    @map("event_id")
+  event    Event  @relation(fields: [eventId], references: [id])
+  lot      Int
+  quantity Int
+  value    Int
+  status   Int
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  createdBy Int       @map("created_by")
+  updatedAt DateTime? @map("updated_at")
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at")
+  deletedBy Int?      @map("deleted_by")
+
+  EventTickets EventTickets[]
+
+  @@map("events_lots")
+}
+
+model EventTickets {
+  id       Int      @id @default(autoincrement())
+  uuid     String   @unique @default(uuid())
+  eventId  Int      @map("event_id")
+  event    Event    @relation(fields: [eventId], references: [id])
+  lotId    Int      @map("lot_id")
+  eventLot EventLot @relation(fields: [lotId], references: [id])
+  userId   Int      @map("user_id")
+  user     User     @relation(fields: [userId], references: [id])
+  ticket   String
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("events_tickets")
+}
+
+enum TransactionType {
+  EVENTS
+}
+
+model Order {
+  id              Int             @id @default(autoincrement())
+  uuid            String          @unique @default(uuid())
+  transactionId   Int             @map("transaction_id")
+  transactionType TransactionType @default(EVENTS) @map("transaction_type")
+  paymentMethod   Int             @map("payment_method")
+  status          Int
+  pixQrCode       String          @map("pix_qr_code")
+  paidAt          DateTime        @map("paid_at")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("orders")
 }
 
 model Log {
@@ -153,10 +231,11 @@ model Log {
   uuid         String   @unique @default(uuid())
   process      String
   value        String
-  oldValue     String?
+  oldValue     String?  @map("old_value")
   timestamp    DateTime @default(now())
   level        Int
-  userId       Int
+  userId       Int      @map("user_id")
+  user         User     @relation(fields: [userId], references: [id])
   note         String?
   jsonRequest  String?  @db.Text
   jsonResponse String?  @db.Text
