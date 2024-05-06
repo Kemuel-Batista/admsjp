@@ -4,10 +4,10 @@ CREATE TABLE "Log" (
     "uuid" TEXT NOT NULL,
     "process" TEXT NOT NULL,
     "value" TEXT NOT NULL,
-    "oldValue" TEXT,
+    "old_value" TEXT,
     "timestamp" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "level" INTEGER NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "user_id" INTEGER NOT NULL,
     "note" TEXT,
     "jsonRequest" TEXT,
     "jsonResponse" TEXT,
@@ -17,3 +17,6 @@ CREATE TABLE "Log" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Log_uuid_key" ON "Log"("uuid");
+
+-- AddForeignKey
+ALTER TABLE "Log" ADD CONSTRAINT "Log_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
