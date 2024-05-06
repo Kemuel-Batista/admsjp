@@ -8,7 +8,6 @@
 - [x] Deve ser possível editar um evento
 - [x] Deve ser possível listar os eventos de acordo com o usuário logado e permissões
 - [x] Deve ser possível listar todos os eventos de forma pública
-- [ ] Deve ser possível editar o status de um evento
 - [ ] Deve ser possível deletar um evento caso não haja nenhuma inscrição realizada
 - [ ] Deve ser possível visualizar detalhes do evento de acordo com o slug do evento
 - [ ] Deve ser possível visualizar detalhes do evento de acordo com o ID do evento
@@ -23,7 +22,7 @@
 
 - [ ] Deve ser possível se inscrever em um evento
 - [ ] Deve ser possível realizar o pagamento de um evento no ato da inscrição
-- [ ] Deve ser possível visualizar a lista de inscrições de acordo com o CPF
+- [ ] Deve ser possível visualizar a lista de inscrições de acordo com o usuário logado
 - [ ] Deve ser possível visualizar detalhes da inscrição de acordo com o ID da inscrição (Evento + Inscrição)
 - [ ] Deve ser possível cancelar a inscrição do evento de acordo com o ID da inscrição (Verificar possibilidade de reembolso)
 
