@@ -13,7 +13,5 @@ export abstract class EventLotsRepository {
   ): Promise<ListEventLotsDTO>
 
   abstract findById(id: EventLot['id']): Promise<EventLot | null>
-  abstract findMaxLotByEventId(
-    eventId: EventLot['eventId'],
-  ): Promise<EventLot | null>
+  abstract findMaxLotByEventId(eventId: EventLot['eventId']): Promise<number>
 }

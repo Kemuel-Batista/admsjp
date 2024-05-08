@@ -34,8 +34,6 @@ export class FindMaxEventLotByEventIdUseCase {
       )
     }
 
-    const maxEventLot = eventLot.lot
-
-    return maxEventLot as TFindMaxEventLotByEventIdUseCase<Options>
+    return eventLot as TFindMaxEventLotByEventIdUseCase<Options>
   }
 }

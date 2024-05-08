@@ -16,7 +16,6 @@ export function makeEvent(override: Partial<EventProps> = {}): EventProps {
     title: faker.lorem.sentence(),
     slug: faker.lorem.slug(),
     description: faker.lorem.sentences(),
-    value: faker.number.int({ max: 1000 }),
     initialDate: faker.date.soon(),
     finalDate: faker.date.future(),
     status: EventStatus.ACTIVE,

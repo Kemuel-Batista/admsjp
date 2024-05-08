@@ -23,6 +23,8 @@ export class InMemoryProfilePermissionsRepository
       updatedAt: new Date(),
       createdBy: data.createdBy,
       updatedBy: data.createdBy,
+      deletedBy: null,
+      deletedAt: null,
     }
 
     this.items.push(profilePermission)

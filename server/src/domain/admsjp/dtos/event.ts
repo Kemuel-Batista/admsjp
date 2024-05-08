@@ -1,10 +1,12 @@
 import { Event } from '@prisma/client'
 
+import { CreateEventAddressDTO, UpdateEventAddressDTO } from './event-address'
+import { CreateEventLotDTO, UpdateEventLotDTO } from './event-lot'
+
 export interface CreateEventDTO {
   title: Event['title']
   slug: Event['slug']
   description: Event['description']
-  value: Event['value']
   initialDate: Event['initialDate']
   finalDate: Event['finalDate']
   status: Event['status']
@@ -12,15 +14,9 @@ export interface CreateEventDTO {
   departmentId: Event['departmentId']
   eventType: Event['eventType']
   imagePath: Event['imagePath']
-  street?: Event['street']
-  number?: Event['number']
-  complement?: Event['complement']
-  neighborhood?: Event['neighborhood']
-  state?: Event['state']
-  city?: Event['city']
-  latitude?: Event['latitude']
-  longitude?: Event['longitude']
   message?: Event['message']
+  lots: CreateEventLotDTO[]
+  address: CreateEventAddressDTO
   createdBy: Event['createdBy']
 }
 
@@ -34,7 +30,6 @@ export interface UpdateEventDTO {
   title: Event['title']
   slug: Event['slug']
   description: Event['description']
-  value: Event['value']
   initialDate: Event['initialDate']
   finalDate: Event['finalDate']
   status: Event['status']
@@ -42,14 +37,8 @@ export interface UpdateEventDTO {
   departmentId: Event['departmentId']
   eventType: Event['eventType']
   imagePath: Event['imagePath']
-  street?: Event['street']
-  number?: Event['number']
-  complement?: Event['complement']
-  neighborhood?: Event['neighborhood']
-  state?: Event['state']
-  city?: Event['city']
-  latitude?: Event['latitude']
-  longitude?: Event['longitude']
   message?: Event['message']
+  lots?: UpdateEventLotDTO[]
+  address?: UpdateEventAddressDTO
   updatedBy: Event['updatedBy']
 }

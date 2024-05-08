@@ -32,6 +32,7 @@ export interface ListUserDTO {
   createdBy: User['createdBy']
   updatedBy: User['updatedBy']
   deletedAt: User['deletedAt']
+  deletedBy: User['deletedBy']
   profileDesc: string | null
   statusDesc: string | null
 }

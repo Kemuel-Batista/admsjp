@@ -30,6 +30,7 @@ export class InMemoryUsersRepository implements UsersRepository {
       createdBy: data.createdBy,
       updatedAt: new Date(),
       updatedBy: data.createdBy,
+      deletedBy: null,
       deletedAt: null,
     }
 

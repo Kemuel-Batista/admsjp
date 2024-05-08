@@ -5,35 +5,24 @@ import HttpStatusCode from '@/core/enums/http-status-code'
 import { AppError } from '@/core/errors/AppError'
 import { i18n } from '@/core/i18n/i18n'
 import { Slug } from '@/core/util/slug/slug'
+import { CreateEventDTO } from '@/domain/admsjp/dtos/event'
+import {
+  EventStatus,
+  EventType,
+  EventVisible,
+} from '@/domain/admsjp/enums/event'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 import { Uploader } from '@/domain/admsjp/storage/uploader'
 
+import { CreateEventAddressUseCase } from '../../event-address/create/create-event-address'
+import { CreateEventLotUseCase } from '../../event-lot/create/create-event-lot'
 import { FindEventBySlugUseCase } from '../find/by-slug/find-event-by-slug'
 import { FindEventByTitleUseCase } from '../find/by-title/find-event-by-title'
 
-interface CreateEventUseCaseRequest {
-  title: Event['title']
-  description: Event['description']
-  value: Event['value']
-  initialDate: Event['initialDate']
-  finalDate: Event['finalDate']
-  status: Event['status']
-  visible: Event['visible']
-  departmentId: Event['departmentId']
-  eventType: Event['eventType']
+interface CreateEventUseCaseRequest extends CreateEventDTO {
   fileName: string
   fileType: string
   body: Buffer
-  street?: Event['street']
-  number?: Event['number']
-  complement?: Event['complement']
-  neighborhood?: Event['neighborhood']
-  state?: Event['state']
-  city?: Event['city']
-  latitude?: Event['latitude']
-  longitude?: Event['longitude']
-  message?: Event['message']
-  createdBy: Event['createdBy']
 }
 
 @Injectable()
@@ -42,34 +31,29 @@ export class CreateEventUseCase {
     private eventsRepository: EventsRepository,
     private findEventByTitleUseCase: FindEventByTitleUseCase,
     private findEventBySlugUseCase: FindEventBySlugUseCase,
+    private createEventLotUseCase: CreateEventLotUseCase,
+    private createEventAddressUseCase: CreateEventAddressUseCase,
     private uploader: Uploader,
   ) {}
 
   async execute({
     title,
     description,
-    value,
     initialDate,
     finalDate,
-    status = 1,
-    visible = 1,
+    status = EventStatus.ACTIVE,
+    visible = EventVisible.VISIBLE,
     eventType,
     departmentId,
     fileName,
     fileType,
     body,
-    street,
-    number,
-    complement,
-    neighborhood,
-    state,
-    city,
-    latitude,
-    longitude,
+    lots,
+    address,
     message,
     createdBy,
   }: CreateEventUseCaseRequest): Promise<Event> {
-    const errorInvalidAttachmentType = 'event.create.keyAlreadyExists'
+    const errorInvalidAttachmentType = 'event.create.invalidAttachmentType'
     const errorCodeFound = HttpStatusCode.BAD_REQUEST
 
     if (
@@ -78,7 +62,7 @@ export class CreateEventUseCase {
       )
     ) {
       throw new AppError(
-        i18n.t(errorInvalidAttachmentType, { fileType }),
+        i18n.t(errorInvalidAttachmentType, { type: fileType }),
         errorCodeFound,
       )
     }
@@ -97,7 +81,6 @@ export class CreateEventUseCase {
       title,
       slug,
       description,
-      value,
       initialDate,
       finalDate,
       status,
@@ -105,17 +88,25 @@ export class CreateEventUseCase {
       eventType,
       departmentId,
       imagePath: '', // Inicialmente vazia, após cadastro fazer upload
-      street,
-      number,
-      complement,
-      neighborhood,
-      state,
-      city,
-      latitude,
-      longitude,
       message,
+      lots,
+      address,
       createdBy,
     })
+
+    for (const lot of lots) {
+      await this.createEventLotUseCase.execute({
+        ...lot,
+        eventId: event.id,
+      })
+    }
+
+    if (eventType !== EventType.REMOTO) {
+      await this.createEventAddressUseCase.execute({
+        eventId: event.id,
+        ...address,
+      })
+    }
 
     const { url } = await this.uploader.upload({
       fileName,

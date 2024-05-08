@@ -26,6 +26,8 @@ export class InMemoryProfilesRepository implements ProfilesRepository {
       updatedAt: new Date(),
       createdBy: data.createdBy,
       updatedBy: data.createdBy,
+      deletedBy: null,
+      deletedAt: null,
     }
 
     this.items.push(profile)

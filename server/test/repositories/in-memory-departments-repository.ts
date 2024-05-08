@@ -27,6 +27,8 @@ export class InMemoryDepartmentsRepository implements DepartmentsRepository {
       createdBy: data.createdBy,
       updatedAt: new Date(),
       updatedBy: data.createdBy,
+      deletedBy: null,
+      deletedAt: null,
     }
 
     this.items.push(department)

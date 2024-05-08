@@ -1,6 +1,7 @@
 const pt = {
   event: {
     create: {
+      invalidAttachmentType: 'Formato {{type}} inválido.',
       keyAlreadyExists: 'Event {{title}} já existe no sistema',
     },
     find: {

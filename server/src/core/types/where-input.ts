@@ -1,7 +1,10 @@
 import {
   Department,
   Event,
-  EventSubscription,
+  EventAddress,
+  EventLot,
+  EventTickets,
+  Order,
   Profile,
   ProfilePermission,
   User,
@@ -34,9 +37,21 @@ export interface Models {
     model: Event
     where: Prisma.EventInput
   }
-  EventSubscription: {
-    model: EventSubscription
-    where: Prisma.EventSubscriptionInput
+  EventAddress: {
+    model: EventAddress
+    where: Prisma.EventAddressInput
+  }
+  EventLot: {
+    model: EventLot
+    where: Prisma.EventLotInput
+  }
+  EventTickets: {
+    model: EventTickets
+    where: Prisma.EventTicketsInput
+  }
+  Order: {
+    model: Order
+    where: Prisma.OrderInput
   }
 }
 
