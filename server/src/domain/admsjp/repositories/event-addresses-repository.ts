@@ -6,10 +6,12 @@ import { IListOptions } from '@/core/repositories/list-options'
 import {
   CreateEventAddressDTO,
   ListEventAddressesDTO,
+  UpdateEventAddressDTO,
 } from '../dtos/event-address'
 
 export abstract class EventAddressesRepository {
   abstract create(data: CreateEventAddressDTO): Promise<EventAddress>
+  abstract update(data: UpdateEventAddressDTO): Promise<EventAddress>
   abstract list(
     options?: IListOptions,
     searchParams?: ISearchParamDTO[],

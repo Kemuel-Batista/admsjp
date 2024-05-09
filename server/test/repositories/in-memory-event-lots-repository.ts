@@ -3,6 +3,7 @@ import { EventLot } from '@prisma/client'
 import {
   CreateEventLotDTO,
   ListEventLotsDTO,
+  UpdateEventLotDTO,
 } from '@/domain/admsjp/dtos/event-lot'
 import { EventLotsRepository } from '@/domain/admsjp/repositories/event-lots-repository'
 
@@ -27,6 +28,25 @@ export class InMemoryEventLotsRepository implements EventLotsRepository {
     this.items.push(eventLot)
 
     return eventLot
+  }
+
+  async update(data: UpdateEventLotDTO): Promise<EventLot> {
+    const itemIndex = this.items.findIndex(
+      (item) => item.eventId === data.eventId && item.lot === data.lot,
+    )
+
+    const event = this.items[itemIndex]
+
+    const eventUpdated = {
+      ...event,
+      quantity: data.quantity,
+      updatedAt: new Date(),
+      updatedBy: data.updatedBy,
+    }
+
+    this.items[itemIndex] = eventUpdated
+
+    return event
   }
 
   async list(): Promise<ListEventLotsDTO> {

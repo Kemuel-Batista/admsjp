@@ -8,6 +8,7 @@ import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import {
   CreateEventAddressDTO,
   ListEventAddressesDTO,
+  UpdateEventAddressDTO,
 } from '@/domain/admsjp/dtos/event-address'
 import { EventAddressesRepository } from '@/domain/admsjp/repositories/event-addresses-repository'
 
@@ -47,6 +48,38 @@ export class PrismaEventAddressesRepository
     })
 
     return eventAddress
+  }
+
+  async update({
+    id,
+    eventId,
+    street,
+    neighborhood,
+    complement,
+    state,
+    city,
+    latitude,
+    longitude,
+    updatedBy,
+  }: UpdateEventAddressDTO): Promise<EventAddress> {
+    const event = await this.prisma.eventAddress.update({
+      where: {
+        id,
+      },
+      data: {
+        eventId: eventId ?? undefined,
+        street: street ?? undefined,
+        neighborhood: neighborhood ?? undefined,
+        complement: complement ?? undefined,
+        state: state ?? undefined,
+        city: city ?? undefined,
+        latitude: latitude ?? undefined,
+        longitude: longitude ?? undefined,
+        updatedBy,
+      },
+    })
+
+    return event
   }
 
   async list(

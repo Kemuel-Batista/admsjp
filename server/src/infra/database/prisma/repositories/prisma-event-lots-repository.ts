@@ -8,6 +8,7 @@ import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import {
   CreateEventLotDTO,
   ListEventLotsDTO,
+  UpdateEventLotDTO,
 } from '@/domain/admsjp/dtos/event-lot'
 import { EventLotsRepository } from '@/domain/admsjp/repositories/event-lots-repository'
 
@@ -37,6 +38,28 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
     })
 
     return eventLot
+  }
+
+  async update({
+    eventId,
+    lot,
+    quantity,
+    updatedBy,
+  }: UpdateEventLotDTO): Promise<EventLot> {
+    const event = await this.prisma.eventLot.update({
+      where: {
+        eventId_lot: {
+          eventId,
+          lot,
+        },
+      },
+      data: {
+        quantity: quantity ?? undefined,
+        updatedBy,
+      },
+    })
+
+    return event
   }
 
   async list(

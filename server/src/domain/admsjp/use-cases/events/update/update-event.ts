@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common'
 import { Event } from '@prisma/client'
 
 import { Either, failure, success } from '@/core/either'
-import HttpStatusCode from '@/core/enums/http-status-code'
-import { AppError } from '@/core/errors/AppError'
+import { InvalidAttachmentTypeError } from '@/core/errors/errors/invalid-attachment-type-error'
 import { ResourceAlreadyExistsError } from '@/core/errors/errors/resource-already-exists-error'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
-import { i18n } from '@/core/i18n/i18n'
 import { Slug } from '@/core/util/slug/slug'
 import { UpdateEventDTO } from '@/domain/admsjp/dtos/event'
+import { EventType } from '@/domain/admsjp/enums/event'
+import { EventAddressesRepository } from '@/domain/admsjp/repositories/event-addresses-repository'
+import { EventLotsRepository } from '@/domain/admsjp/repositories/event-lots-repository'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 import { Uploader } from '@/domain/admsjp/storage/uploader'
 
@@ -19,7 +20,9 @@ interface UpdateEventUseCaseRequest extends UpdateEventDTO {
 }
 
 type UpdateEventUseCaseResponse = Either<
-  ResourceNotFoundError | ResourceAlreadyExistsError,
+  | ResourceNotFoundError
+  | ResourceAlreadyExistsError
+  | InvalidAttachmentTypeError,
   {
     event: Event
   }
@@ -29,6 +32,8 @@ type UpdateEventUseCaseResponse = Either<
 export class UpdateEventUseCase {
   constructor(
     private eventsRepository: EventsRepository,
+    private eventAddressesRepository: EventAddressesRepository,
+    private eventLotsRepository: EventLotsRepository,
     private uploader: Uploader,
   ) {}
 
@@ -45,6 +50,8 @@ export class UpdateEventUseCase {
     fileType,
     body,
     message,
+    lots,
+    address,
     updatedBy,
   }: UpdateEventUseCaseRequest): Promise<UpdateEventUseCaseResponse> {
     const event = await this.eventsRepository.findById(id)
@@ -90,17 +97,16 @@ export class UpdateEventUseCase {
     }
 
     if (fileName && fileType && body) {
-      const errorInvalidAttachmentType = 'event.create.keyAlreadyExists'
-      const errorCodeFound = HttpStatusCode.BAD_REQUEST
-
       if (
         !/^(image\/(jpeg|png|webp))$|^application\/pdf$|^video\/mp4$/.test(
           fileType,
         )
       ) {
-        throw new AppError(
-          i18n.t(errorInvalidAttachmentType, { fileType }),
-          errorCodeFound,
+        return failure(
+          new InvalidAttachmentTypeError({
+            errorKey: 'event.create.invalidAttachmentType',
+            key: fileType,
+          }),
         )
       }
 
@@ -125,6 +131,50 @@ export class UpdateEventUseCase {
     event.updatedBy = updatedBy
 
     await this.eventsRepository.update(event)
+
+    if (eventType !== EventType.REMOTO) {
+      const eventAddress = await this.eventAddressesRepository.findByEventId(
+        event.id,
+      )
+
+      if (!eventAddress) {
+        await this.eventAddressesRepository.create({
+          ...address,
+          createdBy: updatedBy,
+          eventId: event.id,
+        })
+      } else {
+        eventAddress.street = address.street
+        eventAddress.neighborhood = address.neighborhood
+        eventAddress.number = address.number
+        eventAddress.city = address.city
+        eventAddress.state = address.state
+        eventAddress.latitude = address.latitude
+        eventAddress.longitude = address.longitude
+        eventAddress.updatedBy = updatedBy
+
+        await this.eventAddressesRepository.update(eventAddress)
+      }
+    }
+
+    for (const lot of lots) {
+      const eventLot = await this.eventLotsRepository.findByEventIdAndLot(
+        lot.eventId,
+        lot.lot,
+      )
+
+      if (eventLot) {
+        eventLot.quantity = lot.quantity
+        eventLot.updatedBy = updatedBy
+
+        await this.eventLotsRepository.update(eventLot)
+      } else {
+        await this.eventLotsRepository.create({
+          ...lot,
+          createdBy: updatedBy,
+        })
+      }
+    }
 
     return success({
       event,

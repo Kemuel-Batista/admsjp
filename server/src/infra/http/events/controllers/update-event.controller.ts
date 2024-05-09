@@ -144,7 +144,7 @@ export class UpdateEventController {
 
 import { Controller } from '@nestjs/common'
 
-import { UpdateEventUseCase } from '@/domain/admsjp/use-cases/events/update/default/update-event'
+import { UpdateEventUseCase } from '@/domain/admsjp/use-cases/events/update/update-event'
 
 @Controller('/:eventId')
 export class UpdateEventController {

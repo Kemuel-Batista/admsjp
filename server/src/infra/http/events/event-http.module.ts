@@ -5,7 +5,7 @@ import { CreateEventLotUseCase } from '@/domain/admsjp/use-cases/event-lot/creat
 import { CreateEventUseCase } from '@/domain/admsjp/use-cases/events/create/create-event'
 import { ListEventsUseCase } from '@/domain/admsjp/use-cases/events/list/default/list-events'
 import { ListPublicEventsUseCase } from '@/domain/admsjp/use-cases/events/list/public/list-public-events'
-import { UpdateEventUseCase } from '@/domain/admsjp/use-cases/events/update/default/update-event'
+import { UpdateEventUseCase } from '@/domain/admsjp/use-cases/events/update/update-event'
 import { DatabaseModule } from '@/infra/database/database.module'
 import { StorageModule } from '@/infra/storage/storage.module'
 

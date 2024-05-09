@@ -29,5 +29,5 @@ export interface UpdateEventAddressDTO {
   city: EventAddress['city']
   latitude: EventAddress['latitude']
   longitude: EventAddress['longitude']
-  createdBy: EventAddress['createdBy']
+  updatedBy: EventAddress['updatedBy']
 }
