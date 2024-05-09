@@ -1,12 +1,12 @@
 import { EventLot } from '@prisma/client'
 
 export interface CreateEventLotDTO {
-  eventId: EventLot['eventId']
-  quantity: EventLot['quantity']
-  lot: EventLot['lot']
-  value: EventLot['value']
-  status: EventLot['status']
-  createdBy: EventLot['createdBy']
+  eventId?: EventLot['eventId']
+  quantity?: EventLot['quantity']
+  lot?: EventLot['lot']
+  value?: EventLot['value']
+  status?: EventLot['status']
+  createdBy?: EventLot['createdBy']
 }
 
 export interface ListEventLotsDTO {
@@ -15,7 +15,6 @@ export interface ListEventLotsDTO {
 }
 
 export interface UpdateEventLotDTO {
-  id: EventLot['id']
   eventId: EventLot['eventId']
   quantity: EventLot['quantity']
   lot: EventLot['lot']

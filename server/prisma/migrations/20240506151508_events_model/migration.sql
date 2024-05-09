@@ -127,7 +127,7 @@ CREATE UNIQUE INDEX "events_tickets_uuid_key" ON "events_tickets"("uuid");
 CREATE UNIQUE INDEX "orders_uuid_key" ON "orders"("uuid");
 
 -- AddForeignKey
-ALTER TABLE "events" ADD CONSTRAINT "events_department_id_fkey" FOREIGN KEY ("department_id") REFERENCES "Department"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "events" ADD CONSTRAINT "events_department_id_fkey" FOREIGN KEY ("department_id") REFERENCES "departments"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "events_addresses" ADD CONSTRAINT "events_addresses_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "events"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

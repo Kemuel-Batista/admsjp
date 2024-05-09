@@ -99,6 +99,7 @@ export class PrismaUsersRepository implements UsersRepository {
           createdBy: true,
           updatedBy: true,
           deletedAt: true,
+          deletedBy: true,
         },
         skip,
         take,

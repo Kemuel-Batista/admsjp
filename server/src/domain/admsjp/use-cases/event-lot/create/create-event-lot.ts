@@ -1,18 +1,25 @@
 import { Injectable } from '@nestjs/common'
 import { EventLot } from '@prisma/client'
 
+import { Either, failure, success } from '@/core/either'
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 import { CreateEventLotDTO } from '@/domain/admsjp/dtos/event-lot'
 import { EventLotsRepository } from '@/domain/admsjp/repositories/event-lots-repository'
 
-import { FindEventByIdUseCase } from '../../events/find/by-id/find-event-by-id'
-import { FindMaxEventLotByEventIdUseCase } from '../find/max-lot-by-event-id/find-max-event-lot-by-event-id'
+import { EventsRepository } from '../../../repositories/events-repository'
+
+type CreateEventLotUseCaseResponse = Either<
+  ResourceNotFoundError,
+  {
+    eventLot: EventLot
+  }
+>
 
 @Injectable()
 export class CreateEventLotUseCase {
   constructor(
     private eventLotsRepository: EventLotsRepository,
-    private findEventByIdUseCase: FindEventByIdUseCase,
-    private findMaxEventLotByEventIdUseCase: FindMaxEventLotByEventIdUseCase,
+    private eventsRepository: EventsRepository,
   ) {}
 
   async execute({
@@ -21,13 +28,20 @@ export class CreateEventLotUseCase {
     status = 1,
     value,
     createdBy,
-  }: CreateEventLotDTO): Promise<EventLot> {
-    await this.findEventByIdUseCase.execute(eventId, {
-      throwIfFound: true,
-    })
+  }: CreateEventLotDTO): Promise<CreateEventLotUseCaseResponse> {
+    const event = await this.eventsRepository.findById(eventId)
+
+    if (!event) {
+      return failure(
+        new ResourceNotFoundError({
+          errorKey: 'event.find.notFound',
+          key: String(eventId),
+        }),
+      )
+    }
 
     const maxEventLot =
-      await this.findMaxEventLotByEventIdUseCase.execute(eventId)
+      await this.eventLotsRepository.findMaxLotByEventId(eventId)
 
     const eventLot = await this.eventLotsRepository.create({
       eventId,
@@ -38,6 +52,8 @@ export class CreateEventLotUseCase {
       createdBy,
     })
 
-    return eventLot
+    return success({
+      eventLot,
+    })
   }
 }

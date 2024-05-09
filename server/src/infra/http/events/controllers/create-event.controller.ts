@@ -1,10 +1,13 @@
 import {
+  BadRequestException,
   Body,
+  ConflictException,
   Controller,
   FileTypeValidator,
   HttpCode,
   HttpStatus,
   MaxFileSizeValidator,
+  NotFoundException,
   ParseFilePipe,
   Post,
   UploadedFile,
@@ -15,6 +18,8 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { Decimal } from '@prisma/client/runtime/library'
 import { z } from 'zod'
 
+import { ResourceAlreadyExistsError } from '@/core/errors/errors/resource-already-exists-error'
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 import { UserProfile } from '@/domain/admsjp/enums/user'
 import { CreateEventUseCase } from '@/domain/admsjp/use-cases/events/create/create-event'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
@@ -23,20 +28,44 @@ import { ProfileGuard } from '@/infra/auth/profile.guard'
 import { Profiles } from '@/infra/auth/profiles'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 
+const createEventLotSchema = z
+  .object({
+    quantity: z.number().int().positive(),
+    lot: z.number().int().positive(),
+    value: z.number().int().positive(),
+    status: z.number().min(0).max(1),
+  })
+  .array()
+
 const createEventSchema = z.object({
   title: z.string(),
   description: z.string(),
-  value: z.coerce.number(),
   initialDate: z.string().transform((arg) => new Date(arg)),
   finalDate: z.string().transform((arg) => new Date(arg)),
   status: z.coerce.number().int().min(0).max(1).optional(),
   visible: z.coerce.number().int().min(0).max(1).optional(),
   eventType: z.coerce.number().min(0).max(20),
   departmentId: z.coerce.number().positive().min(1),
+  message: z.string().optional(),
+  lots: z
+    .string()
+    .refine(
+      (str) => {
+        try {
+          const parsedArray = JSON.parse(str)
+          createEventLotSchema.parse(parsedArray)
+          return Array.isArray(parsedArray)
+        } catch (error) {
+          return false
+        }
+      },
+      { message: 'Invalid lots array format' },
+    )
+    .transform((str) => JSON.parse(str)),
   street: z.string().optional(),
+  neighborhood: z.string().optional(),
   number: z.string().optional(),
   complement: z.string().optional(),
-  neighborhood: z.string().optional(),
   state: z.coerce.number().positive().min(1).optional(),
   city: z.coerce.number().positive().min(1).optional(),
   latitude: z.coerce
@@ -44,14 +73,15 @@ const createEventSchema = z.object({
     .refine((value) => {
       return Math.abs(value) <= 90
     })
+    .transform((arg) => new Decimal(arg))
     .optional(),
   longitude: z.coerce
     .number()
     .refine((value) => {
       return Math.abs(value) <= 180
     })
+    .transform((arg) => new Decimal(arg))
     .optional(),
-  message: z.string().optional(),
 })
 
 type CreateEventSchema = z.infer<typeof createEventSchema>
@@ -65,7 +95,7 @@ export class CreateEventController {
   @Profiles(UserProfile.ADMINISTRADOR, UserProfile.EVENTS)
   @UseGuards(ProfileGuard)
   @Post()
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('file'))
   async handle(
     @UploadedFile(
@@ -85,28 +115,27 @@ export class CreateEventController {
     const {
       title,
       description,
-      value,
       initialDate,
       finalDate,
       status,
       visible,
       eventType,
       departmentId,
+      message,
+      lots,
       street,
+      neighborhood,
       number,
       complement,
-      neighborhood,
       state,
       city,
       latitude,
       longitude,
-      message,
     } = body
 
-    const event = await this.createEvent.execute({
+    const result = await this.createEvent.execute({
       title,
       description,
-      value,
       initialDate,
       finalDate,
       status,
@@ -116,17 +145,37 @@ export class CreateEventController {
       fileName: file.originalname,
       fileType: file.mimetype,
       body: file.buffer,
-      street,
-      number,
-      complement,
-      neighborhood,
-      state,
-      city,
-      latitude: latitude === undefined ? undefined : new Decimal(latitude),
-      longitude: longitude === undefined ? undefined : new Decimal(longitude),
       message,
+      lots,
+      address: {
+        street,
+        neighborhood,
+        number,
+        complement,
+        state,
+        city,
+        latitude,
+        longitude,
+      },
+      imagePath: '',
+      slug: '',
       createdBy: user.sub.id,
     })
+
+    if (result.isError()) {
+      const error = result.value
+
+      switch (error.constructor) {
+        case ResourceNotFoundError:
+          throw new NotFoundException(error.message)
+        case ResourceAlreadyExistsError:
+          throw new ConflictException(error.message)
+        default:
+          throw new BadRequestException(error.message)
+      }
+    }
+
+    const event = result.value.event
 
     return event
   }

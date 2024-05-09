@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common'
 
 import { DepartmentsRepository } from '@/domain/admsjp/repositories/departments-repository'
+import { EventAddressesRepository } from '@/domain/admsjp/repositories/event-addresses-repository'
+import { EventLotsRepository } from '@/domain/admsjp/repositories/event-lots-repository'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 import { LogsRepository } from '@/domain/admsjp/repositories/logs-repository'
 import { ProfilePermissionsRepository } from '@/domain/admsjp/repositories/profile-permissions-repository'
@@ -10,6 +12,8 @@ import { UsersRepository } from '@/domain/admsjp/repositories/users-repository'
 
 import { PrismaService } from './prisma/prisma.service'
 import { PrismaDepartmentRepository } from './prisma/repositories/prisma-departments-repository'
+import { PrismaEventAddressesRepository } from './prisma/repositories/prisma-event-addresses-repository'
+import { PrismaEventLotsRepository } from './prisma/repositories/prisma-event-lots-repository'
 import { PrismaEventsRepository } from './prisma/repositories/prisma-events-repository'
 import { PrismaLogsRepository } from './prisma/repositories/prisma-logs-repository'
 import { PrismaProfilePermissionsRepository } from './prisma/repositories/prisma-profile-permissions-repository'
@@ -48,6 +52,14 @@ import { PrismaUsersRepository } from './prisma/repositories/prisma-users-reposi
       provide: EventsRepository,
       useClass: PrismaEventsRepository,
     },
+    {
+      provide: EventLotsRepository,
+      useClass: PrismaEventLotsRepository,
+    },
+    {
+      provide: EventAddressesRepository,
+      useClass: PrismaEventAddressesRepository,
+    },
   ],
   exports: [
     PrismaService,
@@ -58,6 +70,8 @@ import { PrismaUsersRepository } from './prisma/repositories/prisma-users-reposi
     ProfilesRepository,
     ProfilePermissionsRepository,
     EventsRepository,
+    EventLotsRepository,
+    EventAddressesRepository,
   ],
 })
 export class DatabaseModule {}

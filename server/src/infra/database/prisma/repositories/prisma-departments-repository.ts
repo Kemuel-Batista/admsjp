@@ -30,7 +30,6 @@ export class PrismaDepartmentRepository implements DepartmentsRepository {
         status,
         visible,
         createdBy,
-        updatedBy: createdBy,
       },
     })
     return department

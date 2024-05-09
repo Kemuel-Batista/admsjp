@@ -1,50 +1,34 @@
 import { Injectable } from '@nestjs/common'
 import { Event } from '@prisma/client'
 
+import { Either, failure, success } from '@/core/either'
 import HttpStatusCode from '@/core/enums/http-status-code'
 import { AppError } from '@/core/errors/AppError'
+import { ResourceAlreadyExistsError } from '@/core/errors/errors/resource-already-exists-error'
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 import { i18n } from '@/core/i18n/i18n'
 import { Slug } from '@/core/util/slug/slug'
+import { UpdateEventDTO } from '@/domain/admsjp/dtos/event'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 import { Uploader } from '@/domain/admsjp/storage/uploader'
 
-import { FindEventByIdUseCase } from '../../find/by-id/find-event-by-id'
-import { FindEventBySlugUseCase } from '../../find/by-slug/find-event-by-slug'
-import { FindEventByTitleUseCase } from '../../find/by-title/find-event-by-title'
-
-interface UpdateEventUseCaseRequest {
-  id: Event['id']
-  title?: Event['title']
-  description?: Event['description']
-  value?: Event['value']
-  initialDate?: Event['initialDate']
-  finalDate?: Event['finalDate']
-  status?: Event['status']
-  visible?: Event['visible']
-  departmentId?: Event['departmentId']
-  eventType?: Event['eventType']
+interface UpdateEventUseCaseRequest extends UpdateEventDTO {
   fileName?: string
   fileType?: string
   body?: Buffer
-  street?: Event['street']
-  number?: Event['number']
-  complement?: Event['complement']
-  neighborhood?: Event['neighborhood']
-  state?: Event['state']
-  city?: Event['city']
-  latitude?: Event['latitude']
-  longitude?: Event['longitude']
-  message?: Event['message']
-  updatedBy: Event['updatedBy']
 }
+
+type UpdateEventUseCaseResponse = Either<
+  ResourceNotFoundError | ResourceAlreadyExistsError,
+  {
+    event: Event
+  }
+>
 
 @Injectable()
 export class UpdateEventUseCase {
   constructor(
     private eventsRepository: EventsRepository,
-    private findEventByIdUseCase: FindEventByIdUseCase,
-    private findEventByTitleUseCase: FindEventByTitleUseCase,
-    private findEventBySlugUseCase: FindEventBySlugUseCase,
     private uploader: Uploader,
   ) {}
 
@@ -52,7 +36,6 @@ export class UpdateEventUseCase {
     id,
     title,
     description,
-    value,
     initialDate,
     finalDate,
     status,
@@ -61,32 +44,45 @@ export class UpdateEventUseCase {
     fileName,
     fileType,
     body,
-    street,
-    number,
-    complement,
-    neighborhood,
-    state,
-    city,
-    latitude,
-    longitude,
     message,
     updatedBy,
-  }: UpdateEventUseCaseRequest): Promise<Event> {
-    const event = await this.findEventByIdUseCase.execute(id, {
-      throwIfFound: true,
-    })
+  }: UpdateEventUseCaseRequest): Promise<UpdateEventUseCaseResponse> {
+    const event = await this.eventsRepository.findById(id)
+
+    if (!event) {
+      return failure(
+        new ResourceNotFoundError({
+          errorKey: 'event.find.notFound',
+          key: String(id),
+        }),
+      )
+    }
 
     if (event.title !== title) {
-      await this.findEventByTitleUseCase.execute(title, {
-        throwIfFound: true,
-      })
+      const eventAlreadyExistsWithTitle =
+        await this.eventsRepository.findByTitle(title)
+
+      if (eventAlreadyExistsWithTitle) {
+        return failure(
+          new ResourceAlreadyExistsError({
+            errorKey: 'event.create.keyAlreadyExists',
+            key: title,
+          }),
+        )
+      }
 
       const { value: slug } = Slug.createFromText(title)
 
-      if (event.slug !== slug) {
-        await this.findEventBySlugUseCase.execute(slug, {
-          throwIfFound: true,
-        })
+      const eventAlreadyExistsWithSlug =
+        await this.eventsRepository.findBySlug(slug)
+
+      if (eventAlreadyExistsWithSlug) {
+        return failure(
+          new ResourceAlreadyExistsError({
+            errorKey: 'event.create.keyAlreadyExists',
+            key: slug,
+          }),
+        )
       }
 
       event.title = title
@@ -120,25 +116,18 @@ export class UpdateEventUseCase {
     }
 
     event.description = description
-    event.value = value
     event.initialDate = initialDate
     event.finalDate = finalDate
     event.status = status
     event.visible = visible
     event.eventType = eventType
-    event.street = street
-    event.number = number
-    event.complement = complement
-    event.neighborhood = neighborhood
-    event.state = state
-    event.city = city
-    event.latitude = latitude
-    event.longitude = longitude
     event.message = message
     event.updatedBy = updatedBy
 
     await this.eventsRepository.update(event)
 
-    return event
+    return success({
+      event,
+    })
   }
 }

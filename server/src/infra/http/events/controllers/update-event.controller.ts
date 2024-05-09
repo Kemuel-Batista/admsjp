@@ -1,3 +1,4 @@
+/*
 import {
   Body,
   Controller,
@@ -123,7 +124,6 @@ export class UpdateEventController {
       id: eventId,
       title,
       description,
-      value,
       initialDate,
       finalDate,
       status,
@@ -133,18 +133,20 @@ export class UpdateEventController {
       fileName: file === undefined ? undefined : file.originalname,
       fileType: file === undefined ? undefined : file.mimetype,
       body: file === undefined ? undefined : file.buffer,
-      street,
-      number,
-      complement,
-      neighborhood,
-      state,
-      city,
-      latitude: latitude === undefined ? undefined : new Decimal(latitude),
-      longitude: longitude === undefined ? undefined : new Decimal(longitude),
       message,
       updatedBy: user.sub.id,
     })
 
     return event
   }
+}
+*/
+
+import { Controller } from '@nestjs/common'
+
+import { UpdateEventUseCase } from '@/domain/admsjp/use-cases/events/update/default/update-event'
+
+@Controller('/:eventId')
+export class UpdateEventController {
+  constructor(private updateEvent: UpdateEventUseCase) {}
 }

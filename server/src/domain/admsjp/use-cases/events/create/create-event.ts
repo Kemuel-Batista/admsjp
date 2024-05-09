@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { Event } from '@prisma/client'
 
-import HttpStatusCode from '@/core/enums/http-status-code'
-import { AppError } from '@/core/errors/AppError'
-import { i18n } from '@/core/i18n/i18n'
+import { Either, failure, success } from '@/core/either'
+import { InvalidAttachmentTypeError } from '@/core/errors/errors/invalid-attachment-type-error'
+import { ResourceAlreadyExistsError } from '@/core/errors/errors/resource-already-exists-error'
 import { Slug } from '@/core/util/slug/slug'
 import { CreateEventDTO } from '@/domain/admsjp/dtos/event'
 import {
@@ -16,8 +16,6 @@ import { Uploader } from '@/domain/admsjp/storage/uploader'
 
 import { CreateEventAddressUseCase } from '../../event-address/create/create-event-address'
 import { CreateEventLotUseCase } from '../../event-lot/create/create-event-lot'
-import { FindEventBySlugUseCase } from '../find/by-slug/find-event-by-slug'
-import { FindEventByTitleUseCase } from '../find/by-title/find-event-by-title'
 
 interface CreateEventUseCaseRequest extends CreateEventDTO {
   fileName: string
@@ -25,12 +23,17 @@ interface CreateEventUseCaseRequest extends CreateEventDTO {
   body: Buffer
 }
 
+type CreateEventUseCaseResponse = Either<
+  InvalidAttachmentTypeError | ResourceAlreadyExistsError,
+  {
+    event: Event
+  }
+>
+
 @Injectable()
 export class CreateEventUseCase {
   constructor(
     private eventsRepository: EventsRepository,
-    private findEventByTitleUseCase: FindEventByTitleUseCase,
-    private findEventBySlugUseCase: FindEventBySlugUseCase,
     private createEventLotUseCase: CreateEventLotUseCase,
     private createEventAddressUseCase: CreateEventAddressUseCase,
     private uploader: Uploader,
@@ -52,30 +55,45 @@ export class CreateEventUseCase {
     address,
     message,
     createdBy,
-  }: CreateEventUseCaseRequest): Promise<Event> {
-    const errorInvalidAttachmentType = 'event.create.invalidAttachmentType'
-    const errorCodeFound = HttpStatusCode.BAD_REQUEST
-
+  }: CreateEventUseCaseRequest): Promise<CreateEventUseCaseResponse> {
     if (
       !/^(image\/(jpeg|png|webp))$|^application\/pdf$|^video\/mp4$/.test(
         fileType,
       )
     ) {
-      throw new AppError(
-        i18n.t(errorInvalidAttachmentType, { type: fileType }),
-        errorCodeFound,
+      return failure(
+        new InvalidAttachmentTypeError({
+          errorKey: 'event.create.invalidAttachmentType',
+          key: fileType,
+        }),
       )
     }
 
-    await this.findEventByTitleUseCase.execute(title, {
-      throwIfFound: true,
-    })
+    const eventAlreadyExistsWithTitle =
+      await this.eventsRepository.findByTitle(title)
+
+    if (eventAlreadyExistsWithTitle) {
+      return failure(
+        new ResourceAlreadyExistsError({
+          errorKey: 'event.create.keyAlreadyExists',
+          key: title,
+        }),
+      )
+    }
 
     const { value: slug } = Slug.createFromText(title)
 
-    await this.findEventBySlugUseCase.execute(slug, {
-      throwIfFound: true,
-    })
+    const eventAlreadyExistsWithSlug =
+      await this.eventsRepository.findBySlug(slug)
+
+    if (eventAlreadyExistsWithSlug) {
+      return failure(
+        new ResourceAlreadyExistsError({
+          errorKey: 'event.create.keyAlreadyExists',
+          key: slug,
+        }),
+      )
+    }
 
     const event = await this.eventsRepository.create({
       title,
@@ -97,14 +115,16 @@ export class CreateEventUseCase {
     for (const lot of lots) {
       await this.createEventLotUseCase.execute({
         ...lot,
+        createdBy,
         eventId: event.id,
       })
     }
 
     if (eventType !== EventType.REMOTO) {
       await this.createEventAddressUseCase.execute({
-        eventId: event.id,
         ...address,
+        createdBy,
+        eventId: event.id,
       })
     }
 
@@ -118,6 +138,8 @@ export class CreateEventUseCase {
 
     await this.eventsRepository.update(event)
 
-    return event
+    return success({
+      event,
+    })
   }
 }

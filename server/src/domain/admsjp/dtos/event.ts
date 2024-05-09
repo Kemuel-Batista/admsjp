@@ -15,8 +15,8 @@ export interface CreateEventDTO {
   eventType: Event['eventType']
   imagePath: Event['imagePath']
   message?: Event['message']
-  lots: CreateEventLotDTO[]
-  address: CreateEventAddressDTO
+  lots?: CreateEventLotDTO[]
+  address?: CreateEventAddressDTO
   createdBy: Event['createdBy']
 }
 

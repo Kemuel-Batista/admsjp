@@ -66,7 +66,7 @@ CREATE TABLE "profiles_permissions" (
 );
 
 -- CreateTable
-CREATE TABLE "Department" (
+CREATE TABLE "departments" (
     "id" SERIAL NOT NULL,
     "uuid" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -80,7 +80,7 @@ CREATE TABLE "Department" (
     "deleted_at" TIMESTAMP(3),
     "deleted_by" INTEGER,
 
-    CONSTRAINT "Department_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "departments_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -108,16 +108,16 @@ CREATE UNIQUE INDEX "profiles_permissions_uuid_key" ON "profiles_permissions"("u
 CREATE UNIQUE INDEX "profiles_permissions_key_profile_id_key" ON "profiles_permissions"("key", "profile_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Department_uuid_key" ON "Department"("uuid");
+CREATE UNIQUE INDEX "departments_uuid_key" ON "departments"("uuid");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Department_name_key" ON "Department"("name");
+CREATE UNIQUE INDEX "departments_name_key" ON "departments"("name");
 
 -- AddForeignKey
 ALTER TABLE "users" ADD CONSTRAINT "users_profile_id_fkey" FOREIGN KEY ("profile_id") REFERENCES "profiles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "users" ADD CONSTRAINT "users_department_id_fkey" FOREIGN KEY ("department_id") REFERENCES "Department"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "users" ADD CONSTRAINT "users_department_id_fkey" FOREIGN KEY ("department_id") REFERENCES "departments"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "users_tokens" ADD CONSTRAINT "users_tokens_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

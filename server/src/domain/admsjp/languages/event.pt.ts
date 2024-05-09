@@ -1,11 +1,11 @@
 const pt = {
   event: {
     create: {
-      invalidAttachmentType: 'Formato {{type}} inválido.',
-      keyAlreadyExists: 'Event {{title}} já existe no sistema',
+      invalidAttachmentType: 'Formato {{key}} inválido.',
+      keyAlreadyExists: 'Event {{key}} já existe no sistema',
     },
     find: {
-      notFound: 'Não foi possível localizar o event {{event}}',
+      notFound: 'Não foi possível localizar o event {{key}}',
       invalidStatus:
         'Status inválido, esperado {{expectedStatus}} recebido {{receivedStatus}}',
       disable: 'Event está desativado',

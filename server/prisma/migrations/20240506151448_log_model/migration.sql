@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "Log" (
+CREATE TABLE "logs" (
     "id" SERIAL NOT NULL,
     "uuid" TEXT NOT NULL,
     "process" TEXT NOT NULL,
@@ -12,11 +12,11 @@ CREATE TABLE "Log" (
     "jsonRequest" TEXT,
     "jsonResponse" TEXT,
 
-    CONSTRAINT "Log_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "logs_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Log_uuid_key" ON "Log"("uuid");
+CREATE UNIQUE INDEX "logs_uuid_key" ON "logs"("uuid");
 
 -- AddForeignKey
-ALTER TABLE "Log" ADD CONSTRAINT "Log_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "logs" ADD CONSTRAINT "logs_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

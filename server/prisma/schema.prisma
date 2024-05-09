@@ -107,6 +107,8 @@ model Department {
 
   users  User[]
   events Event[]
+
+  @@map("departments")
 }
 
 model Event {
@@ -164,10 +166,8 @@ model EventAddress {
 }
 
 model EventLot {
-  id       Int    @id @default(autoincrement())
-  uuid     String @unique @default(uuid())
-  eventId  Int    @map("event_id")
-  event    Event  @relation(fields: [eventId], references: [id])
+  eventId  Int   @map("event_id")
+  event    Event @relation(fields: [eventId], references: [id])
   lot      Int
   quantity Int
   value    Int
@@ -182,6 +182,7 @@ model EventLot {
 
   EventTickets EventTickets[]
 
+  @@id([eventId, lot])
   @@map("events_lots")
 }
 
@@ -190,8 +191,8 @@ model EventTickets {
   uuid     String   @unique @default(uuid())
   eventId  Int      @map("event_id")
   event    Event    @relation(fields: [eventId], references: [id])
-  lotId    Int      @map("lot_id")
-  eventLot EventLot @relation(fields: [lotId], references: [id])
+  lot      Int
+  eventLot EventLot @relation(fields: [eventId, lot], references: [eventId, lot])
   userId   Int      @map("user_id")
   user     User     @relation(fields: [userId], references: [id])
   ticket   String
@@ -239,4 +240,6 @@ model Log {
   note         String?
   jsonRequest  String?  @db.Text
   jsonResponse String?  @db.Text
+
+  @@map("logs")
 }

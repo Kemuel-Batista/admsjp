@@ -95,11 +95,11 @@ async function execute(enviroment: string): Promise<void> {
     })
 
     console.log()
-    console.log('TODOS OS DADOS SERÃO EXCLUÍDOS EM 10 SEGUNDOS.')
+    console.log('TODOS OS DADOS SERÃO EXCLUÍDOS EM 3 SEGUNDOS.')
     console.log('Pressione Ctrl + C para cancelar a execução.')
     console.log()
 
-    for (let i = 10; i > 0; i--) {
+    for (let i = 3; i > 0; i--) {
       console.log(`Iniciando exclusão do banco de dados em ${i}`)
       await new Promise((resolve) => setTimeout(resolve, 1000))
     }

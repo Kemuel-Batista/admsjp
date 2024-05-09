@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common'
 
+import { CreateEventAddressUseCase } from '@/domain/admsjp/use-cases/event-address/create/create-event-address'
+import { CreateEventLotUseCase } from '@/domain/admsjp/use-cases/event-lot/create/create-event-lot'
 import { CreateEventUseCase } from '@/domain/admsjp/use-cases/events/create/create-event'
-import { FindEventByIdUseCase } from '@/domain/admsjp/use-cases/events/find/by-id/find-event-by-id'
-import { FindEventBySlugUseCase } from '@/domain/admsjp/use-cases/events/find/by-slug/find-event-by-slug'
-import { FindEventByTitleUseCase } from '@/domain/admsjp/use-cases/events/find/by-title/find-event-by-title'
 import { ListEventsUseCase } from '@/domain/admsjp/use-cases/events/list/default/list-events'
 import { ListPublicEventsUseCase } from '@/domain/admsjp/use-cases/events/list/public/list-public-events'
 import { UpdateEventUseCase } from '@/domain/admsjp/use-cases/events/update/default/update-event'
@@ -25,9 +24,8 @@ import { UpdateEventController } from './controllers/update-event.controller'
   ],
   providers: [
     CreateEventUseCase,
-    FindEventByIdUseCase,
-    FindEventBySlugUseCase,
-    FindEventByTitleUseCase,
+    CreateEventLotUseCase,
+    CreateEventAddressUseCase,
     ListEventsUseCase,
     ListPublicEventsUseCase,
     UpdateEventUseCase,

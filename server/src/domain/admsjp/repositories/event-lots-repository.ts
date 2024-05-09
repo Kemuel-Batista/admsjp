@@ -12,6 +12,10 @@ export abstract class EventLotsRepository {
     searchParams?: ISearchParamDTO[],
   ): Promise<ListEventLotsDTO>
 
-  abstract findById(id: EventLot['id']): Promise<EventLot | null>
+  abstract findByEventIdAndLot(
+    eventId: EventLot['eventId'],
+    lot: EventLot['lot'],
+  ): Promise<EventLot | null>
+
   abstract findMaxLotByEventId(eventId: EventLot['eventId']): Promise<number>
 }

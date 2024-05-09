@@ -1,7 +1,4 @@
-import { randomUUID } from 'node:crypto'
-
 import { EventLot } from '@prisma/client'
-import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
 import {
   CreateEventLotDTO,
@@ -13,11 +10,7 @@ export class InMemoryEventLotsRepository implements EventLotsRepository {
   public items: EventLot[] = []
 
   async create(data: CreateEventLotDTO): Promise<EventLot> {
-    const id = getLastInsertedId(this.items)
-
     const eventLot = {
-      id,
-      uuid: randomUUID(),
       eventId: data.eventId,
       quantity: data.quantity,
       lot: data.lot,
@@ -46,8 +39,10 @@ export class InMemoryEventLotsRepository implements EventLotsRepository {
     return { eventLots, count }
   }
 
-  async findById(id: number): Promise<EventLot> {
-    const eventLot = this.items.find((item) => item.id === id)
+  async findByEventIdAndLot(eventId: number, lot: number): Promise<EventLot> {
+    const eventLot = this.items.find(
+      (item) => item.eventId === eventId && item.lot === lot,
+    )
 
     if (!eventLot) {
       return null
