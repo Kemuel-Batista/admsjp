@@ -10,7 +10,7 @@ import { UserFactory } from 'test/factories/make-user'
 import { AppModule } from '@/infra/app.module'
 import { DatabaseModule } from '@/infra/database/database.module'
 
-describe('Get event by slug (E2E)', () => {
+describe('Get event by id (E2E)', () => {
   let app: INestApplication
   let jwt: JwtService
   let profileFactory: ProfileFactory
@@ -35,7 +35,7 @@ describe('Get event by slug (E2E)', () => {
     await app.init()
   })
 
-  test('[GET] /events/:slug', async () => {
+  test('[GET] /events/:id', async () => {
     const profile = await profileFactory.makePrismaProfile()
     const department = await departmentFactory.makePrismaDepartment()
 
@@ -53,7 +53,7 @@ describe('Get event by slug (E2E)', () => {
     })
 
     const response = await request(app.getHttpServer())
-      .get(`/events/slug/${event.slug}`)
+      .get(`/events/${event.id}`)
       .set('Authorization', `Bearer ${accessToken}`)
       .send()
 
