@@ -17,7 +17,6 @@ export function makeProfilePermission(
     profileId: faker.number.int({ max: 10 }),
     key: faker.hacker.abbreviation(),
     createdBy: 1,
-    updatedBy: 1,
     ...override,
   }
 }

@@ -28,7 +28,6 @@ export function makeEvent(override: Partial<EventProps> = {}): EventProps {
     eventType: EventType.REMOTO,
     imagePath: faker.image.url(),
     createdBy: 1,
-    updatedBy: 1,
     ...override,
   }
 }

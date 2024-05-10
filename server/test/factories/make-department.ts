@@ -19,7 +19,6 @@ export function makeDepartment(
     status: DepartmentStatus.ACTIVE,
     visible: DepartmentVisible.VISIBLE,
     createdBy: 1,
-    updatedBy: 1,
     ...override,
   }
 }

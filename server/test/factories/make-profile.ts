@@ -15,7 +15,6 @@ export function makeProfile(
     status: ProfileStatus.ACTIVE,
     visible: ProfileVisible.VISIBLE,
     createdBy: 1,
-    updatedBy: 1,
     ...override,
   }
 }

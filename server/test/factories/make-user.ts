@@ -19,7 +19,6 @@ export function makeUser(override: Partial<UserProps> = {}): UserProps {
     password: faker.internet.password(),
     departmentId: 1,
     createdBy: 1,
-    updatedBy: 1,
     ...override,
   }
 }
