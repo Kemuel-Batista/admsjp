@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   Get,
   HttpStatus,
@@ -45,12 +46,18 @@ export class ListEventsController {
       allRecords: parsedAllRecords,
     }
 
-    const { events, count } = await this.listEventsUseCase.execute(
+    const result = await this.listEventsUseCase.execute({
+      profileId: user.sub.profileId,
+      departmentId: user.sub.departmentId,
       options,
-      parsedSearch,
-      user.sub.profileId,
-      user.sub.departmentId,
-    )
+      searchParams: parsedSearch,
+    })
+
+    if (result.isError()) {
+      throw new BadRequestException('Error fetching list of events')
+    }
+
+    const { events, count } = result.value
 
     response.setHeader('X-Total-Count', count)
 

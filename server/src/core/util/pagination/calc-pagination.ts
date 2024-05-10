@@ -10,7 +10,7 @@ export function calcPagination(
 ): ICalcPaginationReturn {
   let { page = 1, pageSize = 30, allRecords = false } = options
 
-  if (allRecords !== null) {
+  if (allRecords) {
     return { skip: undefined, take: undefined }
   }
 
