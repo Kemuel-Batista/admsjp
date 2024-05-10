@@ -107,8 +107,6 @@ export class CreateEventUseCase {
       departmentId,
       imagePath: '', // Inicialmente vazia, após cadastro fazer upload
       message,
-      lots,
-      address,
       createdBy,
     })
 

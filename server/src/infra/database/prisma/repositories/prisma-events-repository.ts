@@ -1,15 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { Event } from '@prisma/client'
+import { Event, Prisma } from '@prisma/client'
 
 import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { IListOptions } from '@/core/repositories/list-options'
 import { buildSearchFilter } from '@/core/util/filtering/build-search-filter'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
-import {
-  CreateEventDTO,
-  ListEventDTO,
-  UpdateEventDTO,
-} from '@/domain/admsjp/dtos/event'
+import { ListEventDTO } from '@/domain/admsjp/dtos/event'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 
@@ -29,7 +25,7 @@ export class PrismaEventsRepository implements EventsRepository {
     imagePath,
     message,
     createdBy,
-  }: CreateEventDTO): Promise<Event> {
+  }: Prisma.EventUncheckedCreateInput): Promise<Event> {
     const event = await this.prisma.event.create({
       data: {
         title,
@@ -64,7 +60,7 @@ export class PrismaEventsRepository implements EventsRepository {
     imagePath,
     message,
     updatedBy,
-  }: UpdateEventDTO): Promise<Event> {
+  }: Event): Promise<Event> {
     const event = await this.prisma.event.update({
       where: {
         id,

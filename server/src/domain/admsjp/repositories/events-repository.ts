@@ -1,13 +1,13 @@
-import { Event } from '@prisma/client'
+import { Event, Prisma } from '@prisma/client'
 
 import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { IListOptions } from '@/core/repositories/list-options'
 
-import { CreateEventDTO, ListEventDTO, UpdateEventDTO } from '../dtos/event'
+import { ListEventDTO } from '../dtos/event'
 
 export abstract class EventsRepository {
-  abstract create(data: CreateEventDTO): Promise<Event>
-  abstract update(data: UpdateEventDTO): Promise<Event>
+  abstract create(data: Prisma.EventUncheckedCreateInput): Promise<Event>
+  abstract update(data: Event): Promise<Event>
   abstract list(
     options?: IListOptions,
     searchParams?: ISearchParamDTO[],

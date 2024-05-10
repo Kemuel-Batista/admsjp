@@ -1,17 +1,13 @@
-import { EventLot } from '@prisma/client'
+import { EventLot, Prisma } from '@prisma/client'
 
 import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { IListOptions } from '@/core/repositories/list-options'
 
-import {
-  CreateEventLotDTO,
-  ListEventLotsDTO,
-  UpdateEventLotDTO,
-} from '../dtos/event-lot'
+import { ListEventLotsDTO } from '../dtos/event-lot'
 
 export abstract class EventLotsRepository {
-  abstract create(data: CreateEventLotDTO): Promise<EventLot>
-  abstract update(data: UpdateEventLotDTO): Promise<EventLot>
+  abstract create(data: Prisma.EventLotUncheckedCreateInput): Promise<EventLot>
+  abstract update(data: EventLot): Promise<EventLot>
   abstract list(
     options?: IListOptions,
     searchParams?: ISearchParamDTO[],

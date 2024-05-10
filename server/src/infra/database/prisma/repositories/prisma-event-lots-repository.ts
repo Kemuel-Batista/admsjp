@@ -1,15 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { EventLot } from '@prisma/client'
+import { EventLot, Prisma } from '@prisma/client'
 
 import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { IListOptions } from '@/core/repositories/list-options'
 import { buildSearchFilter } from '@/core/util/filtering/build-search-filter'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
-import {
-  CreateEventLotDTO,
-  ListEventLotsDTO,
-  UpdateEventLotDTO,
-} from '@/domain/admsjp/dtos/event-lot'
+import { ListEventLotsDTO } from '@/domain/admsjp/dtos/event-lot'
 import { EventLotsRepository } from '@/domain/admsjp/repositories/event-lots-repository'
 
 import { PrismaService } from '../prisma.service'
@@ -25,7 +21,7 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
     value,
     status,
     createdBy,
-  }: CreateEventLotDTO): Promise<EventLot> {
+  }: Prisma.EventLotUncheckedCreateInput): Promise<EventLot> {
     const eventLot = await this.prisma.eventLot.create({
       data: {
         eventId,
@@ -45,7 +41,7 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
     lot,
     quantity,
     updatedBy,
-  }: UpdateEventLotDTO): Promise<EventLot> {
+  }: EventLot): Promise<EventLot> {
     const event = await this.prisma.eventLot.update({
       where: {
         eventId_lot: {

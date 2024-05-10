@@ -1,19 +1,16 @@
 import { randomUUID } from 'node:crypto'
 
 import { Event } from '@prisma/client'
+import { EventProps } from 'test/factories/make-event'
 import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
-import {
-  CreateEventDTO,
-  ListEventDTO,
-  UpdateEventDTO,
-} from '@/domain/admsjp/dtos/event'
+import { ListEventDTO } from '@/domain/admsjp/dtos/event'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 
 export class InMemoryEventsRepository implements EventsRepository {
   public items: Event[] = []
 
-  async create(data: CreateEventDTO): Promise<Event> {
+  async create(data: EventProps): Promise<Event> {
     const id = getLastInsertedId(this.items)
 
     const event = {
@@ -43,7 +40,7 @@ export class InMemoryEventsRepository implements EventsRepository {
     return event
   }
 
-  async update(data: UpdateEventDTO): Promise<Event> {
+  async update(data: Event): Promise<Event> {
     const itemIndex = this.items.findIndex((item) => item.id === data.id)
 
     const event = this.items[itemIndex]

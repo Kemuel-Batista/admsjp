@@ -5,7 +5,9 @@ import { Prisma, User } from '@prisma/client'
 import { UserStatus } from '@/domain/admsjp/enums/user'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 
-interface UserProps extends Prisma.UserUncheckedCreateInput {}
+interface UserProps extends Omit<Prisma.UserUncheckedCreateInput, 'profileId'> {
+  profileId: number
+}
 
 export function makeUser(override: Partial<UserProps> = {}): UserProps {
   return {

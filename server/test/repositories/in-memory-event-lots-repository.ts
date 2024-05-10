@@ -1,16 +1,12 @@
-import { EventLot } from '@prisma/client'
+import { EventLot, Prisma } from '@prisma/client'
 
-import {
-  CreateEventLotDTO,
-  ListEventLotsDTO,
-  UpdateEventLotDTO,
-} from '@/domain/admsjp/dtos/event-lot'
+import { ListEventLotsDTO } from '@/domain/admsjp/dtos/event-lot'
 import { EventLotsRepository } from '@/domain/admsjp/repositories/event-lots-repository'
 
 export class InMemoryEventLotsRepository implements EventLotsRepository {
   public items: EventLot[] = []
 
-  async create(data: CreateEventLotDTO): Promise<EventLot> {
+  async create(data: Prisma.EventLotUncheckedCreateInput): Promise<EventLot> {
     const eventLot = {
       eventId: data.eventId,
       quantity: data.quantity,
@@ -30,7 +26,7 @@ export class InMemoryEventLotsRepository implements EventLotsRepository {
     return eventLot
   }
 
-  async update(data: UpdateEventLotDTO): Promise<EventLot> {
+  async update(data: EventLot): Promise<EventLot> {
     const itemIndex = this.items.findIndex(
       (item) => item.eventId === data.eventId && item.lot === data.lot,
     )

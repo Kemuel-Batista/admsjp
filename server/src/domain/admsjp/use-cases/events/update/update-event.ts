@@ -6,17 +6,23 @@ import { InvalidAttachmentTypeError } from '@/core/errors/errors/invalid-attachm
 import { ResourceAlreadyExistsError } from '@/core/errors/errors/resource-already-exists-error'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 import { Slug } from '@/core/util/slug/slug'
-import { UpdateEventDTO } from '@/domain/admsjp/dtos/event'
-import { EventType } from '@/domain/admsjp/enums/event'
-import { EventAddressesRepository } from '@/domain/admsjp/repositories/event-addresses-repository'
-import { EventLotsRepository } from '@/domain/admsjp/repositories/event-lots-repository'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 import { Uploader } from '@/domain/admsjp/storage/uploader'
 
-interface UpdateEventUseCaseRequest extends UpdateEventDTO {
+interface UpdateEventUseCaseRequest {
+  id: Event['id']
+  title?: Event['title']
+  description?: Event['description']
+  initialDate?: Event['initialDate']
+  finalDate?: Event['finalDate']
+  status?: Event['status']
+  visible?: Event['visible']
+  eventType?: Event['eventType']
+  message?: Event['message']
   fileName?: string
   fileType?: string
   body?: Buffer
+  updatedBy: Event['updatedBy']
 }
 
 type UpdateEventUseCaseResponse = Either<
@@ -32,8 +38,6 @@ type UpdateEventUseCaseResponse = Either<
 export class UpdateEventUseCase {
   constructor(
     private eventsRepository: EventsRepository,
-    private eventAddressesRepository: EventAddressesRepository,
-    private eventLotsRepository: EventLotsRepository,
     private uploader: Uploader,
   ) {}
 
@@ -50,8 +54,6 @@ export class UpdateEventUseCase {
     fileType,
     body,
     message,
-    lots,
-    address,
     updatedBy,
   }: UpdateEventUseCaseRequest): Promise<UpdateEventUseCaseResponse> {
     const event = await this.eventsRepository.findById(id)
@@ -110,13 +112,13 @@ export class UpdateEventUseCase {
         )
       }
 
+      await this.uploader.delete(event.imagePath)
+
       const { url } = await this.uploader.upload({
         fileName,
         fileType,
         body,
       })
-
-      await this.uploader.delete(event.imagePath)
 
       event.imagePath = url
     }
@@ -131,50 +133,6 @@ export class UpdateEventUseCase {
     event.updatedBy = updatedBy
 
     await this.eventsRepository.update(event)
-
-    if (eventType !== EventType.REMOTO) {
-      const eventAddress = await this.eventAddressesRepository.findByEventId(
-        event.id,
-      )
-
-      if (!eventAddress) {
-        await this.eventAddressesRepository.create({
-          ...address,
-          createdBy: updatedBy,
-          eventId: event.id,
-        })
-      } else {
-        eventAddress.street = address.street
-        eventAddress.neighborhood = address.neighborhood
-        eventAddress.number = address.number
-        eventAddress.city = address.city
-        eventAddress.state = address.state
-        eventAddress.latitude = address.latitude
-        eventAddress.longitude = address.longitude
-        eventAddress.updatedBy = updatedBy
-
-        await this.eventAddressesRepository.update(eventAddress)
-      }
-    }
-
-    for (const lot of lots) {
-      const eventLot = await this.eventLotsRepository.findByEventIdAndLot(
-        lot.eventId,
-        lot.lot,
-      )
-
-      if (eventLot) {
-        eventLot.quantity = lot.quantity
-        eventLot.updatedBy = updatedBy
-
-        await this.eventLotsRepository.update(eventLot)
-      } else {
-        await this.eventLotsRepository.create({
-          ...lot,
-          createdBy: updatedBy,
-        })
-      }
-    }
 
     return success({
       event,

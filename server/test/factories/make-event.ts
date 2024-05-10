@@ -9,7 +9,11 @@ import {
 } from '@/domain/admsjp/enums/event'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 
-interface EventProps extends Prisma.EventUncheckedCreateInput {}
+export interface EventProps
+  extends Omit<Prisma.EventUncheckedCreateInput, 'initialDate' | 'finalDate'> {
+  initialDate: Date
+  finalDate: Date
+}
 
 export function makeEvent(override: Partial<EventProps> = {}): EventProps {
   return {

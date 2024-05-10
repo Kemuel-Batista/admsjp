@@ -1,4 +1,3 @@
-/*
 import {
   Body,
   Controller,
@@ -14,11 +13,10 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { Decimal } from '@prisma/client/runtime/library'
 import { z } from 'zod'
 
 import { UserProfile } from '@/domain/admsjp/enums/user'
-import { UpdateEventUseCase } from '@/domain/admsjp/use-cases/events/update/default/update-event'
+import { UpdateEventUseCase } from '@/domain/admsjp/use-cases/events/update/update-event'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
 import { ProfileGuard } from '@/infra/auth/profile.guard'
@@ -28,7 +26,6 @@ import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 const updateEventSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
-  value: z.coerce.number().optional(),
   initialDate: z
     .string()
     .optional()
@@ -40,25 +37,6 @@ const updateEventSchema = z.object({
   status: z.coerce.number().int().min(0).max(1).optional(),
   visible: z.coerce.number().int().min(0).max(1).optional(),
   eventType: z.coerce.number().min(0).max(20).optional(),
-  departmentId: z.coerce.number().positive().min(1).optional(),
-  street: z.string().optional(),
-  number: z.string().optional(),
-  complement: z.string().optional(),
-  neighborhood: z.string().optional(),
-  state: z.coerce.number().positive().min(1).optional(),
-  city: z.coerce.number().positive().min(1).optional(),
-  latitude: z.coerce
-    .number()
-    .refine((value) => {
-      return Math.abs(value) <= 90
-    })
-    .optional(),
-  longitude: z.coerce
-    .number()
-    .refine((value) => {
-      return Math.abs(value) <= 180
-    })
-    .optional(),
   message: z.string().optional(),
 })
 
@@ -102,21 +80,11 @@ export class UpdateEventController {
     const {
       title,
       description,
-      value,
       initialDate,
       finalDate,
       status,
       visible,
       eventType,
-      departmentId,
-      street,
-      number,
-      complement,
-      neighborhood,
-      state,
-      city,
-      latitude,
-      longitude,
       message,
     } = body
 
@@ -129,7 +97,6 @@ export class UpdateEventController {
       status,
       visible,
       eventType,
-      departmentId,
       fileName: file === undefined ? undefined : file.originalname,
       fileType: file === undefined ? undefined : file.mimetype,
       body: file === undefined ? undefined : file.buffer,
@@ -139,14 +106,4 @@ export class UpdateEventController {
 
     return event
   }
-}
-*/
-
-import { Controller } from '@nestjs/common'
-
-import { UpdateEventUseCase } from '@/domain/admsjp/use-cases/events/update/update-event'
-
-@Controller('/:eventId')
-export class UpdateEventController {
-  constructor(private updateEvent: UpdateEventUseCase) {}
 }
