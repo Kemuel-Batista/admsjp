@@ -1,4 +1,12 @@
-import { Controller, Get, HttpStatus, Query, Req, Res } from '@nestjs/common'
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  HttpStatus,
+  Query,
+  Req,
+  Res,
+} from '@nestjs/common'
 import { type Request, type Response } from 'express'
 
 import {
@@ -31,10 +39,16 @@ export class ListPublicEventsController {
       allRecords: parsedAllRecords,
     }
 
-    const { events, count } = await this.listPublicEventsUseCase.execute(
+    const result = await this.listPublicEventsUseCase.execute({
       options,
-      parsedSearch,
-    )
+      searchParams: parsedSearch,
+    })
+
+    if (result.isError()) {
+      throw new BadRequestException('Error fetching list of public events')
+    }
+
+    const { events, count } = result.value
 
     response.setHeader('X-Total-Count', count)
 

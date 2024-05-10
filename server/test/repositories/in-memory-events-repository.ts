@@ -85,7 +85,6 @@ export class InMemoryEventsRepository implements EventsRepository {
     }
 
     const { skip, take } = calcPagination(options)
-    console.log(skip, take)
     const paginatedEvents = filteredEvents.slice(skip, skip + take)
 
     const count = filteredEvents.length
