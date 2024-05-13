@@ -59,7 +59,7 @@ describe('Get event by id (E2E)', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.body).toEqual({
-      question: expect.objectContaining({
+      event: expect.objectContaining({
         title: event.title,
         description: event.description,
       }),

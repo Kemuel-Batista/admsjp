@@ -19,7 +19,7 @@ export class GetEventBySlugController {
     }
 
     return {
-      question: result.value.event,
+      event: result.value.event,
     }
   }
 }

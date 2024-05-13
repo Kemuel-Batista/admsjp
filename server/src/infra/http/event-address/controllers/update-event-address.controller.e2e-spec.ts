@@ -69,7 +69,7 @@ describe('Update Event Address (E2E)', () => {
     })
 
     const response = await request(app.getHttpServer())
-      .get(`/events/address/${eventAddress.id}`)
+      .put(`/events/address/${eventAddress.id}`)
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
         street: 'Rua do teste',
