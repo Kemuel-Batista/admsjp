@@ -1,17 +1,16 @@
-import { EventAddress } from '@prisma/client'
+import { EventAddress, Prisma } from '@prisma/client'
 
 import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { IListOptions } from '@/core/repositories/list-options'
 
-import {
-  CreateEventAddressDTO,
-  ListEventAddressesDTO,
-  UpdateEventAddressDTO,
-} from '../dtos/event-address'
+import { ListEventAddressesDTO } from '../dtos/event-address'
 
 export abstract class EventAddressesRepository {
-  abstract create(data: CreateEventAddressDTO): Promise<EventAddress>
-  abstract update(data: UpdateEventAddressDTO): Promise<EventAddress>
+  abstract create(
+    data: Prisma.EventAddressUncheckedCreateInput,
+  ): Promise<EventAddress>
+
+  abstract update(data: EventAddress): Promise<EventAddress>
   abstract list(
     options?: IListOptions,
     searchParams?: ISearchParamDTO[],

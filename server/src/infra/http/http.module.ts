@@ -11,6 +11,7 @@ import { UserHttpModule } from '@/infra/http/user/user-http.module'
 
 import { DatabaseModule } from '../database/database.module'
 import { DepartmentsHttpModule } from './departments/departments-http.module'
+import { EventAddressHttpModule } from './event-address/event-address-http.module'
 
 @Module({
   imports: [
@@ -38,7 +39,19 @@ import { DepartmentsHttpModule } from './departments/departments-http.module'
       { path: 'departments', module: DepartmentsHttpModule },
     ]),
     EventHttpModule,
-    RouterModule.register([{ path: 'events', module: EventHttpModule }]),
+    EventAddressHttpModule,
+    RouterModule.register([
+      {
+        path: 'events',
+        module: EventHttpModule,
+        children: [
+          {
+            path: 'address',
+            module: EventAddressHttpModule,
+          },
+        ],
+      },
+    ]),
   ],
   controllers: [GetUserPermissionController],
   providers: [GetUserPermissionsUseCase],

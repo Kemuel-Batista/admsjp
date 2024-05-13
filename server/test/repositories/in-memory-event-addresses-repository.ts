@@ -1,13 +1,10 @@
 import { randomUUID } from 'node:crypto'
 
-import { EventAddress } from '@prisma/client'
+import { EventAddress, Prisma } from '@prisma/client'
+import { Decimal } from '@prisma/client/runtime/library'
 import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
-import {
-  CreateEventAddressDTO,
-  ListEventAddressesDTO,
-  UpdateEventAddressDTO,
-} from '@/domain/admsjp/dtos/event-address'
+import { ListEventAddressesDTO } from '@/domain/admsjp/dtos/event-address'
 import { EventAddressesRepository } from '@/domain/admsjp/repositories/event-addresses-repository'
 
 export class InMemoryEventAddressesRepository
@@ -15,7 +12,9 @@ export class InMemoryEventAddressesRepository
 {
   public items: EventAddress[] = []
 
-  async create(data: CreateEventAddressDTO): Promise<EventAddress> {
+  async create(
+    data: Prisma.EventAddressUncheckedCreateInput,
+  ): Promise<EventAddress> {
     const id = getLastInsertedId(this.items)
 
     const eventLot = {
@@ -26,8 +25,8 @@ export class InMemoryEventAddressesRepository
       number: data.number,
       complement: data.complement,
       neighborhood: data.neighborhood,
-      latitude: data.latitude,
-      longitude: data.longitude,
+      latitude: new Decimal(data.latitude.toString()),
+      longitude: new Decimal(data.longitude.toString()),
       state: data.state,
       city: data.city,
       createdAt: new Date(),
@@ -43,7 +42,7 @@ export class InMemoryEventAddressesRepository
     return eventLot
   }
 
-  async update(data: UpdateEventAddressDTO): Promise<EventAddress> {
+  async update(data: EventAddress): Promise<EventAddress> {
     const itemIndex = this.items.findIndex((item) => item.id === data.id)
 
     const event = this.items[itemIndex]

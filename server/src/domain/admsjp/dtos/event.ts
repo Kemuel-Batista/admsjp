@@ -1,6 +1,6 @@
 import { Event } from '@prisma/client'
 
-import { CreateEventAddressDTO } from './event-address'
+import { CreateEventAddressUseCaseRequest } from '../use-cases/event-address/create/create-event-address'
 import { CreateEventLotDTO } from './event-lot'
 
 export interface CreateEventDTO {
@@ -16,7 +16,7 @@ export interface CreateEventDTO {
   imagePath: Event['imagePath']
   message?: Event['message']
   lots?: CreateEventLotDTO[]
-  address?: CreateEventAddressDTO
+  address?: CreateEventAddressUseCaseRequest
   createdBy: Event['createdBy']
 }
 
