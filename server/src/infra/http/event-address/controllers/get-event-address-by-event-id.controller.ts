@@ -28,7 +28,7 @@ export class GetEventAddressByEventIdController {
     }
 
     return {
-      event: result.value.eventAddress,
+      eventAddress: result.value.eventAddress,
     }
   }
 }

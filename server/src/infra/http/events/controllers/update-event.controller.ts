@@ -88,7 +88,7 @@ export class UpdateEventController {
       message,
     } = body
 
-    const event = await this.updateEvent.execute({
+    await this.updateEvent.execute({
       id: eventId,
       title,
       description,
@@ -103,7 +103,5 @@ export class UpdateEventController {
       message,
       updatedBy: user.sub.id,
     })
-
-    return event
   }
 }

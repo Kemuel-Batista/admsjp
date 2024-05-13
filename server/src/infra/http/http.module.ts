@@ -12,6 +12,7 @@ import { UserHttpModule } from '@/infra/http/user/user-http.module'
 import { DatabaseModule } from '../database/database.module'
 import { DepartmentsHttpModule } from './departments/departments-http.module'
 import { EventAddressHttpModule } from './event-address/event-address-http.module'
+import { EventLotHttpModule } from './event-lot/event-lot-http.module'
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { EventAddressHttpModule } from './event-address/event-address-http.modul
     ]),
     EventHttpModule,
     EventAddressHttpModule,
+    EventLotHttpModule,
     RouterModule.register([
       {
         path: 'events',
@@ -48,6 +50,10 @@ import { EventAddressHttpModule } from './event-address/event-address-http.modul
           {
             path: 'address',
             module: EventAddressHttpModule,
+          },
+          {
+            path: 'lot',
+            module: EventLotHttpModule,
           },
         ],
       },

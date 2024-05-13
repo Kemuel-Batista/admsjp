@@ -80,7 +80,7 @@ export class UpdateEventAddressController {
       longitude,
     } = body
 
-    const eventAddress = await this.updateEventAddress.execute({
+    await this.updateEventAddress.execute({
       id,
       street,
       number,
@@ -92,7 +92,5 @@ export class UpdateEventAddressController {
       longitude,
       updatedBy: user.sub.id,
     })
-
-    return eventAddress
   }
 }
