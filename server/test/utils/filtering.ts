@@ -25,6 +25,28 @@ export function applyFilters<T>(
               return item[key] === value
             case 'contains':
               return item[key].includes(value)
+            case 'startsWith':
+              return item[key].startsWith(value)
+            case 'endsWith':
+              return item[key].endsWith(value)
+            case 'lt':
+              return item[key] < value
+            case 'lte':
+              return item[key] <= value
+            case 'gt':
+              return item[key] > value
+            case 'gte':
+              return item[key] >= value
+            case 'in':
+              return value.includes(item[key])
+            case 'notIn':
+              return !value.includes(item[key])
+            case 'not':
+              return item[key] !== value
+            case 'isNull':
+              return item[key] === null
+            case 'isNotNull':
+              return item[key] !== null
             default:
               return true
           }

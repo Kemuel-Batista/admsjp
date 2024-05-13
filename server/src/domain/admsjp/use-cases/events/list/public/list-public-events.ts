@@ -7,8 +7,8 @@ import { IListOptions } from '@/core/repositories/list-options'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 
 interface ListPublicEventsUseCaseRequest {
-  options: IListOptions
-  searchParams: ISearchParamDTO[]
+  options?: IListOptions
+  searchParams?: ISearchParamDTO[]
 }
 
 type ListPublicEventsUseCaseResponse = Either<
@@ -27,6 +27,20 @@ export class ListPublicEventsUseCase {
     options = {},
     searchParams = [],
   }: ListPublicEventsUseCaseRequest): Promise<ListPublicEventsUseCaseResponse> {
+    searchParams.push({
+      condition: 'equals',
+      field: 'visible',
+      value: 1,
+    })
+
+    const date = new Date()
+
+    searchParams.push({
+      condition: 'gte',
+      field: 'finalDate',
+      value: date,
+    })
+
     const { events, count } = await this.eventsRepository.list(
       options,
       searchParams,

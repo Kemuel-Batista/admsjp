@@ -63,4 +63,43 @@ describe('List Events', () => {
       expect(result.value.events).toHaveLength(2)
     }
   })
+
+  it('should not be able to fetch events with final date gte to now date', async () => {
+    const eventFactory01 = makeEvent({
+      finalDate: new Date('2020-01-01'),
+    })
+    await inMemoryEventsRepository.create(eventFactory01)
+
+    const result = await sut.execute({
+      options: {},
+      searchParams: [],
+    })
+
+    expect(result.isSuccess()).toBe(true)
+
+    if (result.isSuccess()) {
+      expect(result.value.events).toHaveLength(0)
+    }
+  })
+
+  it('should be able to display events whose end date is greater than the current date', async () => {
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1) // Tomorrow
+
+    const eventFactory01 = makeEvent({
+      finalDate: tomorrow,
+    })
+    await inMemoryEventsRepository.create(eventFactory01)
+
+    const result = await sut.execute({
+      options: {},
+      searchParams: [],
+    })
+
+    expect(result.isSuccess()).toBe(true)
+
+    if (result.isSuccess()) {
+      expect(result.value.events).toHaveLength(1)
+    }
+  })
 })
