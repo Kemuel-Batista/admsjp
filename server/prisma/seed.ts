@@ -1,7 +1,15 @@
+import { randomUUID } from 'node:crypto'
+
 import { faker } from '@faker-js/faker'
 import { Department, PrismaClient, User } from '@prisma/client'
 import { config } from 'dotenv'
 
+import {
+  EventStatus,
+  EventType,
+  EventVisible,
+} from '@/domain/admsjp/enums/event'
+import { EventLotStatus } from '@/domain/admsjp/enums/event-lot'
 import { UserStatus } from '@/domain/admsjp/enums/user'
 import BCryptHashProvider from '@/infra/cryptography/brcrypt-hash-provider'
 import { envSchema } from '@/infra/env/env'
@@ -84,6 +92,8 @@ async function execute(enviroment: string): Promise<void> {
 
   if (enviroment === 'development') {
     await clearDatabase()
+
+    await createEvent(admin)
     // await createFakeUsers()
   }
 
@@ -265,6 +275,70 @@ async function execute(enviroment: string): Promise<void> {
     }
 
     console.timeEnd('createFakeUsers')
+  }
+
+  async function createEvent(admin: User): Promise<void> {
+    console.time('createEvent')
+
+    const event = await prisma.event.upsert({
+      where: {
+        title: 'UMADSJP',
+      },
+      create: {
+        title: 'UMADSJP',
+        slug: faker.lorem.slug(),
+        description: faker.lorem.sentences(),
+        initialDate: faker.date.soon(),
+        finalDate: faker.date.future(),
+        status: EventStatus.ACTIVE,
+        visible: EventVisible.VISIBLE,
+        departmentId: 1,
+        eventType: EventType.PRESENCIAL,
+        imagePath: faker.image.url(),
+        createdBy: admin.id,
+      },
+      update: {},
+    })
+
+    await prisma.eventLot.upsert({
+      where: {
+        eventId_lot: {
+          eventId: event.id,
+          lot: 1,
+        },
+      },
+      create: {
+        lot: 1,
+        quantity: 50,
+        status: EventLotStatus.ACTIVE,
+        value: 20000,
+        eventId: event.id,
+        fulfilledQuantity: 0,
+        createdBy: admin.id,
+      },
+      update: {},
+    })
+
+    await prisma.eventAddress.upsert({
+      where: {
+        uuid: randomUUID(),
+      },
+      create: {
+        street: faker.location.street(),
+        number: String(faker.number.int({ max: 100 })),
+        complement: faker.location.streetAddress(),
+        neighborhood: faker.location.zipCode(),
+        state: faker.number.int({ max: 100 }),
+        city: faker.number.int({ max: 100 }),
+        eventId: event.id,
+        latitude: faker.location.latitude(),
+        longitude: faker.location.longitude(),
+        createdBy: admin.id,
+      },
+      update: {},
+    })
+
+    console.timeEnd('createEvent')
   }
 }
 

@@ -10,6 +10,7 @@ export class InMemoryEventLotsRepository implements EventLotsRepository {
     const eventLot = {
       eventId: data.eventId,
       quantity: data.quantity,
+      fulfilledQuantity: data.fulfilledQuantity,
       lot: data.lot,
       value: data.value,
       status: data.status,
@@ -36,6 +37,7 @@ export class InMemoryEventLotsRepository implements EventLotsRepository {
     const eventUpdated = {
       ...event,
       quantity: data.quantity,
+      fulfilledQuantity: data.fulfilledQuantity,
       updatedAt: new Date(),
       updatedBy: data.updatedBy,
     }

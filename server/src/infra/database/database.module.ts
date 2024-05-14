@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common'
 import { DepartmentsRepository } from '@/domain/admsjp/repositories/departments-repository'
 import { EventAddressesRepository } from '@/domain/admsjp/repositories/event-addresses-repository'
 import { EventLotsRepository } from '@/domain/admsjp/repositories/event-lots-repository'
+import { EventTicketsRepository } from '@/domain/admsjp/repositories/event-tickets-repository'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 import { LogsRepository } from '@/domain/admsjp/repositories/logs-repository'
 import { ProfilePermissionsRepository } from '@/domain/admsjp/repositories/profile-permissions-repository'
@@ -14,6 +15,7 @@ import { PrismaService } from './prisma/prisma.service'
 import { PrismaDepartmentRepository } from './prisma/repositories/prisma-departments-repository'
 import { PrismaEventAddressesRepository } from './prisma/repositories/prisma-event-addresses-repository'
 import { PrismaEventLotsRepository } from './prisma/repositories/prisma-event-lots-repository'
+import { PrismaEventTicketsRepository } from './prisma/repositories/prisma-event-tickets-repository'
 import { PrismaEventsRepository } from './prisma/repositories/prisma-events-repository'
 import { PrismaLogsRepository } from './prisma/repositories/prisma-logs-repository'
 import { PrismaProfilePermissionsRepository } from './prisma/repositories/prisma-profile-permissions-repository'
@@ -60,6 +62,10 @@ import { PrismaUsersRepository } from './prisma/repositories/prisma-users-reposi
       provide: EventAddressesRepository,
       useClass: PrismaEventAddressesRepository,
     },
+    {
+      provide: EventTicketsRepository,
+      useClass: PrismaEventTicketsRepository,
+    },
   ],
   exports: [
     PrismaService,
@@ -72,6 +78,7 @@ import { PrismaUsersRepository } from './prisma/repositories/prisma-users-reposi
     EventsRepository,
     EventLotsRepository,
     EventAddressesRepository,
+    EventTicketsRepository,
   ],
 })
 export class DatabaseModule {}

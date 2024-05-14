@@ -32,7 +32,7 @@ model User {
   deletedBy Int?      @map("deleted_by")
 
   userTokens   UserToken[]
-  eventTickets EventTickets[]
+  eventTickets EventTicket[]
   logs         Log[]
 
   @@map("users")
@@ -134,7 +134,7 @@ model Event {
   deletedAt DateTime? @map("deleted_at")
   deletedBy Int?      @map("deleted_by")
 
-  eventTickets EventTickets[]
+  eventTickets EventTicket[]
   eventAddress EventAddress?
   eventLots    EventLot[]
 
@@ -166,12 +166,13 @@ model EventAddress {
 }
 
 model EventLot {
-  eventId  Int   @map("event_id")
-  event    Event @relation(fields: [eventId], references: [id])
-  lot      Int
-  quantity Int
-  value    Int
-  status   Int
+  eventId           Int   @map("event_id")
+  event             Event @relation(fields: [eventId], references: [id])
+  lot               Int
+  quantity          Int
+  fulfilledQuantity Int   @default(0)
+  value             Int
+  status            Int
 
   createdAt DateTime  @default(now()) @map("created_at")
   createdBy Int       @map("created_by")
@@ -180,13 +181,13 @@ model EventLot {
   deletedAt DateTime? @map("deleted_at")
   deletedBy Int?      @map("deleted_by")
 
-  EventTickets EventTickets[]
+  EventTickets EventTicket[]
 
   @@id([eventId, lot])
   @@map("events_lots")
 }
 
-model EventTickets {
+model EventTicket {
   id       Int      @id @default(autoincrement())
   uuid     String   @unique @default(uuid())
   eventId  Int      @map("event_id")

@@ -13,6 +13,7 @@ import { DatabaseModule } from '../database/database.module'
 import { DepartmentsHttpModule } from './departments/departments-http.module'
 import { EventAddressHttpModule } from './event-address/event-address-http.module'
 import { EventLotHttpModule } from './event-lot/event-lot-http.module'
+import { EventTicketHttpModule } from './event-ticket/event-ticket-http.module'
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { EventLotHttpModule } from './event-lot/event-lot-http.module'
     EventHttpModule,
     EventAddressHttpModule,
     EventLotHttpModule,
+    EventTicketHttpModule,
     RouterModule.register([
       {
         path: 'events',
@@ -54,6 +56,10 @@ import { EventLotHttpModule } from './event-lot/event-lot-http.module'
           {
             path: 'lot',
             module: EventLotHttpModule,
+          },
+          {
+            path: 'tickets',
+            module: EventTicketHttpModule,
           },
         ],
       },

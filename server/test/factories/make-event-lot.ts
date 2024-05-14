@@ -13,6 +13,7 @@ export function makeEventLot(
   return {
     eventId: faker.number.int({ max: 10 }),
     quantity: faker.number.int({ max: 10 }),
+    fulfilledQuantity: faker.number.int({ max: 10 }),
     lot: faker.number.int({ max: 10 }),
     value: faker.number.int({ max: 1000 }),
     status: EventLotStatus.ACTIVE,

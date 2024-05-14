@@ -15,6 +15,10 @@ async function bootstrap() {
     origin: ['http://localhost:3000'],
   }
 
+  const eventQueueConsumer = new EventQueueConsumer()
+
+  eventQueueConsumer.execute()
+
   app.enableCors(corsOptions)
 
   app.use(cookieParser())
