@@ -1,16 +1,19 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, OnModuleInit } from '@nestjs/common'
 import * as amqp from 'amqplib'
 
 import { CreateEventTicketUseCase } from '@/domain/admsjp/use-cases/event-ticket/create-event-ticket'
 
 @Injectable()
-export class EventQueueConsumer {
+export class EventQueueConsumer implements OnModuleInit {
   private readonly queueName = 'event_queue'
   private connection: amqp.Connection
   private channel: amqp.Channel
 
-  constructor(private createEventTicket: CreateEventTicketUseCase) {
-    this.initialize()
+  constructor(private createEventTicket: CreateEventTicketUseCase) {}
+
+  async onModuleInit() {
+    await this.initialize()
+    await this.execute()
   }
 
   private async initialize() {

@@ -93,32 +93,32 @@ export class InMemoryEventsRepository implements EventsRepository {
   }
 
   async findById(id: number): Promise<Event> {
-    const user = this.items.find((item) => item.id === id)
+    const event = this.items.find((item) => item.id === id)
 
-    if (!user) {
+    if (!event) {
       return null
     }
 
-    return user
+    return event
   }
 
   async findByTitle(title: string): Promise<Event> {
-    const user = this.items.find((item) => item.title === title)
+    const event = this.items.find((item) => item.title === title)
 
-    if (!user) {
+    if (!event) {
       return null
     }
 
-    return user
+    return event
   }
 
   async findBySlug(slug: string): Promise<Event> {
-    const user = this.items.find((item) => item.slug === slug)
+    const event = this.items.find((item) => item.slug === slug)
 
-    if (!user) {
+    if (!event) {
       return null
     }
 
-    return user
+    return event
   }
 }

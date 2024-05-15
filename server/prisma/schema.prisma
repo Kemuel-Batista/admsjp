@@ -198,6 +198,7 @@ model EventTicket {
   user     User     @relation(fields: [userId], references: [id])
   ticket   String
 
+  expiresAt DateTime  @map("expires_at")
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
@@ -217,8 +218,8 @@ model Order {
   transactionType TransactionType @default(EVENTS) @map("transaction_type")
   paymentMethod   Int             @map("payment_method")
   status          Int
-  pixQrCode       String          @map("pix_qr_code")
-  paidAt          DateTime        @map("paid_at")
+  pixQrCode       String?         @map("pix_qr_code")
+  paidAt          DateTime?       @map("paid_at")
 
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @map("updated_at")

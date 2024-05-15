@@ -20,6 +20,7 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
       userId: data.userId,
       lot: data.lot,
       ticket: data.ticket,
+      expiresAt: new Date(data.expiresAt) ?? null,
       createdAt: new Date(),
       updatedAt: null,
       deletedBy: null,
@@ -29,6 +30,38 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
     this.items.push(eventTicket)
 
     return eventTicket
+  }
+
+  async update(data: EventTicket): Promise<EventTicket> {
+    const itemIndex = this.items.findIndex(
+      (item) => item.eventId === data.eventId && item.lot === data.lot,
+    )
+
+    const event = this.items[itemIndex]
+
+    const eventUpdated = {
+      ...event,
+      expiresAt: data.expiresAt,
+    }
+
+    this.items[itemIndex] = eventUpdated
+
+    return event
+  }
+
+  async findByEventIdAndUserId(
+    eventId: number,
+    userId: number,
+  ): Promise<EventTicket | null> {
+    const event = this.items.find(
+      (item) => item.eventId === eventId && item.userId === userId,
+    )
+
+    if (!event) {
+      return null
+    }
+
+    return event
   }
 
   async lastTicket(): Promise<string> {

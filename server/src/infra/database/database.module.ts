@@ -6,6 +6,7 @@ import { EventLotsRepository } from '@/domain/admsjp/repositories/event-lots-rep
 import { EventTicketsRepository } from '@/domain/admsjp/repositories/event-tickets-repository'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 import { LogsRepository } from '@/domain/admsjp/repositories/logs-repository'
+import { OrdersRepository } from '@/domain/admsjp/repositories/orders-repository'
 import { ProfilePermissionsRepository } from '@/domain/admsjp/repositories/profile-permissions-repository'
 import { ProfilesRepository } from '@/domain/admsjp/repositories/profiles-repository'
 import { UserTokensRepository } from '@/domain/admsjp/repositories/user-tokens-repository'
@@ -18,6 +19,7 @@ import { PrismaEventLotsRepository } from './prisma/repositories/prisma-event-lo
 import { PrismaEventTicketsRepository } from './prisma/repositories/prisma-event-tickets-repository'
 import { PrismaEventsRepository } from './prisma/repositories/prisma-events-repository'
 import { PrismaLogsRepository } from './prisma/repositories/prisma-logs-repository'
+import { PrismaOrdersRepository } from './prisma/repositories/prisma-orders-repository'
 import { PrismaProfilePermissionsRepository } from './prisma/repositories/prisma-profile-permissions-repository'
 import { PrismaProfilesRepository } from './prisma/repositories/prisma-profiles-repository'
 import { PrismaUserTokensRepository } from './prisma/repositories/prisma-user-tokens-repository'
@@ -66,6 +68,10 @@ import { PrismaUsersRepository } from './prisma/repositories/prisma-users-reposi
       provide: EventTicketsRepository,
       useClass: PrismaEventTicketsRepository,
     },
+    {
+      provide: OrdersRepository,
+      useClass: PrismaOrdersRepository,
+    },
   ],
   exports: [
     PrismaService,
@@ -79,6 +85,7 @@ import { PrismaUsersRepository } from './prisma/repositories/prisma-users-reposi
     EventLotsRepository,
     EventAddressesRepository,
     EventTicketsRepository,
+    OrdersRepository,
   ],
 })
 export class DatabaseModule {}

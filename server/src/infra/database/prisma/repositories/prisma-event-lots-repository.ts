@@ -40,6 +40,7 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
     eventId,
     lot,
     quantity,
+    fulfilledQuantity,
     updatedBy,
   }: EventLot): Promise<EventLot> {
     const event = await this.prisma.eventLot.update({
@@ -51,6 +52,7 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
       },
       data: {
         quantity: quantity ?? undefined,
+        fulfilledQuantity: fulfilledQuantity ?? undefined,
         updatedBy,
       },
     })

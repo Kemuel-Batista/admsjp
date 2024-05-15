@@ -51,11 +51,10 @@ CREATE TABLE "events_addresses" (
 
 -- CreateTable
 CREATE TABLE "events_lots" (
-    "id" SERIAL NOT NULL,
-    "uuid" TEXT NOT NULL,
     "event_id" INTEGER NOT NULL,
     "lot" INTEGER NOT NULL,
     "quantity" INTEGER NOT NULL,
+    "fulfilledQuantity" INTEGER NOT NULL DEFAULT 0,
     "value" INTEGER NOT NULL,
     "status" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -65,7 +64,7 @@ CREATE TABLE "events_lots" (
     "deleted_at" TIMESTAMP(3),
     "deleted_by" INTEGER,
 
-    CONSTRAINT "events_lots_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "events_lots_pkey" PRIMARY KEY ("event_id","lot")
 );
 
 -- CreateTable
@@ -73,9 +72,10 @@ CREATE TABLE "events_tickets" (
     "id" SERIAL NOT NULL,
     "uuid" TEXT NOT NULL,
     "event_id" INTEGER NOT NULL,
-    "lot_id" INTEGER NOT NULL,
+    "lot" INTEGER NOT NULL,
     "user_id" INTEGER NOT NULL,
     "ticket" TEXT NOT NULL,
+    "expires_at" TIMESTAMP(3) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3),
     "deleted_at" TIMESTAMP(3),
@@ -92,8 +92,8 @@ CREATE TABLE "orders" (
     "transaction_type" "TransactionType" NOT NULL DEFAULT 'EVENTS',
     "payment_method" INTEGER NOT NULL,
     "status" INTEGER NOT NULL,
-    "pix_qr_code" TEXT NOT NULL,
-    "paid_at" TIMESTAMP(3) NOT NULL,
+    "pix_qr_code" TEXT,
+    "paid_at" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3),
     "deleted_at" TIMESTAMP(3),
@@ -118,9 +118,6 @@ CREATE UNIQUE INDEX "events_addresses_uuid_key" ON "events_addresses"("uuid");
 CREATE UNIQUE INDEX "events_addresses_event_id_key" ON "events_addresses"("event_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "events_lots_uuid_key" ON "events_lots"("uuid");
-
--- CreateIndex
 CREATE UNIQUE INDEX "events_tickets_uuid_key" ON "events_tickets"("uuid");
 
 -- CreateIndex
@@ -139,7 +136,7 @@ ALTER TABLE "events_lots" ADD CONSTRAINT "events_lots_event_id_fkey" FOREIGN KEY
 ALTER TABLE "events_tickets" ADD CONSTRAINT "events_tickets_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "events"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "events_tickets" ADD CONSTRAINT "events_tickets_lot_id_fkey" FOREIGN KEY ("lot_id") REFERENCES "events_lots"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "events_tickets" ADD CONSTRAINT "events_tickets_event_id_lot_fkey" FOREIGN KEY ("event_id", "lot") REFERENCES "events_lots"("event_id", "lot") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "events_tickets" ADD CONSTRAINT "events_tickets_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

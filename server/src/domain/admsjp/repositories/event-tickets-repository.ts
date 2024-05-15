@@ -5,5 +5,12 @@ export abstract class EventTicketsRepository {
     data: Prisma.EventTicketUncheckedCreateInput,
   ): Promise<EventTicket>
 
+  abstract update(data: EventTicket): Promise<EventTicket>
+
+  abstract findByEventIdAndUserId(
+    eventId: EventTicket['eventId'],
+    userId: EventTicket['userId'],
+  ): Promise<EventTicket | null>
+
   abstract lastTicket(): Promise<string>
 }
