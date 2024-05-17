@@ -13,6 +13,12 @@ export abstract class EventLotsRepository {
     searchParams?: ISearchParamDTO[],
   ): Promise<ListEventLotsDTO>
 
+  abstract listByEventId(
+    eventId: EventLot['eventId'],
+    options?: IListOptions,
+    searchParams?: ISearchParamDTO[],
+  ): Promise<ListEventLotsDTO>
+
   abstract findByEventIdAndLot(
     eventId: EventLot['eventId'],
     lot: EventLot['lot'],

@@ -1,5 +1,10 @@
 import { EventLot, Prisma } from '@prisma/client'
+import { applyFilters } from 'test/utils/filtering'
 
+import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
+import { IListOptions } from '@/core/repositories/list-options'
+import { buildSearchFilter } from '@/core/util/filtering/build-search-filter'
+import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import { ListEventLotsDTO } from '@/domain/admsjp/dtos/event-lot'
 import { EventLotsRepository } from '@/domain/admsjp/repositories/event-lots-repository'
 
@@ -55,6 +60,32 @@ export class InMemoryEventLotsRepository implements EventLotsRepository {
     const count = eventLots.length
 
     return { eventLots, count }
+  }
+
+  async listByEventId(
+    eventId: number,
+    options?: IListOptions,
+    searchParams?: ISearchParamDTO[],
+  ): Promise<ListEventLotsDTO> {
+    let filteredEventLots = this.items
+
+    searchParams.push({
+      condition: 'equals',
+      field: 'eventId',
+      value: eventId,
+    })
+
+    if (searchParams && searchParams.length > 0) {
+      const searchFilter = buildSearchFilter<EventLot>(searchParams)
+      filteredEventLots = applyFilters<EventLot>(this.items, [searchFilter])
+    }
+
+    const { skip, take } = calcPagination(options)
+    const paginatedEvents = filteredEventLots.slice(skip, skip + take)
+
+    const count = filteredEventLots.length
+
+    return { eventLots: paginatedEvents, count }
   }
 
   async findByEventIdAndLot(eventId: number, lot: number): Promise<EventLot> {

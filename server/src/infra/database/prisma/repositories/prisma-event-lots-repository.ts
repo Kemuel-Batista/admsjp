@@ -81,6 +81,34 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
     return { eventLots, count }
   }
 
+  async listByEventId(
+    eventId: EventLot['eventId'],
+    options?: IListOptions,
+    searchParams?: ISearchParamDTO[],
+  ): Promise<ListEventLotsDTO> {
+    const { skip, take } = calcPagination(options)
+
+    searchParams.push({
+      condition: 'equals',
+      field: 'eventId',
+      value: eventId,
+    })
+
+    const search = buildSearchFilter<EventLot>(searchParams)
+
+    const [eventLots, count] = await this.prisma.$transaction([
+      this.prisma.eventLot.findMany({
+        where: search,
+        skip,
+        take,
+        orderBy: { createdAt: 'asc' },
+      }),
+      this.prisma.eventLot.count({ where: search }),
+    ])
+
+    return { eventLots, count }
+  }
+
   async findByEventIdAndLot(eventId: number, lot: number): Promise<EventLot> {
     const eventLot = await this.prisma.eventLot.findUnique({
       where: {

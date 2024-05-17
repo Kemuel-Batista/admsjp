@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common'
 import { CreateEventAddressUseCase } from '@/domain/admsjp/use-cases/event-address/create/create-event-address'
 import { CreateEventLotUseCase } from '@/domain/admsjp/use-cases/event-lot/create/create-event-lot'
 import { CreateEventUseCase } from '@/domain/admsjp/use-cases/events/create/create-event'
+import { DeleteEventUseCase } from '@/domain/admsjp/use-cases/events/delete-event'
 import { GetEventByIdUseCase } from '@/domain/admsjp/use-cases/events/get/by-id/get-event-by-id'
 import { GetEventBySlugUseCase } from '@/domain/admsjp/use-cases/events/get/by-slug/get-event-by-slug'
 import { ListEventsUseCase } from '@/domain/admsjp/use-cases/events/list/default/list-events'
@@ -12,6 +13,7 @@ import { DatabaseModule } from '@/infra/database/database.module'
 import { StorageModule } from '@/infra/storage/storage.module'
 
 import { CreateEventController } from './controllers/create-event.controller'
+import { DeleteEventController } from './controllers/delete-event.controller'
 import { GetEventByIdController } from './controllers/get-event-by-id.controller'
 import { GetEventBySlugController } from './controllers/get-event-by-slug.controller'
 import { ListEventsController } from './controllers/list-events.controller'
@@ -27,6 +29,7 @@ import { UpdateEventController } from './controllers/update-event.controller'
     UpdateEventController,
     GetEventBySlugController,
     GetEventByIdController,
+    DeleteEventController,
   ],
   providers: [
     CreateEventUseCase,
@@ -37,6 +40,7 @@ import { UpdateEventController } from './controllers/update-event.controller'
     UpdateEventUseCase,
     GetEventBySlugUseCase,
     GetEventByIdUseCase,
+    DeleteEventUseCase,
   ],
 })
 export class EventHttpModule {}

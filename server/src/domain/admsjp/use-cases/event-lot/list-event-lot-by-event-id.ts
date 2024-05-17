@@ -45,13 +45,8 @@ export class ListEventLotByEventIdUseCase {
       )
     }
 
-    searchParams.push({
-      condition: 'equals',
-      field: 'eventId',
-      value: eventId,
-    })
-
-    const { eventLots, count } = await this.eventLotsRepository.list(
+    const { eventLots, count } = await this.eventLotsRepository.listByEventId(
+      eventId,
       options,
       searchParams,
     )

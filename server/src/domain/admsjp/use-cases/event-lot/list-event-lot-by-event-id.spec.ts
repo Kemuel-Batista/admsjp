@@ -3,7 +3,7 @@ import { makeEventLot } from 'test/factories/make-event-lot'
 import { InMemoryEventLotsRepository } from 'test/repositories/in-memory-event-lots-repository'
 import { InMemoryEventsRepository } from 'test/repositories/in-memory-events-repository'
 
-import { ListEventLotByEventIdUseCase } from './ListEventLotByEventId'
+import { ListEventLotByEventIdUseCase } from './list-event-lot-by-event-id'
 
 let inMemoryEventsRepository: InMemoryEventsRepository
 let inMemoryEventLotsRepository: InMemoryEventLotsRepository

@@ -121,4 +121,10 @@ export class InMemoryEventsRepository implements EventsRepository {
 
     return event
   }
+
+  async delete(id: number): Promise<void> {
+    const itemIndex = this.items.findIndex((item) => item.id === id)
+
+    this.items.splice(itemIndex, 1)
+  }
 }

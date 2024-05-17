@@ -15,6 +15,10 @@ const pt = {
       keyAlreadyExists: 'Event {{key}} já existe no sistema',
       value: 'Alterado valor do prametro',
     },
+    delete: {
+      hasAssociations:
+        'Não foi possível deletar o evento pois existem ingressos associados a esse evento',
+    },
   },
 }
 

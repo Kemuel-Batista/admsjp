@@ -18,7 +18,7 @@ import {
   PageQueryParamSchema,
   queryValidationPipe,
 } from '@/core/schemas/query-params-schema'
-import { ListEventLotByEventIdUseCase } from '@/domain/admsjp/use-cases/event-lot/list/by-event-id/ListEventLotByEventId'
+import { ListEventLotByEventIdUseCase } from '@/domain/admsjp/use-cases/event-lot/list-event-lot-by-event-id'
 import { Public } from '@/infra/auth/public'
 
 @Controller('/event/:id')

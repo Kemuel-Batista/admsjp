@@ -16,4 +16,5 @@ export abstract class EventsRepository {
   abstract findById(id: Event['id']): Promise<Event | null>
   abstract findByTitle(title: Event['title']): Promise<Event | null>
   abstract findBySlug(slug: Event['slug']): Promise<Event | null>
+  abstract delete(id: Event['id']): Promise<void>
 }

@@ -133,4 +133,10 @@ export class PrismaEventsRepository implements EventsRepository {
 
     return event
   }
+
+  async delete(id: Event['id']): Promise<void> {
+    await this.prisma.profilePermission.delete({
+      where: { id },
+    })
+  }
 }
