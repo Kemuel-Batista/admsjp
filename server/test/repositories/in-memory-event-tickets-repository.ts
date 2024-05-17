@@ -4,9 +4,18 @@ import { EventTicket, Prisma } from '@prisma/client'
 import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
 import { EventTicketsRepository } from '@/domain/admsjp/repositories/event-tickets-repository'
+import { EventTicketWithUserAndEventLot } from '@/domain/admsjp/types/event-ticket'
+
+import { InMemoryEventLotsRepository } from './in-memory-event-lots-repository'
+import { InMemoryUsersRepository } from './in-memory-users-repository'
 
 export class InMemoryEventTicketsRepository implements EventTicketsRepository {
   public items: EventTicket[] = []
+
+  constructor(
+    private usersRepository: InMemoryUsersRepository,
+    private eventLotsRepository: InMemoryEventLotsRepository,
+  ) {}
 
   async create(
     data: Prisma.EventTicketUncheckedCreateInput,
@@ -68,6 +77,43 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
     const eventTickets = this.items
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .filter((item) => item.lot === lot)
+
+    return eventTickets
+  }
+
+  async listDetailsByEventId(
+    eventId: number,
+  ): Promise<EventTicketWithUserAndEventLot[]> {
+    const eventTickets = this.items
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .filter((item) => item.eventId === eventId)
+      .map((eventTicket) => {
+        const user = this.usersRepository.items.find((user) => {
+          return user.id === eventTicket.userId
+        })
+
+        if (!user) {
+          throw new Error(
+            `User with ID "${eventTicket.userId.toString()}" does not exist.`,
+          )
+        }
+
+        const eventLot = this.eventLotsRepository.items.find((eventLot) => {
+          return eventLot.lot === eventTicket.lot
+        })
+
+        if (!eventLot) {
+          throw new Error(
+            `Event Lot with lot "${eventTicket.lot.toString()}" does not exist.`,
+          )
+        }
+
+        return {
+          ...eventTicket,
+          user,
+          eventLot,
+        }
+      })
 
     return eventTickets
   }

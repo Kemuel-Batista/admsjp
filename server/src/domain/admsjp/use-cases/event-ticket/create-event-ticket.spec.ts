@@ -26,10 +26,13 @@ let sut: CreateEventTicketUseCase
 
 describe('Create Event Ticket', () => {
   beforeEach(() => {
-    inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository()
-    inMemoryEventsRepository = new InMemoryEventsRepository()
-    inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
     inMemoryUsersRepository = new InMemoryUsersRepository()
+    inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
+    inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
+      inMemoryUsersRepository,
+      inMemoryEventLotsRepository,
+    )
+    inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryOrdersRepository = new InMemoryOrdersRepository()
 
     fakeTicketGenerator = new FakeTicketGenerator()

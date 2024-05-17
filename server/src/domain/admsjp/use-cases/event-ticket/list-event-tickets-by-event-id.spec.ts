@@ -1,53 +1,41 @@
 import { makeEvent } from 'test/factories/make-event'
 import { makeEventLot } from 'test/factories/make-event-lot'
 import { makeEventTicket } from 'test/factories/make-event-ticket'
+import { makeUser } from 'test/factories/make-user'
 import { InMemoryEventLotsRepository } from 'test/repositories/in-memory-event-lots-repository'
 import { InMemoryEventTicketsRepository } from 'test/repositories/in-memory-event-tickets-repository'
 import { InMemoryEventsRepository } from 'test/repositories/in-memory-events-repository'
 import { InMemoryUsersRepository } from 'test/repositories/in-memory-users-repository'
 
-import { ResourceHasAssociationsError } from '@/core/errors/errors/resource-has-associations-error'
-
-import { DeleteEventUseCase } from './delete-event'
+import { ListEventTicketsByEventIdUseCase } from './list-event-tickets-by-event-id'
 
 let inMemoryUsersRepository: InMemoryUsersRepository
 let inMemoryEventsRepository: InMemoryEventsRepository
 let inMemoryEventLotsRepository: InMemoryEventLotsRepository
 let inMemoryEventTicketsRepository: InMemoryEventTicketsRepository
 
-let sut: DeleteEventUseCase
+let sut: ListEventTicketsByEventIdUseCase
 
-describe('Delete Event', () => {
+describe('List event tickets by event id', () => {
   beforeEach(() => {
-    inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryUsersRepository = new InMemoryUsersRepository()
+    inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
     inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
       inMemoryUsersRepository,
       inMemoryEventLotsRepository,
     )
 
-    sut = new DeleteEventUseCase(
-      inMemoryEventsRepository,
-      inMemoryEventLotsRepository,
+    sut = new ListEventTicketsByEventIdUseCase(
       inMemoryEventTicketsRepository,
+      inMemoryEventsRepository,
     )
   })
 
-  it('should be able to delete an event', async () => {
-    const eventFactory = makeEvent()
-    const event = await inMemoryEventsRepository.create(eventFactory)
+  it('should be able to list event tickets with details by event id', async () => {
+    const userFactory = makeUser()
+    const user = await inMemoryUsersRepository.create(userFactory)
 
-    const result = await sut.execute({
-      id: event.id,
-    })
-
-    expect(result.isSuccess()).toBe(true)
-
-    expect(inMemoryEventsRepository.items).toHaveLength(0)
-  })
-
-  it('should not be able to delete an event if there are event tickets associated to it', async () => {
     const eventFactory = makeEvent()
     const event = await inMemoryEventsRepository.create(eventFactory)
 
@@ -57,16 +45,32 @@ describe('Delete Event', () => {
     const eventLot = await inMemoryEventLotsRepository.create(eventLotFactory)
 
     const eventTicketFactory = makeEventTicket({
+      userId: user.id,
       eventId: event.id,
       lot: eventLot.lot,
     })
     await inMemoryEventTicketsRepository.create(eventTicketFactory)
 
     const result = await sut.execute({
-      id: event.id,
+      eventId: event.id,
     })
 
-    expect(result.isError()).toBe(true)
-    expect(result.value).toBeInstanceOf(ResourceHasAssociationsError)
+    expect(result.isSuccess()).toBe(true)
+    expect(result.value).toEqual({
+      eventTickets: expect.arrayContaining([
+        expect.objectContaining({
+          userId: user.id,
+          eventId: event.id,
+          lot: eventLot.lot,
+          user: expect.objectContaining({
+            email: user.email,
+            name: user.name,
+          }),
+          eventLot: expect.objectContaining({
+            lot: eventLot.lot,
+          }),
+        }),
+      ]),
+    })
   })
 })
