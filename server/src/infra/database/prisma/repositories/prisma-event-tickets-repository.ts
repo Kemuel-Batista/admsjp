@@ -42,6 +42,16 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
     return event
   }
 
+  async listByLot(lot: number): Promise<EventTicket[]> {
+    const eventTickets = await this.prisma.eventTicket.findMany({
+      where: {
+        lot,
+      },
+    })
+
+    return eventTickets
+  }
+
   async findByEventIdAndUserId(
     eventId: EventTicket['eventId'],
     userId: EventTicket['userId'],

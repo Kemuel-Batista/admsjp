@@ -101,7 +101,7 @@ export class CreateEventTicketUseCase {
     }
 
     eventLot.fulfilledQuantity += 1
-    await this.eventLotsRepository.update(eventLot)
+    await this.eventLotsRepository.save(eventLot)
 
     const lastTicket = await this.eventTicketsRepository.lastTicket()
     const ticket = await this.ticketGenerator.generate('EV', lastTicket) // EV = Events

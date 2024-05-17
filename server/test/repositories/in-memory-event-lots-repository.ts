@@ -27,7 +27,7 @@ export class InMemoryEventLotsRepository implements EventLotsRepository {
     return eventLot
   }
 
-  async update(data: EventLot): Promise<EventLot> {
+  async save(data: EventLot): Promise<EventLot> {
     const itemIndex = this.items.findIndex(
       (item) => item.eventId === data.eventId && item.lot === data.lot,
     )

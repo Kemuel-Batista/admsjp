@@ -7,7 +7,7 @@ import { ListEventLotsDTO } from '../dtos/event-lot'
 
 export abstract class EventLotsRepository {
   abstract create(data: Prisma.EventLotUncheckedCreateInput): Promise<EventLot>
-  abstract update(data: EventLot): Promise<EventLot>
+  abstract save(data: EventLot): Promise<EventLot>
   abstract list(
     options?: IListOptions,
     searchParams?: ISearchParamDTO[],

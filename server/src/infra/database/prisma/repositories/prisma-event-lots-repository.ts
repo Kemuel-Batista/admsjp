@@ -36,7 +36,7 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
     return eventLot
   }
 
-  async update({
+  async save({
     eventId,
     lot,
     quantity,

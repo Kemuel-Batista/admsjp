@@ -6,9 +6,7 @@ import {
   Param,
   Put,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common'
-import { FileInterceptor } from '@nestjs/platform-express'
 import { Decimal } from '@prisma/client/runtime/library'
 import { z } from 'zod'
 
@@ -63,7 +61,6 @@ export class UpdateEventAddressController {
   @UseGuards(ProfileGuard)
   @Put()
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseInterceptors(FileInterceptor('file'))
   async handle(
     @Body(bodyValidationPipe) body: UpdateEventAddressSchema,
     @Param('id', paramValidationPipe) id: ParamSchema,

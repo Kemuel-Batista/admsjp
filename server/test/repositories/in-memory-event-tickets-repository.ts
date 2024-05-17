@@ -64,6 +64,14 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
     return event
   }
 
+  async listByLot(lot: number): Promise<EventTicket[]> {
+    const eventTickets = this.items
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .filter((item) => item.lot === lot)
+
+    return eventTickets
+  }
+
   async lastTicket(): Promise<string> {
     const now = new Date()
 
