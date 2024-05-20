@@ -7,6 +7,7 @@ import { EventTicketsRepository } from '@/domain/admsjp/repositories/event-ticke
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 import { LogsRepository } from '@/domain/admsjp/repositories/logs-repository'
 import { OrdersRepository } from '@/domain/admsjp/repositories/orders-repository'
+import { ParametersRepository } from '@/domain/admsjp/repositories/parameters-repository'
 import { ProfilePermissionsRepository } from '@/domain/admsjp/repositories/profile-permissions-repository'
 import { ProfilesRepository } from '@/domain/admsjp/repositories/profiles-repository'
 import { UserTokensRepository } from '@/domain/admsjp/repositories/user-tokens-repository'
@@ -20,6 +21,7 @@ import { PrismaEventTicketsRepository } from './prisma/repositories/prisma-event
 import { PrismaEventsRepository } from './prisma/repositories/prisma-events-repository'
 import { PrismaLogsRepository } from './prisma/repositories/prisma-logs-repository'
 import { PrismaOrdersRepository } from './prisma/repositories/prisma-orders-repository'
+import { PrismaParametersRepository } from './prisma/repositories/prisma-parameters-repository'
 import { PrismaProfilePermissionsRepository } from './prisma/repositories/prisma-profile-permissions-repository'
 import { PrismaProfilesRepository } from './prisma/repositories/prisma-profiles-repository'
 import { PrismaUserTokensRepository } from './prisma/repositories/prisma-user-tokens-repository'
@@ -72,6 +74,10 @@ import { PrismaUsersRepository } from './prisma/repositories/prisma-users-reposi
       provide: OrdersRepository,
       useClass: PrismaOrdersRepository,
     },
+    {
+      provide: ParametersRepository,
+      useClass: PrismaParametersRepository,
+    },
   ],
   exports: [
     PrismaService,
@@ -86,6 +92,7 @@ import { PrismaUsersRepository } from './prisma/repositories/prisma-users-reposi
     EventAddressesRepository,
     EventTicketsRepository,
     OrdersRepository,
+    ParametersRepository,
   ],
 })
 export class DatabaseModule {}

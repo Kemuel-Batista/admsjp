@@ -245,3 +245,19 @@ model Log {
 
   @@map("logs")
 }
+
+model Parameter {
+  id        Int       @id @default(autoincrement())
+  uuid      String    @unique @default(uuid())
+  key       String    @unique
+  keyInfo   String    @map("key_info")
+  value     String
+  status    Int       @default(1)
+  visible   Int       @default(1)
+  createdAt DateTime  @default(now()) @map("created_at")
+  createdBy Int       @map("created_by")
+  updatedAt DateTime? @map("updated_at")
+  updatedBy Int?      @map("updated_by")
+
+  @@map("parameters")
+}

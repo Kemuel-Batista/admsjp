@@ -14,6 +14,7 @@ import { DepartmentsHttpModule } from './departments/departments-http.module'
 import { EventAddressHttpModule } from './event-address/event-address-http.module'
 import { EventLotHttpModule } from './event-lot/event-lot-http.module'
 import { EventTicketHttpModule } from './event-ticket/event-ticket-http.module'
+import { ParameterHttpModule } from './parameter/parameter-http.module'
 
 @Module({
   imports: [
@@ -64,6 +65,8 @@ import { EventTicketHttpModule } from './event-ticket/event-ticket-http.module'
         ],
       },
     ]),
+    ParameterHttpModule,
+    RouterModule.register([{ path: 'parameter', module: ParameterHttpModule }]),
   ],
   controllers: [GetUserPermissionController],
   providers: [GetUserPermissionsUseCase],
