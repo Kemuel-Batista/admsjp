@@ -220,6 +220,7 @@ model Order {
   status          Int
   pixQrCode       String?         @map("pix_qr_code")
   paidAt          DateTime?       @map("paid_at")
+  attachment      String?         @map("attachment")
 
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @map("updated_at")

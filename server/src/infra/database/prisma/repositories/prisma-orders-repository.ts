@@ -14,6 +14,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
     transactionType,
     paidAt,
     pixQrCode,
+    attachment,
     status,
     paymentMethod,
   }: Prisma.OrderUncheckedCreateInput): Promise<void> {
@@ -23,6 +24,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
         transactionType,
         paidAt,
         pixQrCode,
+        attachment,
         status,
         paymentMethod,
       },

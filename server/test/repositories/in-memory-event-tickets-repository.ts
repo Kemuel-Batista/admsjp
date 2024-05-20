@@ -73,6 +73,16 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
     return event
   }
 
+  async findById(id: number): Promise<EventTicket> {
+    const eventTicket = this.items.find((item) => item.id === id)
+
+    if (!eventTicket) {
+      return null
+    }
+
+    return eventTicket
+  }
+
   async listByLot(lot: number): Promise<EventTicket[]> {
     const eventTickets = this.items
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())

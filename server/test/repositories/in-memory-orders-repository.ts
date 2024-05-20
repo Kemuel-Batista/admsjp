@@ -19,6 +19,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
       status: data.status,
       pixQrCode: data.pixQrCode,
       paidAt: new Date(data.paidAt),
+      attachment: data.attachment,
       createdAt: new Date(),
       updatedAt: null,
       deletedBy: null,

@@ -95,6 +95,16 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
     return eventTicket
   }
 
+  async findById(id: EventTicket['id']): Promise<EventTicket | null> {
+    const eventTicket = await this.prisma.eventTicket.findUnique({
+      where: {
+        id,
+      },
+    })
+
+    return eventTicket
+  }
+
   async lastTicket(): Promise<string> {
     const now = new Date()
 
