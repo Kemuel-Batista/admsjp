@@ -7,7 +7,7 @@ import { OrdersRepository } from '@/domain/admsjp/repositories/orders-repository
 export class InMemoryOrdersRepository implements OrdersRepository {
   public items: Order[] = []
 
-  async create(data: Prisma.OrderUncheckedCreateInput): Promise<void> {
+  async create(data: Prisma.OrderUncheckedCreateInput): Promise<Order> {
     const id = getLastInsertedId(this.items)
 
     const order = {
@@ -24,9 +24,46 @@ export class InMemoryOrdersRepository implements OrdersRepository {
       updatedAt: null,
       deletedBy: null,
       deletedAt: null,
+      confirmedBy: null,
     }
 
     this.items.push(order)
+
+    return order
+  }
+
+  async update(data: Order): Promise<Order> {
+    const itemIndex = this.items.findIndex((item) => item.id === data.id)
+
+    const order = this.items[itemIndex]
+
+    const orderUpdated = {
+      ...order,
+      transactionType: data.transactionType,
+      paymentMethod: data.paymentMethod,
+      status: data.status,
+      pixQrCode: data.pixQrCode,
+      paidAt: data.paidAt,
+      attachment: data.attachment,
+      deletedAt: data.deletedAt,
+      deletedBy: data.deletedBy,
+      confirmedBy: data.confirmedBy,
+      updatedAt: new Date(),
+    }
+
+    this.items[itemIndex] = orderUpdated
+
+    return order
+  }
+
+  async findById(id: number): Promise<Order> {
+    const order = this.items.find((item) => item.id === id)
+
+    if (!order) {
+      return null
+    }
+
+    return order
   }
 
   async listByTransactionId(transactionId: number): Promise<Order[]> {

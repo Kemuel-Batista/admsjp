@@ -222,10 +222,11 @@ model Order {
   paidAt          DateTime?       @map("paid_at")
   attachment      String?         @map("attachment")
 
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime? @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-  deletedBy Int?      @map("deleted_by")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime? @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  deletedBy   Int?      @map("deleted_by")
+  confirmedBy Int?      @map("confirmed_by")
 
   @@map("orders")
 }

@@ -17,8 +17,8 @@ export class PrismaOrdersRepository implements OrdersRepository {
     attachment,
     status,
     paymentMethod,
-  }: Prisma.OrderUncheckedCreateInput): Promise<void> {
-    await this.prisma.order.create({
+  }: Prisma.OrderUncheckedCreateInput): Promise<Order> {
+    const order = await this.prisma.order.create({
       data: {
         transactionId,
         transactionType,
@@ -29,6 +29,34 @@ export class PrismaOrdersRepository implements OrdersRepository {
         paymentMethod,
       },
     })
+
+    return order
+  }
+
+  async update({ id, status, confirmedBy, paidAt }: Order): Promise<Order> {
+    const order = await this.prisma.order.update({
+      where: {
+        id,
+      },
+      data: {
+        status,
+        confirmedBy,
+        paidAt,
+        updatedAt: new Date(),
+      },
+    })
+
+    return order
+  }
+
+  async findById(id: Order['id']): Promise<Order | null> {
+    const order = await this.prisma.order.findUnique({
+      where: {
+        id,
+      },
+    })
+
+    return order
   }
 
   async listByTransactionId(transactionId: number): Promise<Order[]> {
