@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { Prisma } from '@prisma/client'
+import { Order, Prisma } from '@prisma/client'
 
 import { OrdersRepository } from '@/domain/admsjp/repositories/orders-repository'
 
@@ -29,5 +29,15 @@ export class PrismaOrdersRepository implements OrdersRepository {
         paymentMethod,
       },
     })
+  }
+
+  async listByTransactionId(transactionId: number): Promise<Order[]> {
+    const orders = await this.prisma.order.findMany({
+      where: {
+        transactionId,
+      },
+    })
+
+    return orders
   }
 }

@@ -28,4 +28,12 @@ export class InMemoryOrdersRepository implements OrdersRepository {
 
     this.items.push(order)
   }
+
+  async listByTransactionId(transactionId: number): Promise<Order[]> {
+    const orders = this.items
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .filter((item) => item.transactionId === transactionId)
+
+    return orders
+  }
 }
