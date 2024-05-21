@@ -10,6 +10,7 @@ import { ListEventsUseCase } from '@/domain/admsjp/use-cases/events/list/default
 import { ListPublicEventsUseCase } from '@/domain/admsjp/use-cases/events/list/public/list-public-events'
 import { UpdateEventUseCase } from '@/domain/admsjp/use-cases/events/update/update-event'
 import { DatabaseModule } from '@/infra/database/database.module'
+import { NotifierModule } from '@/infra/notifier/notifier.module'
 import { StorageModule } from '@/infra/storage/storage.module'
 
 import { CreateEventController } from './controllers/create-event.controller'
@@ -21,7 +22,7 @@ import { ListPublicEventsController } from './controllers/list-public-events.con
 import { UpdateEventController } from './controllers/update-event.controller'
 
 @Module({
-  imports: [DatabaseModule, StorageModule],
+  imports: [DatabaseModule, StorageModule, NotifierModule],
   controllers: [
     CreateEventController,
     ListEventsController,
