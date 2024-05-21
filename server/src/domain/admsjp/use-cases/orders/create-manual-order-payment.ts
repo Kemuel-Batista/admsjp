@@ -1,7 +1,10 @@
-import { Order } from '@prisma/client'
+import { Injectable } from '@nestjs/common'
+import { Order, User } from '@prisma/client'
 
 import { Either, failure, success } from '@/core/either'
+import { IncorrectAssociationError } from '@/core/errors/errors/incorrect-association-error'
 import { InvalidAttachmentTypeError } from '@/core/errors/errors/invalid-attachment-type-error'
+import { OrderPaymentAlreadyCompletedError } from '@/core/errors/errors/order-payment-already-completed-error'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 
 import { OrderPaymentMethod, OrderStatus } from '../../enums/order'
@@ -14,13 +17,18 @@ interface CreateManualOrderPaymentUseCaseRequest {
   fileName: string
   fileType: string
   body: Buffer
+  paidBy: User['id']
 }
 
 type CreateManualOrderPaymentUseCaseResponse = Either<
-  InvalidAttachmentTypeError | ResourceNotFoundError,
+  | InvalidAttachmentTypeError
+  | ResourceNotFoundError
+  | IncorrectAssociationError
+  | OrderPaymentAlreadyCompletedError,
   null
 >
 
+@Injectable()
 export class CreateManualOrderPaymentUseCase {
   constructor(
     private ordersRepository: OrdersRepository,
@@ -33,6 +41,7 @@ export class CreateManualOrderPaymentUseCase {
     fileName,
     fileType,
     body,
+    paidBy,
   }: CreateManualOrderPaymentUseCaseRequest): Promise<CreateManualOrderPaymentUseCaseResponse> {
     if (
       !/^(image\/(jpeg|png|webp))$|^application\/pdf$|^video\/mp4$/.test(
@@ -59,6 +68,24 @@ export class CreateManualOrderPaymentUseCase {
       )
     }
 
+    if (eventTicket.userId !== paidBy) {
+      return failure(
+        new IncorrectAssociationError({
+          errorKey: 'order.payment.ticketOwnerIsNotSame',
+          key: paidBy.toString(),
+        }),
+      )
+    }
+
+    if (eventTicket.expiresAt === null) {
+      return failure(
+        new OrderPaymentAlreadyCompletedError({
+          errorKey: 'order.payment.alreadyCompleted',
+          key: transactionId.toString(),
+        }),
+      )
+    }
+
     const { url } = await this.uploader.upload({
       fileName,
       fileType,
@@ -71,6 +98,10 @@ export class CreateManualOrderPaymentUseCase {
       paymentMethod: OrderPaymentMethod.MANUAL,
       attachment: url,
     })
+
+    eventTicket.expiresAt = null
+
+    await this.eventTicketsRepository.update(eventTicket)
 
     return success(null)
   }
