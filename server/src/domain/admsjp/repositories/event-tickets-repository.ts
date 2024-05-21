@@ -18,6 +18,9 @@ export abstract class EventTicketsRepository {
   ): Promise<EventTicket | null>
 
   abstract findById(id: EventTicket['id']): Promise<EventTicket | null>
+  abstract findDetailsById(
+    id: EventTicket['id'],
+  ): Promise<EventTicketWithEventAndEventLot | null>
 
   abstract listByLot(lot: EventTicket['lot']): Promise<EventTicket[]>
   abstract listDetailsByUserId(

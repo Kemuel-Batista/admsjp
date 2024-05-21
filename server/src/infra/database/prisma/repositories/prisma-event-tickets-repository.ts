@@ -67,6 +67,7 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
         eventLot: {
           select: {
             lot: true,
+            value: true,
           },
         },
         event: {
@@ -107,6 +108,7 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
         eventLot: {
           select: {
             lot: true,
+            value: true,
           },
         },
       },
@@ -135,6 +137,40 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
     const eventTicket = await this.prisma.eventTicket.findUnique({
       where: {
         id,
+      },
+    })
+
+    return eventTicket
+  }
+
+  async findDetailsById(
+    id: EventTicket['id'],
+  ): Promise<EventTicketWithEventAndEventLot> {
+    const eventTicket = await this.prisma.eventTicket.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        eventLot: {
+          select: {
+            lot: true,
+            value: true,
+          },
+        },
+        event: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            department: {
+              select: {
+                name: true,
+              },
+            },
+            imagePath: true,
+            eventType: true,
+          },
+        },
       },
     })
 

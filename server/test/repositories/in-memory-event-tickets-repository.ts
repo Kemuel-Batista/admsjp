@@ -90,6 +90,49 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
     return eventTicket
   }
 
+  async findDetailsById(id: number): Promise<EventTicketWithEventAndEventLot> {
+    const eventTicket = this.items.find((item) => item.id === id)
+
+    const eventLot = this.eventLotsRepository.items.find((eventLot) => {
+      return eventLot.lot === eventTicket.lot
+    })
+
+    if (!eventLot) {
+      throw new Error(
+        `Event Lot with lot "${eventTicket.lot.toString()}" does not exist.`,
+      )
+    }
+
+    const event = this.eventsRepository.items.find((event) => {
+      return event.id === eventTicket.eventId
+    })
+
+    if (!event) {
+      throw new Error(
+        `Event with "${eventTicket.eventId.toString()}" does not exist.`,
+      )
+    }
+
+    const department = this.departmentsRepository.items.find((department) => {
+      return department.id === event.departmentId
+    })
+
+    return {
+      ...eventTicket,
+      eventLot,
+      event: {
+        id: event.id,
+        title: event.title,
+        description: event.description,
+        department: {
+          name: department.name,
+        },
+        imagePath: event.imagePath,
+        eventType: event.eventType,
+      },
+    }
+  }
+
   async listByLot(lot: number): Promise<EventTicket[]> {
     const eventTickets = this.items
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())

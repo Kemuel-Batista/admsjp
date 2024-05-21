@@ -5,10 +5,8 @@ import {
   paramsValidationPipe,
 } from '@/core/schemas/params-schema'
 import { ListEventTicketsByEventIdUseCase } from '@/domain/admsjp/use-cases/event-ticket/list-event-tickets-by-event-id'
-import { Public } from '@/infra/auth/public'
 
 @Controller('/event/:id')
-@Public()
 export class ListEventTicketsByEventIdController {
   constructor(
     private listEventTicketsByEventIdUseCase: ListEventTicketsByEventIdUseCase,
