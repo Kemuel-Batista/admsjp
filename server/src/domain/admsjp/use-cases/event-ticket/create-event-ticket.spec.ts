@@ -3,6 +3,7 @@ import { makeEventLot } from 'test/factories/make-event-lot'
 import { makeEventTicket } from 'test/factories/make-event-ticket'
 import { makeUser } from 'test/factories/make-user'
 import { FakeTicketGenerator } from 'test/generators/fake-ticket-generator'
+import { InMemoryDepartmentsRepository } from 'test/repositories/in-memory-departments-repository'
 import { InMemoryEventLotsRepository } from 'test/repositories/in-memory-event-lots-repository'
 import { InMemoryEventTicketsRepository } from 'test/repositories/in-memory-event-tickets-repository'
 import { InMemoryEventsRepository } from 'test/repositories/in-memory-events-repository'
@@ -15,10 +16,11 @@ import { TicketsSoldOutError } from '@/core/errors/errors/tickets-sold-out-error
 
 import { CreateEventTicketUseCase } from './create-event-ticket'
 
-let inMemoryEventTicketsRepository: InMemoryEventTicketsRepository
+let inMemoryUsersRepository: InMemoryUsersRepository
+let inMemoryDepartmentsRepository: InMemoryDepartmentsRepository
 let inMemoryEventsRepository: InMemoryEventsRepository
 let inMemoryEventLotsRepository: InMemoryEventLotsRepository
-let inMemoryUsersRepository: InMemoryUsersRepository
+let inMemoryEventTicketsRepository: InMemoryEventTicketsRepository
 let inMemoryOrdersRepository: InMemoryOrdersRepository
 let fakeTicketGenerator: FakeTicketGenerator
 
@@ -27,12 +29,15 @@ let sut: CreateEventTicketUseCase
 describe('Create Event Ticket', () => {
   beforeEach(() => {
     inMemoryUsersRepository = new InMemoryUsersRepository()
+    inMemoryDepartmentsRepository = new InMemoryDepartmentsRepository()
+    inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
     inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
       inMemoryUsersRepository,
+      inMemoryDepartmentsRepository,
+      inMemoryEventsRepository,
       inMemoryEventLotsRepository,
     )
-    inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryOrdersRepository = new InMemoryOrdersRepository()
 
     fakeTicketGenerator = new FakeTicketGenerator()

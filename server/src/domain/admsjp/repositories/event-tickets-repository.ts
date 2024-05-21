@@ -1,6 +1,9 @@
 import { EventTicket, Prisma } from '@prisma/client'
 
-import { EventTicketWithUserAndEventLot } from '../types/event-ticket'
+import {
+  EventTicketWithEventAndEventLot,
+  EventTicketWithUserAndEventLot,
+} from '../types/event-ticket'
 
 export abstract class EventTicketsRepository {
   abstract create(
@@ -17,6 +20,10 @@ export abstract class EventTicketsRepository {
   abstract findById(id: EventTicket['id']): Promise<EventTicket | null>
 
   abstract listByLot(lot: EventTicket['lot']): Promise<EventTicket[]>
+  abstract listDetailsByUserId(
+    userId: EventTicket['userId'],
+  ): Promise<EventTicketWithEventAndEventLot[]>
+
   abstract listDetailsByEventId(
     eventId: EventTicket['eventId'],
   ): Promise<EventTicketWithUserAndEventLot[]>

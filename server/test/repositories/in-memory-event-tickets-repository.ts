@@ -4,9 +4,14 @@ import { EventTicket, Prisma } from '@prisma/client'
 import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
 import { EventTicketsRepository } from '@/domain/admsjp/repositories/event-tickets-repository'
-import { EventTicketWithUserAndEventLot } from '@/domain/admsjp/types/event-ticket'
+import {
+  EventTicketWithEventAndEventLot,
+  EventTicketWithUserAndEventLot,
+} from '@/domain/admsjp/types/event-ticket'
 
+import { InMemoryDepartmentsRepository } from './in-memory-departments-repository'
 import { InMemoryEventLotsRepository } from './in-memory-event-lots-repository'
+import { InMemoryEventsRepository } from './in-memory-events-repository'
 import { InMemoryUsersRepository } from './in-memory-users-repository'
 
 export class InMemoryEventTicketsRepository implements EventTicketsRepository {
@@ -14,6 +19,8 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
 
   constructor(
     private usersRepository: InMemoryUsersRepository,
+    private departmentsRepository: InMemoryDepartmentsRepository,
+    private eventsRepository: InMemoryEventsRepository,
     private eventLotsRepository: InMemoryEventLotsRepository,
   ) {}
 
@@ -87,6 +94,58 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
     const eventTickets = this.items
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .filter((item) => item.lot === lot)
+
+    return eventTickets
+  }
+
+  async listDetailsByUserId(
+    userId: number,
+  ): Promise<EventTicketWithEventAndEventLot[]> {
+    const eventTickets = this.items
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .filter((item) => item.eventId === userId)
+      .map((eventTicket) => {
+        const eventLot = this.eventLotsRepository.items.find((eventLot) => {
+          return eventLot.lot === eventTicket.lot
+        })
+
+        if (!eventLot) {
+          throw new Error(
+            `Event Lot with lot "${eventTicket.lot.toString()}" does not exist.`,
+          )
+        }
+
+        const event = this.eventsRepository.items.find((event) => {
+          return event.id === eventTicket.eventId
+        })
+
+        if (!event) {
+          throw new Error(
+            `Event with "${eventTicket.eventId.toString()}" does not exist.`,
+          )
+        }
+
+        const department = this.departmentsRepository.items.find(
+          (department) => {
+            return department.id === event.departmentId
+          },
+        )
+
+        return {
+          ...eventTicket,
+          eventLot,
+          event: {
+            id: event.id,
+            title: event.title,
+            description: event.description,
+            department: {
+              name: department.name,
+            },
+            imagePath: event.imagePath,
+            eventType: event.eventType,
+          },
+        }
+      })
 
     return eventTickets
   }

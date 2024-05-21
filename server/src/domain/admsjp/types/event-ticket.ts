@@ -16,3 +16,27 @@ export type EventTicketWithUserAndEventLot = Prisma.EventTicketGetPayload<{
     }
   }
 }>
+
+export type EventTicketWithEventAndEventLot = Prisma.EventTicketGetPayload<{
+  include: {
+    eventLot: {
+      select: {
+        lot: true
+      }
+    }
+    event: {
+      select: {
+        id: true
+        title: true
+        description: true
+        department: {
+          select: {
+            name: true
+          }
+        }
+        imagePath: true
+        eventType: true
+      }
+    }
+  }
+}>

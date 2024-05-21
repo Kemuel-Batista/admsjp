@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common'
 import { EventTicket, Prisma } from '@prisma/client'
 
 import { EventTicketsRepository } from '@/domain/admsjp/repositories/event-tickets-repository'
-import { EventTicketWithUserAndEventLot } from '@/domain/admsjp/types/event-ticket'
+import {
+  EventTicketWithEventAndEventLot,
+  EventTicketWithUserAndEventLot,
+} from '@/domain/admsjp/types/event-ticket'
 
 import { PrismaService } from '../prisma.service'
 
@@ -47,6 +50,39 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
     const eventTickets = await this.prisma.eventTicket.findMany({
       where: {
         lot,
+      },
+    })
+
+    return eventTickets
+  }
+
+  async listDetailsByUserId(
+    userId: number,
+  ): Promise<EventTicketWithEventAndEventLot[]> {
+    const eventTickets = await this.prisma.eventTicket.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        eventLot: {
+          select: {
+            lot: true,
+          },
+        },
+        event: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            department: {
+              select: {
+                name: true,
+              },
+            },
+            imagePath: true,
+            eventType: true,
+          },
+        },
       },
     })
 

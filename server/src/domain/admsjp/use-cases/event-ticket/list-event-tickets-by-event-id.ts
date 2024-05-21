@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common'
 import { EventTicket } from '@prisma/client'
 
 import { Either, failure, success } from '@/core/either'
@@ -18,6 +19,7 @@ type ListEventTicketsByEventIdUseCaseResponse = Either<
   }
 >
 
+@Injectable()
 export class ListEventTicketsByEventIdUseCase {
   constructor(
     private eventTicketsRepository: EventTicketsRepository,

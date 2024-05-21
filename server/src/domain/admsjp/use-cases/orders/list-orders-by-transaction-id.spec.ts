@@ -1,29 +1,36 @@
 import { makeEventTicket } from 'test/factories/make-event-ticket'
 import { makeOrder } from 'test/factories/make-order'
+import { InMemoryDepartmentsRepository } from 'test/repositories/in-memory-departments-repository'
 import { InMemoryEventLotsRepository } from 'test/repositories/in-memory-event-lots-repository'
 import { InMemoryEventTicketsRepository } from 'test/repositories/in-memory-event-tickets-repository'
+import { InMemoryEventsRepository } from 'test/repositories/in-memory-events-repository'
 import { InMemoryOrdersRepository } from 'test/repositories/in-memory-orders-repository'
 import { InMemoryUsersRepository } from 'test/repositories/in-memory-users-repository'
 
 import { ListOrdersByTransactionIdUseCase } from './list-orders-by-transaction-id'
 
-let inMemoryOrdersRepository: InMemoryOrdersRepository
 let inMemoryUsersRepository: InMemoryUsersRepository
+let inMemoryDepartmentsRepository: InMemoryDepartmentsRepository
+let inMemoryEventsRepository: InMemoryEventsRepository
 let inMemoryEventLotsRepository: InMemoryEventLotsRepository
 let inMemoryEventTicketsRepository: InMemoryEventTicketsRepository
+let inMemoryOrdersRepository: InMemoryOrdersRepository
 
 let sut: ListOrdersByTransactionIdUseCase
 
 describe('List orders by transaction id', () => {
   beforeEach(() => {
-    inMemoryOrdersRepository = new InMemoryOrdersRepository()
-
     inMemoryUsersRepository = new InMemoryUsersRepository()
+    inMemoryDepartmentsRepository = new InMemoryDepartmentsRepository()
+    inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
     inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
       inMemoryUsersRepository,
+      inMemoryDepartmentsRepository,
+      inMemoryEventsRepository,
       inMemoryEventLotsRepository,
     )
+    inMemoryOrdersRepository = new InMemoryOrdersRepository()
 
     sut = new ListOrdersByTransactionIdUseCase(inMemoryOrdersRepository)
   })

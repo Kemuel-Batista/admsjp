@@ -7,17 +7,15 @@ import {
   Param,
   Patch,
 } from '@nestjs/common'
-import { z } from 'zod'
 
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
+import {
+  ParamsSchema,
+  paramsValidationPipe,
+} from '@/core/schemas/params-schema'
 import { ConfirmOrderPaymentUseCase } from '@/domain/admsjp/use-cases/orders/confirm-order-payment'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
-import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
-
-const paramsSchema = z.coerce.number().int().positive()
-const paramValidationPipe = new ZodValidationPipe(paramsSchema)
-type ParamSchema = z.infer<typeof paramsSchema>
 
 @Controller('/confirm/:orderId')
 export class ConfirmOrderPaymentController {
@@ -26,7 +24,7 @@ export class ConfirmOrderPaymentController {
   @Patch()
   @HttpCode(HttpStatus.NO_CONTENT)
   async handle(
-    @Param('orderId', paramValidationPipe) orderId: ParamSchema,
+    @Param('orderId', paramsValidationPipe) orderId: ParamsSchema,
     @CurrentUser() user: UserPayload,
   ) {
     const result = await this.confirmOrderPayment.execute({

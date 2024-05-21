@@ -2,6 +2,7 @@ import { makeEvent } from 'test/factories/make-event'
 import { makeEventLot } from 'test/factories/make-event-lot'
 import { makeEventTicket } from 'test/factories/make-event-ticket'
 import { makeUser } from 'test/factories/make-user'
+import { InMemoryDepartmentsRepository } from 'test/repositories/in-memory-departments-repository'
 import { InMemoryEventLotsRepository } from 'test/repositories/in-memory-event-lots-repository'
 import { InMemoryEventTicketsRepository } from 'test/repositories/in-memory-event-tickets-repository'
 import { InMemoryEventsRepository } from 'test/repositories/in-memory-events-repository'
@@ -10,6 +11,7 @@ import { InMemoryUsersRepository } from 'test/repositories/in-memory-users-repos
 import { ListEventTicketsByEventIdUseCase } from './list-event-tickets-by-event-id'
 
 let inMemoryUsersRepository: InMemoryUsersRepository
+let inMemoryDepartmentsRepository: InMemoryDepartmentsRepository
 let inMemoryEventsRepository: InMemoryEventsRepository
 let inMemoryEventLotsRepository: InMemoryEventLotsRepository
 let inMemoryEventTicketsRepository: InMemoryEventTicketsRepository
@@ -19,10 +21,13 @@ let sut: ListEventTicketsByEventIdUseCase
 describe('List event tickets by event id', () => {
   beforeEach(() => {
     inMemoryUsersRepository = new InMemoryUsersRepository()
+    inMemoryDepartmentsRepository = new InMemoryDepartmentsRepository()
     inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
     inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
       inMemoryUsersRepository,
+      inMemoryDepartmentsRepository,
+      inMemoryEventsRepository,
       inMemoryEventLotsRepository,
     )
 

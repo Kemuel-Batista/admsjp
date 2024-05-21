@@ -1,13 +1,15 @@
+import { makeDepartment } from 'test/factories/make-department'
+import { makeEvent } from 'test/factories/make-event'
 import { makeEventLot } from 'test/factories/make-event-lot'
 import { makeEventTicket } from 'test/factories/make-event-ticket'
+import { makeUser } from 'test/factories/make-user'
 import { InMemoryDepartmentsRepository } from 'test/repositories/in-memory-departments-repository'
 import { InMemoryEventLotsRepository } from 'test/repositories/in-memory-event-lots-repository'
 import { InMemoryEventTicketsRepository } from 'test/repositories/in-memory-event-tickets-repository'
 import { InMemoryEventsRepository } from 'test/repositories/in-memory-events-repository'
 import { InMemoryUsersRepository } from 'test/repositories/in-memory-users-repository'
 
-import { EventLotStatus } from '../../enums/event-lot'
-import { EditEventLotUseCase } from './edit-event-lot'
+import { ListEventTicketsByUserIdUseCase } from './list-event-tickets-by-user-id'
 
 let inMemoryUsersRepository: InMemoryUsersRepository
 let inMemoryDepartmentsRepository: InMemoryDepartmentsRepository
@@ -15,9 +17,9 @@ let inMemoryEventsRepository: InMemoryEventsRepository
 let inMemoryEventLotsRepository: InMemoryEventLotsRepository
 let inMemoryEventTicketsRepository: InMemoryEventTicketsRepository
 
-let sut: EditEventLotUseCase
+let sut: ListEventTicketsByUserIdUseCase
 
-describe('Edit event lot', () => {
+describe('List event tickets by user id', () => {
   beforeEach(() => {
     inMemoryUsersRepository = new InMemoryUsersRepository()
     inMemoryDepartmentsRepository = new InMemoryDepartmentsRepository()
@@ -30,74 +32,60 @@ describe('Edit event lot', () => {
       inMemoryEventLotsRepository,
     )
 
-    sut = new EditEventLotUseCase(
-      inMemoryEventLotsRepository,
+    sut = new ListEventTicketsByUserIdUseCase(
       inMemoryEventTicketsRepository,
+      inMemoryUsersRepository,
     )
   })
 
-  it('should be able to edit an event lot with all information', async () => {
-    const eventLotFactory = makeEventLot({
-      quantity: 50,
-      value: 60,
+  it('should be able to list event tickets with details by user id', async () => {
+    const departmentFactory = makeDepartment()
+    const department =
+      await inMemoryDepartmentsRepository.create(departmentFactory)
+
+    const userFactory = makeUser()
+    const user = await inMemoryUsersRepository.create(userFactory)
+
+    const eventFactory = makeEvent({
+      departmentId: department.id,
     })
-    const eventLot = await inMemoryEventLotsRepository.create(eventLotFactory)
+    const event = await inMemoryEventsRepository.create(eventFactory)
 
-    const result = await sut.execute({
-      eventId: eventLot.eventId,
-      lot: eventLot.lot,
-      quantity: 100,
-      value: 1000,
-      status: EventLotStatus.ACTIVE,
-    })
-
-    expect(result.isSuccess()).toBe(true)
-
-    expect(inMemoryEventLotsRepository.items).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          eventId: eventLot.eventId,
-          lot: eventLot.lot,
-          quantity: 100,
-          value: 1000,
-          status: EventLotStatus.ACTIVE,
-        }),
-      ]),
-    )
-  })
-
-  it('should be able to edit just quantity because have ticket associations to lot', async () => {
     const eventLotFactory = makeEventLot({
-      quantity: 50,
+      eventId: event.id,
     })
     const eventLot = await inMemoryEventLotsRepository.create(eventLotFactory)
 
     const eventTicketFactory = makeEventTicket({
+      userId: user.id,
+      eventId: event.id,
       lot: eventLot.lot,
-      eventId: eventLot.eventId,
     })
     await inMemoryEventTicketsRepository.create(eventTicketFactory)
 
     const result = await sut.execute({
-      eventId: eventLot.eventId,
-      lot: eventLot.lot,
-      quantity: 100,
-      status: EventLotStatus.ACTIVE,
-      value: 1000,
+      userId: user.id,
     })
 
     expect(result.isSuccess()).toBe(true)
-
-    expect(inMemoryEventLotsRepository.items).toEqual(
-      expect.arrayContaining([
+    expect(result.value).toEqual({
+      eventTickets: expect.arrayContaining([
         expect.objectContaining({
-          eventId: eventLot.eventId,
+          userId: user.id,
+          eventId: event.id,
           lot: eventLot.lot,
-          quantity: 100,
-          value: eventLot.value,
-          status: eventLot.status,
+          eventLot: expect.objectContaining({
+            lot: eventLot.lot,
+          }),
+          event: expect.objectContaining({
+            id: event.id,
+            title: event.title,
+            department: expect.objectContaining({
+              name: department.name,
+            }),
+          }),
         }),
       ]),
-    )
+    })
   })
 })

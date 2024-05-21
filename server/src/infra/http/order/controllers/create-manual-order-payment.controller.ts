@@ -15,20 +15,18 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { z } from 'zod'
 
 import { IncorrectAssociationError } from '@/core/errors/errors/incorrect-association-error'
 import { InvalidAttachmentTypeError } from '@/core/errors/errors/invalid-attachment-type-error'
 import { OrderPaymentAlreadyCompletedError } from '@/core/errors/errors/order-payment-already-completed-error'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
+import {
+  ParamsSchema,
+  paramsValidationPipe,
+} from '@/core/schemas/params-schema'
 import { CreateManualOrderPaymentUseCase } from '@/domain/admsjp/use-cases/orders/create-manual-order-payment'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
-import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
-
-const paramsSchema = z.coerce.number().int().positive()
-const paramValidationPipe = new ZodValidationPipe(paramsSchema)
-type ParamSchema = z.infer<typeof paramsSchema>
 
 @Controller('/manual/:transactionId')
 export class CreateManualOrderPaymentController {
@@ -51,7 +49,7 @@ export class CreateManualOrderPaymentController {
       }),
     )
     file: Express.Multer.File,
-    @Param('transactionId', paramValidationPipe) transactionId: ParamSchema,
+    @Param('transactionId', paramsValidationPipe) transactionId: ParamsSchema,
     @CurrentUser() user: UserPayload,
   ) {
     const result = await this.createManualOrderPayment.execute({

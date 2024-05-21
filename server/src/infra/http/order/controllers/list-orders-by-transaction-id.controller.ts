@@ -1,13 +1,10 @@
 import { BadRequestException, Controller, Get, Param } from '@nestjs/common'
-import { z } from 'zod'
 
+import {
+  ParamsSchema,
+  paramsValidationPipe,
+} from '@/core/schemas/params-schema'
 import { ListOrdersByTransactionIdUseCase } from '@/domain/admsjp/use-cases/orders/list-orders-by-transaction-id'
-
-import { ZodValidationPipe } from '../../pipes/zod-validation-pipe'
-
-const paramsSchema = z.coerce.number().int().positive()
-const paramValidationPipe = new ZodValidationPipe(paramsSchema)
-type ParamSchema = z.infer<typeof paramsSchema>
 
 @Controller('/transactions/:transactionId')
 export class ListOrdersByTransactionIdController {
@@ -17,7 +14,7 @@ export class ListOrdersByTransactionIdController {
 
   @Get()
   async handle(
-    @Param('transactionId', paramValidationPipe) transactionId: ParamSchema,
+    @Param('transactionId', paramsValidationPipe) transactionId: ParamsSchema,
   ) {
     const result = await this.listOrdersByTransactionIdUseCase.execute({
       transactionId,

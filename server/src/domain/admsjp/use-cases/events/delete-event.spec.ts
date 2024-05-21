@@ -1,6 +1,7 @@
 import { makeEvent } from 'test/factories/make-event'
 import { makeEventLot } from 'test/factories/make-event-lot'
 import { makeEventTicket } from 'test/factories/make-event-ticket'
+import { InMemoryDepartmentsRepository } from 'test/repositories/in-memory-departments-repository'
 import { InMemoryEventLotsRepository } from 'test/repositories/in-memory-event-lots-repository'
 import { InMemoryEventTicketsRepository } from 'test/repositories/in-memory-event-tickets-repository'
 import { InMemoryEventsRepository } from 'test/repositories/in-memory-events-repository'
@@ -11,6 +12,7 @@ import { ResourceHasAssociationsError } from '@/core/errors/errors/resource-has-
 import { DeleteEventUseCase } from './delete-event'
 
 let inMemoryUsersRepository: InMemoryUsersRepository
+let inMemoryDepartmentsRepository: InMemoryDepartmentsRepository
 let inMemoryEventsRepository: InMemoryEventsRepository
 let inMemoryEventLotsRepository: InMemoryEventLotsRepository
 let inMemoryEventTicketsRepository: InMemoryEventTicketsRepository
@@ -19,11 +21,14 @@ let sut: DeleteEventUseCase
 
 describe('Delete Event', () => {
   beforeEach(() => {
-    inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryUsersRepository = new InMemoryUsersRepository()
+    inMemoryDepartmentsRepository = new InMemoryDepartmentsRepository()
+    inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
     inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
       inMemoryUsersRepository,
+      inMemoryDepartmentsRepository,
+      inMemoryEventsRepository,
       inMemoryEventLotsRepository,
     )
 
