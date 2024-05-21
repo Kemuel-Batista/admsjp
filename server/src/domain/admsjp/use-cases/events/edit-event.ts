@@ -1,5 +1,9 @@
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
+
 import { Injectable } from '@nestjs/common'
 import { Event } from '@prisma/client'
+import handlebars from 'handlebars'
 
 import { Either, failure, success } from '@/core/either'
 import { InvalidAttachmentTypeError } from '@/core/errors/errors/invalid-attachment-type-error'
@@ -9,7 +13,10 @@ import { Slug } from '@/core/util/slug/slug'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 import { Uploader } from '@/domain/admsjp/storage/uploader'
 
-interface UpdateEventUseCaseRequest {
+import { MailNotifier } from '../../notifiers/mail-notifier'
+import { EventTicketsRepository } from '../../repositories/event-tickets-repository'
+
+interface EditEventUseCaseRequest {
   id: Event['id']
   title?: Event['title']
   description?: Event['description']
@@ -25,7 +32,7 @@ interface UpdateEventUseCaseRequest {
   updatedBy: Event['updatedBy']
 }
 
-type UpdateEventUseCaseResponse = Either<
+type EditEventUseCaseResponse = Either<
   | ResourceNotFoundError
   | ResourceAlreadyExistsError
   | InvalidAttachmentTypeError,
@@ -35,10 +42,12 @@ type UpdateEventUseCaseResponse = Either<
 >
 
 @Injectable()
-export class UpdateEventUseCase {
+export class EditEventUseCase {
   constructor(
     private eventsRepository: EventsRepository,
+    private eventTicketsRepository: EventTicketsRepository,
     private uploader: Uploader,
+    private mailNotifier: MailNotifier,
   ) {}
 
   async execute({
@@ -55,7 +64,7 @@ export class UpdateEventUseCase {
     body,
     message,
     updatedBy,
-  }: UpdateEventUseCaseRequest): Promise<UpdateEventUseCaseResponse> {
+  }: EditEventUseCaseRequest): Promise<EditEventUseCaseResponse> {
     const event = await this.eventsRepository.findById(id)
 
     if (!event) {
@@ -123,6 +132,26 @@ export class UpdateEventUseCase {
       event.imagePath = url
     }
 
+    let renderedHtml = ''
+
+    if (
+      event.initialDate !== initialDate ||
+      event.finalDate !== finalDate ||
+      event.eventType !== eventType
+    ) {
+      // TODO: Create html content on views/event-updated.hbs
+      const htmlPath = join(__dirname, '..', '..', 'views', 'event-updated.hbs')
+      const templateHtml = readFileSync(htmlPath, 'utf-8')
+
+      const compiledTemplate = handlebars.compile(templateHtml)
+      // TODO: Create a redirectionLink to send to client too
+      renderedHtml = compiledTemplate({
+        initialDate: initialDate.toLocaleDateString(),
+        finalDate: finalDate.toLocaleDateString(),
+        eventType,
+      })
+    }
+
     event.description = description
     event.initialDate = initialDate
     event.finalDate = finalDate
@@ -133,6 +162,20 @@ export class UpdateEventUseCase {
     event.updatedBy = updatedBy
 
     await this.eventsRepository.update(event)
+
+    const eventTickets = await this.eventTicketsRepository.listDetailsByEventId(
+      event.id,
+    )
+
+    for (const eventTicket of eventTickets) {
+      await this.mailNotifier.send({
+        email: eventTicket.user.email,
+        title: 'Evento foi atualizado!',
+        content:
+          'O evento que você tem uma inscrição foi atualizado! Verique os detalhes abaixo.',
+        renderedHtml,
+      })
+    }
 
     return success({
       event,

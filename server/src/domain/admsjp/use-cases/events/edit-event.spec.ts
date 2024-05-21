@@ -1,5 +1,9 @@
 import { makeEvent } from 'test/factories/make-event'
 import { makeUser } from 'test/factories/make-user'
+import { FakeMailNotifier } from 'test/notifier/fake-mail-notifier'
+import { InMemoryDepartmentsRepository } from 'test/repositories/in-memory-departments-repository'
+import { InMemoryEventLotsRepository } from 'test/repositories/in-memory-event-lots-repository'
+import { InMemoryEventTicketsRepository } from 'test/repositories/in-memory-event-tickets-repository'
 import { InMemoryEventsRepository } from 'test/repositories/in-memory-events-repository'
 import { InMemoryUsersRepository } from 'test/repositories/in-memory-users-repository'
 import { FakeUploader } from 'test/storage/fake-storage'
@@ -10,22 +14,40 @@ import {
   EventVisible,
 } from '@/domain/admsjp/enums/event'
 
-import { UpdateEventUseCase } from './update-event'
+import { EditEventUseCase } from './edit-event'
 
 let inMemoryUsersRepository: InMemoryUsersRepository
+let inMemoryDepartmentsRepository: InMemoryDepartmentsRepository
 let inMemoryEventsRepository: InMemoryEventsRepository
+let inMemoryEventLotsRepository: InMemoryEventLotsRepository
+let inMemoryEventTicketsRepository: InMemoryEventTicketsRepository
 let fakeUploader: FakeUploader
+let fakeMailNotifier: FakeMailNotifier
 
-let sut: UpdateEventUseCase
+let sut: EditEventUseCase
 
-describe('Update Event', () => {
+describe('Edit Event', () => {
   beforeEach(() => {
     inMemoryUsersRepository = new InMemoryUsersRepository()
+    inMemoryDepartmentsRepository = new InMemoryDepartmentsRepository()
     inMemoryEventsRepository = new InMemoryEventsRepository()
+    inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
+    inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
+      inMemoryUsersRepository,
+      inMemoryDepartmentsRepository,
+      inMemoryEventsRepository,
+      inMemoryEventLotsRepository,
+    )
 
     fakeUploader = new FakeUploader()
+    fakeMailNotifier = new FakeMailNotifier()
 
-    sut = new UpdateEventUseCase(inMemoryEventsRepository, fakeUploader)
+    sut = new EditEventUseCase(
+      inMemoryEventsRepository,
+      inMemoryEventTicketsRepository,
+      fakeUploader,
+      fakeMailNotifier,
+    )
   })
 
   it('should be able to edit an existent event', async () => {

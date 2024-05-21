@@ -3,7 +3,7 @@ import {
   MailNotifierProps,
 } from '@/domain/admsjp/notifiers/mail-notifier'
 
-export class FakeNotifier implements MailNotifier {
+export class FakeMailNotifier implements MailNotifier {
   send({ email, title, content }: MailNotifierProps): Promise<void> {
     console.log(
       `Simulating notification sent to (${email}): ${title} - ${content}`,
