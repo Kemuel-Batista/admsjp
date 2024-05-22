@@ -6,6 +6,7 @@ import { envSchema } from './env/env'
 import { EnvModule } from './env/env.module'
 import { HttpModule } from './http/http.module'
 import { QueueModule } from './queue/queue.module'
+import { WebsocketModule } from './websocket/websocket.module'
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { QueueModule } from './queue/queue.module'
       validate: (env) => envSchema.parse(env),
       isGlobal: true,
     }),
+    WebsocketModule,
     AuthModule,
     HttpModule,
     EnvModule,

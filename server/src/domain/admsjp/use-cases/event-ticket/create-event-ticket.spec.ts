@@ -1,6 +1,7 @@
 import { makeEvent } from 'test/factories/make-event'
 import { makeEventLot } from 'test/factories/make-event-lot'
 import { makeEventTicket } from 'test/factories/make-event-ticket'
+import { makeParameter } from 'test/factories/make-parameter'
 import { makeUser } from 'test/factories/make-user'
 import { FakeTicketGenerator } from 'test/generators/fake-ticket-generator'
 import { InMemoryDepartmentsRepository } from 'test/repositories/in-memory-departments-repository'
@@ -8,7 +9,9 @@ import { InMemoryEventLotsRepository } from 'test/repositories/in-memory-event-l
 import { InMemoryEventTicketsRepository } from 'test/repositories/in-memory-event-tickets-repository'
 import { InMemoryEventsRepository } from 'test/repositories/in-memory-events-repository'
 import { InMemoryOrdersRepository } from 'test/repositories/in-memory-orders-repository'
+import { InMemoryParametersRepository } from 'test/repositories/in-memory-parameters-repository'
 import { InMemoryUsersRepository } from 'test/repositories/in-memory-users-repository'
+import { FakeEventSocket } from 'test/websocket/fake-event-socket'
 
 import { ResourceAlreadyExistsError } from '@/core/errors/errors/resource-already-exists-error'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
@@ -22,12 +25,14 @@ let inMemoryEventsRepository: InMemoryEventsRepository
 let inMemoryEventLotsRepository: InMemoryEventLotsRepository
 let inMemoryEventTicketsRepository: InMemoryEventTicketsRepository
 let inMemoryOrdersRepository: InMemoryOrdersRepository
+let inMemoryParametersRepository: InMemoryParametersRepository
 let fakeTicketGenerator: FakeTicketGenerator
+let fakeEventSocket: FakeEventSocket
 
 let sut: CreateEventTicketUseCase
 
 describe('Create Event Ticket', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     inMemoryUsersRepository = new InMemoryUsersRepository()
     inMemoryDepartmentsRepository = new InMemoryDepartmentsRepository()
     inMemoryEventsRepository = new InMemoryEventsRepository()
@@ -39,8 +44,10 @@ describe('Create Event Ticket', () => {
       inMemoryEventLotsRepository,
     )
     inMemoryOrdersRepository = new InMemoryOrdersRepository()
+    inMemoryParametersRepository = new InMemoryParametersRepository()
 
     fakeTicketGenerator = new FakeTicketGenerator()
+    fakeEventSocket = new FakeEventSocket()
 
     sut = new CreateEventTicketUseCase(
       inMemoryEventTicketsRepository,
@@ -49,7 +56,14 @@ describe('Create Event Ticket', () => {
       inMemoryUsersRepository,
       inMemoryOrdersRepository,
       fakeTicketGenerator,
+      inMemoryParametersRepository,
+      fakeEventSocket,
     )
+
+    const parameterFactory = makeParameter({
+      key: 'order.payment.type',
+    })
+    await inMemoryParametersRepository.create(parameterFactory)
   })
 
   it('should be able to create a new event ticket', async () => {

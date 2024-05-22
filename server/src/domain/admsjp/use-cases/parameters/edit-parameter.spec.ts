@@ -34,7 +34,7 @@ describe('Edit parameter', () => {
 
     const result = await sut.execute({
       id: parameter.id,
-      key: 'order.payment',
+      key: 'order.payment.type',
       keyInfo:
         'Parâmetro para verificar o tipo de pagamento a ser utilizado no sistema',
       value: 'manual',
@@ -49,7 +49,7 @@ describe('Edit parameter', () => {
     expect(inMemoryParametersRepository.items).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          key: 'order.payment',
+          key: 'order.payment.type',
           keyInfo:
             'Parâmetro para verificar o tipo de pagamento a ser utilizado no sistema',
           value: 'manual',
@@ -65,7 +65,7 @@ describe('Edit parameter', () => {
     const user = await inMemoryUsersRepository.create(userFactory)
 
     const parameterFactory = makeParameter({
-      key: 'order.payment',
+      key: 'order.payment.type',
     })
     await inMemoryParametersRepository.create(parameterFactory)
 
@@ -75,7 +75,7 @@ describe('Edit parameter', () => {
 
     const result = await sut.execute({
       id: parameter02.id,
-      key: 'order.payment',
+      key: 'order.payment.type',
       keyInfo:
         'Parâmetro para verificar o tipo de pagamento a ser utilizado no sistema',
       value: 'manual',

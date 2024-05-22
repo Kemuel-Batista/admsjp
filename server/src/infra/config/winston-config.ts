@@ -23,6 +23,14 @@ export const winstonConfig: WinstonModuleOptions = {
       zippedArchive: false,
       maxFiles: '2d',
     }),
+    new transports.DailyRotateFile({
+      level: 'log',
+      filename: `logs/%DATE%-log.log`,
+      format: format.combine(format.timestamp(), format.json()),
+      datePattern: 'YYYY-MM-DD',
+      zippedArchive: false,
+      maxFiles: '2d',
+    }),
     new transports.Console({
       format: format.combine(
         format.cli(),

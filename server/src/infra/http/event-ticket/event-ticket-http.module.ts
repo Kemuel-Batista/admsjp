@@ -8,6 +8,7 @@ import { RegisterEventQueue } from '@/domain/admsjp/use-cases/queues/register-ev
 import { DatabaseModule } from '@/infra/database/database.module'
 import { GeneratorsModule } from '@/infra/generators/generators.module'
 import { QueueModule } from '@/infra/queue/queue.module'
+import { WebsocketModule } from '@/infra/websocket/websocket.module'
 
 import { CreateEventTicketController } from './controllers/create-event-ticket.controller'
 import { GetAllInformationAboutEventTicketController } from './controllers/get-all-information-about-event-ticket.controller'
@@ -15,7 +16,7 @@ import { ListEventTicketsByEventIdController } from './controllers/list-event-ti
 import { ListEventTicketsByUserIdController } from './controllers/list-event-tickets-by-user-id.controller'
 
 @Module({
-  imports: [DatabaseModule, QueueModule, GeneratorsModule],
+  imports: [DatabaseModule, QueueModule, GeneratorsModule, WebsocketModule],
   controllers: [
     CreateEventTicketController,
     ListEventTicketsByEventIdController,

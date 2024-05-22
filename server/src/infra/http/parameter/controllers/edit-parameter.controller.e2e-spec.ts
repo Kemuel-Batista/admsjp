@@ -64,7 +64,7 @@ describe('Edit parameter (E2E)', () => {
       .put(`/parameter/${parameter.id}`)
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
-        key: 'order.payment',
+        key: 'order.payment.type',
         keyInfo:
           'Parâmetro para verificar o tipo de pagamento a ser utilizado no sistema',
         value: 'manual',

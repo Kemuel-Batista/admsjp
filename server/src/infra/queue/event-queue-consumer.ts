@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common'
 import * as amqp from 'amqplib'
 
 import { CreateEventTicketUseCase } from '@/domain/admsjp/use-cases/event-ticket/create-event-ticket'
+import { EventSocket } from '@/domain/admsjp/websocket/event-socket'
 
 @Injectable()
 export class EventQueueConsumer implements OnModuleInit {
@@ -9,7 +10,10 @@ export class EventQueueConsumer implements OnModuleInit {
   private connection: amqp.Connection
   private channel: amqp.Channel
 
-  constructor(private createEventTicket: CreateEventTicketUseCase) {}
+  constructor(
+    private createEventTicket: CreateEventTicketUseCase,
+    private eventSocket: EventSocket,
+  ) {}
 
   async onModuleInit() {
     await this.initialize()
@@ -38,6 +42,12 @@ export class EventQueueConsumer implements OnModuleInit {
       async (msg) => {
         if (msg !== null) {
           const event = JSON.parse(msg.content.toString())
+
+          await this.eventSocket.emit({
+            to: `purchase:${event.userId}`,
+            event: 'order-processing-started',
+          })
+
           await this.createEventTicket.execute(event)
 
           this.channel.ack(msg)

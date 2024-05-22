@@ -23,6 +23,11 @@ export abstract class EventTicketsRepository {
   ): Promise<EventTicketWithEventAndEventLot | null>
 
   abstract listByLot(lot: EventTicket['lot']): Promise<EventTicket[]>
+
+  abstract findFirstLastUnexpiredByUserId(
+    userId: EventTicket['userId'],
+  ): Promise<EventTicket | null>
+
   abstract listDetailsByUserId(
     userId: EventTicket['userId'],
   ): Promise<EventTicketWithEventAndEventLot[]>

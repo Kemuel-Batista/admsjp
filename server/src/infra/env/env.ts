@@ -16,6 +16,8 @@ export const envSchema = z.object({
   AWS_BUCKET_NAME: z.string(),
   AWS_ACCESS_KEY_ID: z.string(),
   AWS_SECRET_ACCESS_KEY: z.string(),
+  SOCKETIO_SERVER_PORT: z.coerce.number(),
+  SOCKETIO_SERVER_PATH: z.string(),
 })
 
 export type Env = z.infer<typeof envSchema>

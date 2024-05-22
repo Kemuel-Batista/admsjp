@@ -5,11 +5,12 @@ import { CreateEventTicketUseCase } from '@/domain/admsjp/use-cases/event-ticket
 
 import { DatabaseModule } from '../database/database.module'
 import { GeneratorsModule } from '../generators/generators.module'
+import { WebsocketModule } from '../websocket/websocket.module'
 import { EventQueueConsumer } from './event-queue-consumer'
 import { EventQueueRabbitMQ } from './event-queue-rabbitmq'
 
 @Module({
-  imports: [DatabaseModule, GeneratorsModule],
+  imports: [DatabaseModule, GeneratorsModule, WebsocketModule],
   providers: [
     { provide: EventQueue, useClass: EventQueueRabbitMQ },
     CreateEventTicketUseCase,

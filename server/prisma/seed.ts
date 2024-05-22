@@ -10,6 +10,10 @@ import {
   EventVisible,
 } from '@/domain/admsjp/enums/event'
 import { EventLotStatus } from '@/domain/admsjp/enums/event-lot'
+import {
+  ParameterStatus,
+  ParameterVisible,
+} from '@/domain/admsjp/enums/parameter'
 import { UserStatus } from '@/domain/admsjp/enums/user'
 import BCryptHashProvider from '@/infra/cryptography/brcrypt-hash-provider'
 import { envSchema } from '@/infra/env/env'
@@ -94,6 +98,8 @@ async function execute(enviroment: string): Promise<void> {
     await clearDatabase()
 
     await createEvent(admin)
+
+    await createParameters(admin)
     // await createFakeUsers()
   }
 
@@ -339,6 +345,28 @@ async function execute(enviroment: string): Promise<void> {
     })
 
     console.timeEnd('createEvent')
+  }
+
+  async function createParameters(admin: User): Promise<void> {
+    console.time('createParameters')
+
+    await prisma.parameter.upsert({
+      where: {
+        key: 'order.payment.type',
+      },
+      create: {
+        key: 'order.payment.type',
+        keyInfo:
+          'Parâmetro para verificar o tipo de pagamento a ser utilizado no sistema',
+        value: 'manual',
+        createdBy: admin.id,
+        status: ParameterStatus.ACTIVE,
+        visible: ParameterVisible.VISIBLE,
+      },
+      update: {},
+    })
+
+    console.timeEnd('createParameters')
   }
 }
 

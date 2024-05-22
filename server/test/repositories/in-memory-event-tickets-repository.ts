@@ -141,6 +141,22 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
     return eventTickets
   }
 
+  async findFirstLastUnexpiredByUserId(
+    userId: number,
+  ): Promise<EventTicket | null> {
+    const now = new Date()
+    const fifteenMinutesAgo = new Date(now.getTime() - 15 * 60 * 1000)
+
+    const eventTicket = this.items.find(
+      (item) =>
+        item.userId === userId &&
+        item.expiresAt > fifteenMinutesAgo &&
+        item.expiresAt <= now,
+    )
+
+    return eventTicket
+  }
+
   async listDetailsByUserId(
     userId: number,
   ): Promise<EventTicketWithEventAndEventLot[]> {

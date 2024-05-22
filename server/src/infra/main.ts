@@ -5,6 +5,7 @@ import * as cookieParser from 'cookie-parser'
 
 import { AppModule } from './app.module'
 import { Env } from './env/env'
+import { SocketIOAdapter } from './websocket/socket-io-adapter'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -20,6 +21,8 @@ async function bootstrap() {
   app.use(cookieParser())
 
   const configService = app.get<ConfigService<Env, true>>(ConfigService)
+
+  app.useWebSocketAdapter(new SocketIOAdapter(app, configService))
 
   const port = configService.get('PORT', { infer: true })
 

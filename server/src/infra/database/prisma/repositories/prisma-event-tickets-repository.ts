@@ -143,6 +143,26 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
     return eventTicket
   }
 
+  async findFirstLastUnexpiredByUserId(
+    userId: number,
+  ): Promise<EventTicket | null> {
+    const now = new Date()
+
+    const eventTicket = await this.prisma.eventTicket.findFirst({
+      where: {
+        userId,
+        expiresAt: {
+          gte: new Date(now.getTime() - 15 * 60 * 1000),
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+
+    return eventTicket
+  }
+
   async findDetailsById(
     id: EventTicket['id'],
   ): Promise<EventTicketWithEventAndEventLot> {
