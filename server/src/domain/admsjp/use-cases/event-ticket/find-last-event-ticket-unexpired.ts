@@ -63,6 +63,11 @@ export class FindLastEventTicketUnexpiredUseCase {
         event: 'order-processing-completed',
         data,
       })
+    } else {
+      await this.eventSocket.emit({
+        to: `purchase:${userId}`,
+        event: 'order-not-exist',
+      })
     }
   }
 }
