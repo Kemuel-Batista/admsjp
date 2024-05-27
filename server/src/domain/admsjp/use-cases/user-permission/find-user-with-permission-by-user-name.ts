@@ -4,8 +4,8 @@ import { User } from '@prisma/client'
 import { IFindOptions } from '@/core/repositories/find-options'
 import { UserWithPermission } from '@/domain/admsjp/types/user/user-with-permission'
 
-import { ListProfilePermissionByProfileIdUseCase } from '../../../profile-permission/list/by-profile-Id/list-profile-permission-by-profile-id'
-import { FindUserByUsernameUseCase } from '../../../user/find/by-username/find-user-by-username'
+import { ListProfilePermissionByProfileIdUseCase } from '../profile-permission/list-profile-permission-by-profile-id'
+import { FindUserByUsernameUseCase } from '../user/find/by-username/find-user-by-username'
 
 type TFindUserWithPermissionByUserNameUseCase<Options extends IFindOptions> =
   | UserWithPermission
@@ -25,14 +25,23 @@ export class FindUserWithPermissionByUserNameUseCase {
 
     const user = await this.findUserByUsernameUseCase.execute(userName)
 
-    const profilePermissions =
-      await this.listProfilePermissionByProfileId.execute(user.profileId, {
-        allRecords: true,
+    const resultProfilePermissions =
+      await this.listProfilePermissionByProfileId.execute({
+        profileId: user.profileId,
+        options: {
+          allRecords: true,
+        },
+        searchParams: [],
       })
+
+    if (resultProfilePermissions.isError()) {
+      throw new Error('resultProfilePermissions')
+    }
 
     const permissions = new Set<string>([])
 
-    for (const profilePermission of profilePermissions) {
+    for (const profilePermission of resultProfilePermissions.value
+      .profilePermissions) {
       permissions.add(profilePermission.key)
     }
 

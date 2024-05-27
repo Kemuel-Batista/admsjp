@@ -1,4 +1,11 @@
-import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common'
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common'
 import { Request } from 'express'
 
 import {
@@ -6,7 +13,7 @@ import {
   queryValidationPipe,
 } from '@/core/schemas/query-params-schema'
 import { UserProfile } from '@/domain/admsjp/enums/user'
-import { ListProfilePermissionUseCase } from '@/domain/admsjp/use-cases/profile-permission/list/default/list-profile-permission'
+import { ListProfilePermissionUseCase } from '@/domain/admsjp/use-cases/profile-permission/list-profile-permission'
 import { ProfileGuard } from '@/infra/auth/profile.guard'
 import { Profiles } from '@/infra/auth/profiles'
 
@@ -33,11 +40,19 @@ export class ListProfilePermissionController {
       allRecords: parsedAllRecords,
     }
 
-    const profilePermissions = await this.listProfilePermission.execute(
+    const result = await this.listProfilePermission.execute({
       options,
-      parsedSearch,
-    )
+      searchParams: parsedSearch,
+    })
 
-    return profilePermissions
+    if (result.isError()) {
+      throw new BadRequestException()
+    }
+
+    const profilePermissions = result.value.profilePermissions
+
+    return {
+      profilePermissions,
+    }
   }
 }

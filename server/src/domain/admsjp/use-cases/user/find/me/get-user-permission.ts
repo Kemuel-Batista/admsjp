@@ -4,7 +4,7 @@ import { User } from '@prisma/client'
 import HttpStatusCode from '@/core/enums/http-status-code'
 import { UserWithoutPassword } from '@/domain/admsjp/types/user/user-without-password'
 
-import { FindUserWithPermissionByUserNameUseCase } from '../../../user-permission/find/user-permission-by-user-name/find-user-with-permission-by-user-name'
+import { FindUserWithPermissionByUserNameUseCase } from '../../../user-permission/find-user-with-permission-by-user-name'
 import { FindUserByIdUseCase } from '../by-id/find-user-by-id'
 
 @Injectable()

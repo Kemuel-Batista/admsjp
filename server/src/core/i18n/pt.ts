@@ -1,3 +1,4 @@
+import department from '@/domain/admsjp/languages/department.pt'
 import event from '@/domain/admsjp/languages/event.pt'
 import eventAddress from '@/domain/admsjp/languages/event-address.pt'
 import eventLot from '@/domain/admsjp/languages/event-lot.pt'
@@ -11,6 +12,7 @@ import user from '@/domain/admsjp/languages/user.pt'
 const messages = {
   pt: {
     translations: {
+      ...department,
       ...user,
       ...profile,
       ...profilePermission,

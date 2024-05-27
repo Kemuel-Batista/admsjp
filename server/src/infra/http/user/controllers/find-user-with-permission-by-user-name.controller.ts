@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common'
 
 import { UserProfile } from '@/domain/admsjp/enums/user'
-import { FindUserWithPermissionByUserNameUseCase } from '@/domain/admsjp/use-cases/user-permission/find/user-permission-by-user-name/find-user-with-permission-by-user-name'
+import { FindUserWithPermissionByUserNameUseCase } from '@/domain/admsjp/use-cases/user-permission/find-user-with-permission-by-user-name'
 import { ProfileGuard } from '@/infra/auth/profile.guard'
 import { Profiles } from '@/infra/auth/profiles'
 

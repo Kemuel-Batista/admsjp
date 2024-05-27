@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { ProfilePermission } from '@prisma/client'
+import { Prisma, ProfilePermission } from '@prisma/client'
 
 import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { IListOptions } from '@/core/repositories/list-options'
 import { buildSearchFilter } from '@/core/util/filtering/build-search-filter'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
-import { CreateProfilePermissionDTO } from '@/domain/admsjp/dtos/profile-permission'
 import { ProfilePermissionsRepository } from '@/domain/admsjp/repositories/profile-permissions-repository'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 
@@ -19,7 +18,7 @@ export class PrismaProfilePermissionsRepository
     profileId,
     key,
     createdBy,
-  }: CreateProfilePermissionDTO): Promise<ProfilePermission> {
+  }: Prisma.ProfilePermissionUncheckedCreateInput): Promise<ProfilePermission> {
     const profilePermission = await this.prisma.profilePermission.create({
       data: { profileId, key, createdBy, updatedBy: createdBy },
     })

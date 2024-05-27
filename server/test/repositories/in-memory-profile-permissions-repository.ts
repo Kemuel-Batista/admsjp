@@ -1,9 +1,8 @@
 import { randomUUID } from 'node:crypto'
 
-import { ProfilePermission } from '@prisma/client'
+import { Prisma, ProfilePermission } from '@prisma/client'
 import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
-import { CreateProfilePermissionDTO } from '@/domain/admsjp/dtos/profile-permission'
 import { ProfilePermissionsRepository } from '@/domain/admsjp/repositories/profile-permissions-repository'
 
 export class InMemoryProfilePermissionsRepository
@@ -11,7 +10,9 @@ export class InMemoryProfilePermissionsRepository
 {
   public items: ProfilePermission[] = []
 
-  async create(data: CreateProfilePermissionDTO): Promise<ProfilePermission> {
+  async create(
+    data: Prisma.ProfilePermissionUncheckedCreateInput,
+  ): Promise<ProfilePermission> {
     const id = getLastInsertedId(this.items)
 
     const profilePermission = {

@@ -10,7 +10,7 @@ import { UpdateUserUseCase } from '@/domain/admsjp/use-cases/user/update/default
 import { UpdateUserPasswordUseCase } from '@/domain/admsjp/use-cases/user/update/password/update-user-password'
 import { UserUpdateSelfPasswordUseCase } from '@/domain/admsjp/use-cases/user/update/self-password/user-update-self-password'
 import { UpdateStatusUserUseCase } from '@/domain/admsjp/use-cases/user/update/status/update-status-user'
-import { FindUserWithPermissionByUserNameUseCase } from '@/domain/admsjp/use-cases/user-permission/find/user-permission-by-user-name/find-user-with-permission-by-user-name'
+import { FindUserWithPermissionByUserNameUseCase } from '@/domain/admsjp/use-cases/user-permission/find-user-with-permission-by-user-name'
 import { CryptographyModule } from '@/infra/cryptography/cryptography.module'
 import { DatabaseModule } from '@/infra/database/database.module'
 import { ProfileHttpModule } from '@/infra/http/profile/profile-http.module'

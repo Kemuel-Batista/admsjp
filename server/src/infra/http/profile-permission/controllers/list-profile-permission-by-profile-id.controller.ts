@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   Get,
   HttpCode,
@@ -19,7 +20,7 @@ import {
   queryValidationPipe,
 } from '@/core/schemas/query-params-schema'
 import { UserProfile } from '@/domain/admsjp/enums/user'
-import { ListProfilePermissionByProfileIdUseCase } from '@/domain/admsjp/use-cases/profile-permission/list/by-profile-Id/list-profile-permission-by-profile-id'
+import { ListProfilePermissionByProfileIdUseCase } from '@/domain/admsjp/use-cases/profile-permission/list-profile-permission-by-profile-id'
 import { ProfileGuard } from '@/infra/auth/profile.guard'
 import { Profiles } from '@/infra/auth/profiles'
 
@@ -50,14 +51,21 @@ class ListProfilePermissionByProfileIdController {
       allRecords: parsedAllRecords,
     }
 
-    const profilePermissions =
-      await this.listProfilePermissionByProfileId.execute(
-        profileId,
-        options,
-        parsedSearch,
-      )
+    const result = await this.listProfilePermissionByProfileId.execute({
+      profileId,
+      options,
+      searchParams: parsedSearch,
+    })
 
-    return profilePermissions
+    if (result.isError()) {
+      throw new BadRequestException()
+    }
+
+    const profilePermissions = result.value.profilePermissions
+
+    return {
+      profilePermissions,
+    }
   }
 }
 

@@ -1,23 +1,25 @@
 import { Module } from '@nestjs/common'
 
-import { CreateDepartmentUseCase } from '@/domain/admsjp/use-cases/departments/create/create-department'
-import { FindDepartmentByIdUseCase } from '@/domain/admsjp/use-cases/departments/find/by-id/find-department-by-id'
-import { FindDepartmentByNameUseCase } from '@/domain/admsjp/use-cases/departments/find/by-name/find-department-by-name'
-import { ListDepartmentUseCase } from '@/domain/admsjp/use-cases/departments/list/default/list-department'
+import { CreateDepartmentUseCase } from '@/domain/admsjp/use-cases/departments/create-department'
+import { GetDepartmentByIdUseCase } from '@/domain/admsjp/use-cases/departments/get-department-by-id'
+import { ListDepartmentUseCase } from '@/domain/admsjp/use-cases/departments/list-department'
 import { DatabaseModule } from '@/infra/database/database.module'
 
 import { CreateDepartmentController } from './controllers/create-department.controller'
+import { GetDepartmentByIdController } from './controllers/get-department-by-id.controller'
 import { ListDepartmentsController } from './controllers/list-departments.controller'
 
 @Module({
   imports: [DatabaseModule],
-  controllers: [ListDepartmentsController, CreateDepartmentController],
+  controllers: [
+    ListDepartmentsController,
+    CreateDepartmentController,
+    GetDepartmentByIdController,
+  ],
   providers: [
     ListDepartmentUseCase,
-    FindDepartmentByIdUseCase,
-    FindDepartmentByNameUseCase,
+    GetDepartmentByIdUseCase,
     CreateDepartmentUseCase,
   ],
-  exports: [ListDepartmentUseCase, FindDepartmentByIdUseCase],
 })
 export class DepartmentsHttpModule {}

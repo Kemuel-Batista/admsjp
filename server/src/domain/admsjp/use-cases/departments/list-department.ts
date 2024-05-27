@@ -1,22 +1,37 @@
 import { Injectable } from '@nestjs/common'
+import { Department } from '@prisma/client'
 
 import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
+import { Either, success } from '@/core/either'
 import { IListOptions } from '@/core/repositories/list-options'
-import { ListDepartmentDTO } from '@/domain/admsjp/dtos/department'
 import { UserProfile } from '@/domain/admsjp/enums/user'
 import { DepartmentsRepository } from '@/domain/admsjp/repositories/departments-repository'
 import { UserWithPermission } from '@/domain/admsjp/types/user/user-with-permission'
+
+interface ListDepartmentUseCaseRequest {
+  options: IListOptions
+  searchParams: ISearchParamDTO[]
+  profileId: UserWithPermission['profileId']
+}
+
+type ListDepartmentUseCaseResponse = Either<
+  null,
+  {
+    departments: Department[]
+    count: number
+  }
+>
 
 @Injectable()
 export class ListDepartmentUseCase {
   constructor(private departmentsRepository: DepartmentsRepository) {}
 
-  async execute(
-    options: IListOptions = {},
-    searchParams: ISearchParamDTO[] = [],
-    departmentId: UserWithPermission['departmentId'],
-  ): Promise<ListDepartmentDTO> {
-    if (departmentId !== UserProfile.ADMINISTRADOR) {
+  async execute({
+    profileId,
+    options = {},
+    searchParams = [],
+  }: ListDepartmentUseCaseRequest): Promise<ListDepartmentUseCaseResponse> {
+    if (profileId !== UserProfile.ADMINISTRADOR) {
       searchParams.push({
         condition: 'equals',
         field: 'visible',
@@ -29,6 +44,6 @@ export class ListDepartmentUseCase {
       searchParams,
     )
 
-    return { departments, count }
+    return success({ departments, count })
   }
 }

@@ -10,7 +10,7 @@ import { Response } from 'express'
 import { z } from 'zod'
 
 import { UserProfile } from '@/domain/admsjp/enums/user'
-import { CreateProfilePermissionUseCase } from '@/domain/admsjp/use-cases/profile-permission/create/create-profile-permission'
+import { CreateProfilePermissionUseCase } from '@/domain/admsjp/use-cases/profile-permission/create-profile-permission'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
 import { ProfileGuard } from '@/infra/auth/profile.guard'

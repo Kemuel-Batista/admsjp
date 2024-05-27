@@ -9,7 +9,7 @@ import {
 import { z } from 'zod'
 
 import { UserProfile } from '@/domain/admsjp/enums/user'
-import { DeleteProfilePermissionByIdUseCase } from '@/domain/admsjp/use-cases/profile-permission/delete/by-id/delete-profile-permission-by-id'
+import { DeleteProfilePermissionByIdUseCase } from '@/domain/admsjp/use-cases/profile-permission/delete-profile-permission-by-id'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
 import { ProfileGuard } from '@/infra/auth/profile.guard'
@@ -31,7 +31,7 @@ export class DeleteProfilePermissionByIdController {
   @Profiles(UserProfile.ADMINISTRADOR)
   @UseGuards(ProfileGuard)
   @Delete()
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async handle(
     @Param('id', paramValidationPipe) id: ParamSchema,
     @CurrentUser() user: UserPayload,

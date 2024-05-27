@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   Get,
   HttpStatus,
@@ -14,7 +15,7 @@ import {
   queryValidationPipe,
 } from '@/core/schemas/query-params-schema'
 import { UserProfile } from '@/domain/admsjp/enums/user'
-import { ListDepartmentUseCase } from '@/domain/admsjp/use-cases/departments/list/default/list-department'
+import { ListDepartmentUseCase } from '@/domain/admsjp/use-cases/departments/list-department'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
 import { ProfileGuard } from '@/infra/auth/profile.guard'
@@ -45,11 +46,17 @@ export class ListDepartmentsController {
       allRecords: parsedAllRecords,
     }
 
-    const { departments, count } = await this.listDepartmentsUseCase.execute(
+    const result = await this.listDepartmentsUseCase.execute({
       options,
-      parsedSearch,
-      user.sub.profileId,
-    )
+      searchParams: parsedSearch,
+      profileId: user.sub.profileId,
+    })
+
+    if (result.isError()) {
+      throw new BadRequestException('Error fetching list of departments')
+    }
+
+    const { departments, count } = result.value
 
     response.setHeader('X-Total-Count', count)
 
