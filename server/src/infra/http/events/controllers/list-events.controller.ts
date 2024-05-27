@@ -15,7 +15,7 @@ import {
   queryValidationPipe,
 } from '@/core/schemas/query-params-schema'
 import { UserProfile } from '@/domain/admsjp/enums/user'
-import { ListEventsUseCase } from '@/domain/admsjp/use-cases/events/list/default/list-events'
+import { ListEventsUseCase } from '@/domain/admsjp/use-cases/events/list-events'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
 import { ProfileGuard } from '@/infra/auth/profile.guard'

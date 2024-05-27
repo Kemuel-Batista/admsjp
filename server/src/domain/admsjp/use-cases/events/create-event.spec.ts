@@ -12,8 +12,8 @@ import {
   EventVisible,
 } from '@/domain/admsjp/enums/event'
 
-import { CreateEventAddressUseCase } from '../../event-address/create/create-event-address'
-import { CreateEventLotUseCase } from '../../event-lot/create/create-event-lot'
+import { CreateEventAddressUseCase } from '../event-address/create-event-address'
+import { CreateEventLotUseCase } from '../event-lot/create-event-lot'
 import { CreateEventUseCase } from './create-event'
 
 let inMemoryUsersRepository: InMemoryUsersRepository

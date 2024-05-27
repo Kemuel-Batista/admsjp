@@ -1,7 +1,7 @@
 import { BadRequestException, Controller, Get, Param } from '@nestjs/common'
 import { z } from 'zod'
 
-import { GetEventAddressByEventIdUseCase } from '@/domain/admsjp/use-cases/event-address/get/by-event-id/get-event-address-by-event-id'
+import { GetEventAddressByEventIdUseCase } from '@/domain/admsjp/use-cases/event-address/get-event-address-by-event-id'
 import { Public } from '@/infra/auth/public'
 
 import { ZodValidationPipe } from '../../pipes/zod-validation-pipe'

@@ -8,9 +8,9 @@ import { EventType } from '@/domain/admsjp/enums/event'
 import { EventAddressesRepository } from '@/domain/admsjp/repositories/event-addresses-repository'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 
-import { InvalidEventTypeError } from '../../events/errors/invalid-event-type-error'
+import { InvalidEventTypeError } from '../../../../core/errors/errors/invalid-event-type-error'
 
-interface UpdateEventAddressUseCaseRequest {
+interface EditEventAddressUseCaseRequest {
   id: EventAddress['id']
   street: EventAddress['street']
   number: EventAddress['number']
@@ -23,7 +23,7 @@ interface UpdateEventAddressUseCaseRequest {
   updatedBy: EventAddress['updatedBy']
 }
 
-type UpdateEventAddressUseCaseResponse = Either<
+type EditEventAddressUseCaseResponse = Either<
   ResourceNotFoundError | IncorrectAssociationError | InvalidEventTypeError,
   {
     eventAddress: EventAddress
@@ -31,7 +31,7 @@ type UpdateEventAddressUseCaseResponse = Either<
 >
 
 @Injectable()
-export class UpdateEventAddressUseCase {
+export class EditEventAddressUseCase {
   constructor(
     private eventAddressesRepository: EventAddressesRepository,
     private eventsRepository: EventsRepository,
@@ -48,7 +48,7 @@ export class UpdateEventAddressUseCase {
     latitude,
     longitude,
     updatedBy,
-  }: UpdateEventAddressUseCaseRequest): Promise<UpdateEventAddressUseCaseResponse> {
+  }: EditEventAddressUseCaseRequest): Promise<EditEventAddressUseCaseResponse> {
     const eventAddress = await this.eventAddressesRepository.findById(id)
 
     if (!eventAddress) {

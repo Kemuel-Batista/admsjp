@@ -5,7 +5,7 @@ import { Either, failure, success } from '@/core/either'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 import { EventAddressesRepository } from '@/domain/admsjp/repositories/event-addresses-repository'
 
-import { EventsRepository } from '../../../repositories/events-repository'
+import { EventsRepository } from '../../repositories/events-repository'
 
 export interface CreateEventAddressUseCaseRequest {
   eventId?: EventAddress['eventId']

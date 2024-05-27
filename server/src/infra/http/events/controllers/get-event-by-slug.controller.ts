@@ -1,6 +1,6 @@
 import { BadRequestException, Controller, Get, Param } from '@nestjs/common'
 
-import { GetEventBySlugUseCase } from '@/domain/admsjp/use-cases/events/get/by-slug/get-event-by-slug'
+import { GetEventBySlugUseCase } from '@/domain/admsjp/use-cases/events/get-event-by-slug'
 import { Public } from '@/infra/auth/public'
 
 @Controller('/slug/:slug')

@@ -11,7 +11,7 @@ import { Decimal } from '@prisma/client/runtime/library'
 import { z } from 'zod'
 
 import { UserProfile } from '@/domain/admsjp/enums/user'
-import { UpdateEventAddressUseCase } from '@/domain/admsjp/use-cases/event-address/update/update-event-address'
+import { EditEventAddressUseCase } from '@/domain/admsjp/use-cases/event-address/edit-event-address'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
 import { ProfileGuard } from '@/infra/auth/profile.guard'
@@ -55,7 +55,7 @@ type ParamSchema = z.infer<typeof UpdateEventAddressParamsSchema>
 
 @Controller('/:id')
 export class UpdateEventAddressController {
-  constructor(private updateEventAddress: UpdateEventAddressUseCase) {}
+  constructor(private updateEventAddress: EditEventAddressUseCase) {}
 
   @Profiles(UserProfile.ADMINISTRADOR, UserProfile.EVENTS)
   @UseGuards(ProfileGuard)

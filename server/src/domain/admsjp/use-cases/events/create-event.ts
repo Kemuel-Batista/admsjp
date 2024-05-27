@@ -5,7 +5,6 @@ import { Either, failure, success } from '@/core/either'
 import { InvalidAttachmentTypeError } from '@/core/errors/errors/invalid-attachment-type-error'
 import { ResourceAlreadyExistsError } from '@/core/errors/errors/resource-already-exists-error'
 import { Slug } from '@/core/util/slug/slug'
-import { CreateEventDTO } from '@/domain/admsjp/dtos/event'
 import {
   EventStatus,
   EventType,
@@ -14,10 +13,30 @@ import {
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 import { Uploader } from '@/domain/admsjp/storage/uploader'
 
-import { CreateEventAddressUseCase } from '../../event-address/create/create-event-address'
-import { CreateEventLotUseCase } from '../../event-lot/create/create-event-lot'
+import {
+  CreateEventAddressUseCase,
+  CreateEventAddressUseCaseRequest,
+} from '../event-address/create-event-address'
+import {
+  CreateEventLotUseCase,
+  CreateEventLotUseCaseRequest,
+} from '../event-lot/create-event-lot'
 
-interface CreateEventUseCaseRequest extends CreateEventDTO {
+interface CreateEventUseCaseRequest {
+  title: Event['title']
+  slug: Event['slug']
+  description: Event['description']
+  initialDate: Event['initialDate']
+  finalDate: Event['finalDate']
+  status: Event['status']
+  visible: Event['visible']
+  departmentId: Event['departmentId']
+  eventType: Event['eventType']
+  imagePath: Event['imagePath']
+  message?: Event['message']
+  lots?: CreateEventLotUseCaseRequest[]
+  address?: CreateEventAddressUseCaseRequest
+  createdBy: Event['createdBy']
   fileName: string
   fileType: string
   body: Buffer

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 
-import { UpdateEventAddressUseCase } from '@/domain/admsjp/use-cases/event-address/update/update-event-address'
+import { EditEventAddressUseCase } from '@/domain/admsjp/use-cases/event-address/edit-event-address'
 import { DatabaseModule } from '@/infra/database/database.module'
 
 import { UpdateEventAddressController } from './controllers/update-event-address.controller'
@@ -8,6 +8,6 @@ import { UpdateEventAddressController } from './controllers/update-event-address
 @Module({
   imports: [DatabaseModule],
   controllers: [UpdateEventAddressController],
-  providers: [UpdateEventAddressUseCase],
+  providers: [EditEventAddressUseCase],
 })
 export class EventAddressHttpModule {}

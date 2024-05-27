@@ -5,20 +5,20 @@ import { InMemoryEventsRepository } from 'test/repositories/in-memory-events-rep
 
 import { EventType } from '@/domain/admsjp/enums/event'
 
-import { InvalidEventTypeError } from '../../events/errors/invalid-event-type-error'
-import { UpdateEventAddressUseCase } from './update-event-address'
+import { InvalidEventTypeError } from '../../../../core/errors/errors/invalid-event-type-error'
+import { EditEventAddressUseCase } from './edit-event-address'
 
 let inMemoryEventAddressesRepository: InMemoryEventAddressesRepository
 let inMemoryEventsRepository: InMemoryEventsRepository
 
-let sut: UpdateEventAddressUseCase
+let sut: EditEventAddressUseCase
 
 describe('Update event address', () => {
   beforeEach(() => {
     inMemoryEventAddressesRepository = new InMemoryEventAddressesRepository()
     inMemoryEventsRepository = new InMemoryEventsRepository()
 
-    sut = new UpdateEventAddressUseCase(
+    sut = new EditEventAddressUseCase(
       inMemoryEventAddressesRepository,
       inMemoryEventsRepository,
     )

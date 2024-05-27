@@ -13,7 +13,7 @@ import {
   PageQueryParamSchema,
   queryValidationPipe,
 } from '@/core/schemas/query-params-schema'
-import { ListPublicEventsUseCase } from '@/domain/admsjp/use-cases/events/list/public/list-public-events'
+import { ListPublicEventsUseCase } from '@/domain/admsjp/use-cases/events/list-public-events'
 import { Public } from '@/infra/auth/public'
 
 @Controller('/public')
