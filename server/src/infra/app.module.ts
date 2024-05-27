@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module'
 import { envSchema } from './env/env'
 import { EnvModule } from './env/env.module'
 import { HttpModule } from './http/http.module'
+import { JobsModule } from './jobs/jobs.module'
 import { QueueModule } from './queue/queue.module'
 import { WebsocketModule } from './websocket/websocket.module'
 
@@ -19,6 +20,7 @@ import { WebsocketModule } from './websocket/websocket.module'
     HttpModule,
     EnvModule,
     QueueModule,
+    JobsModule,
   ],
 })
 export class AppModule {}

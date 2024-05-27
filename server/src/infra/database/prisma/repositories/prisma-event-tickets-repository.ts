@@ -46,6 +46,66 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
     return event
   }
 
+  async findByEventIdAndUserId(
+    eventId: EventTicket['eventId'],
+    userId: EventTicket['userId'],
+  ): Promise<EventTicket | null> {
+    const eventTicket = await this.prisma.eventTicket.findFirst({
+      where: {
+        eventId,
+        AND: {
+          userId,
+        },
+      },
+    })
+
+    return eventTicket
+  }
+
+  async findById(id: EventTicket['id']): Promise<EventTicket | null> {
+    const eventTicket = await this.prisma.eventTicket.findUnique({
+      where: {
+        id,
+      },
+    })
+
+    return eventTicket
+  }
+
+  async findDetailsById(
+    id: EventTicket['id'],
+  ): Promise<EventTicketWithEventAndEventLot> {
+    const eventTicket = await this.prisma.eventTicket.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        eventLot: {
+          select: {
+            lot: true,
+            value: true,
+          },
+        },
+        event: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            department: {
+              select: {
+                name: true,
+              },
+            },
+            imagePath: true,
+            eventType: true,
+          },
+        },
+      },
+    })
+
+    return eventTicket
+  }
+
   async listByLot(lot: number): Promise<EventTicket[]> {
     const eventTickets = await this.prisma.eventTicket.findMany({
       where: {
@@ -54,6 +114,38 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
     })
 
     return eventTickets
+  }
+
+  async listCloseToExpiry(): Promise<EventTicket[]> {
+    const eventTickets = await this.prisma.eventTicket.findMany({
+      where: {
+        expiresAt: {
+          not: null,
+        },
+      },
+    })
+
+    return eventTickets
+  }
+
+  async findFirstLastUnexpiredByUserId(
+    userId: number,
+  ): Promise<EventTicket | null> {
+    const now = new Date()
+
+    const eventTicket = await this.prisma.eventTicket.findFirst({
+      where: {
+        userId,
+        expiresAt: {
+          gte: new Date(now.getTime() - 15 * 60 * 1000),
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+
+    return eventTicket
   }
 
   async listDetailsByUserId(
@@ -117,86 +209,6 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
     return eventTickets
   }
 
-  async findByEventIdAndUserId(
-    eventId: EventTicket['eventId'],
-    userId: EventTicket['userId'],
-  ): Promise<EventTicket | null> {
-    const eventTicket = await this.prisma.eventTicket.findFirst({
-      where: {
-        eventId,
-        AND: {
-          userId,
-        },
-      },
-    })
-
-    return eventTicket
-  }
-
-  async findById(id: EventTicket['id']): Promise<EventTicket | null> {
-    const eventTicket = await this.prisma.eventTicket.findUnique({
-      where: {
-        id,
-      },
-    })
-
-    return eventTicket
-  }
-
-  async findFirstLastUnexpiredByUserId(
-    userId: number,
-  ): Promise<EventTicket | null> {
-    const now = new Date()
-
-    const eventTicket = await this.prisma.eventTicket.findFirst({
-      where: {
-        userId,
-        expiresAt: {
-          gte: new Date(now.getTime() - 15 * 60 * 1000),
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    })
-
-    return eventTicket
-  }
-
-  async findDetailsById(
-    id: EventTicket['id'],
-  ): Promise<EventTicketWithEventAndEventLot> {
-    const eventTicket = await this.prisma.eventTicket.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        eventLot: {
-          select: {
-            lot: true,
-            value: true,
-          },
-        },
-        event: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-            department: {
-              select: {
-                name: true,
-              },
-            },
-            imagePath: true,
-            eventType: true,
-          },
-        },
-      },
-    })
-
-    return eventTicket
-  }
-
   async lastTicket(): Promise<string> {
     const now = new Date()
 
@@ -225,5 +237,11 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
     }, 0)
 
     return `${year}${month.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}EV${maxTicket.toString().padStart(4, '0')}`
+  }
+
+  async delete(id: EventTicket['id']): Promise<void> {
+    await this.prisma.eventTicket.delete({
+      where: { id },
+    })
   }
 }

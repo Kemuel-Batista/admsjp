@@ -141,6 +141,14 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
     return eventTickets
   }
 
+  async listCloseToExpiry(): Promise<EventTicket[]> {
+    const eventTickets = this.items
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .filter((item) => item.expiresAt !== null)
+
+    return eventTickets
+  }
+
   async findFirstLastUnexpiredByUserId(
     userId: number,
   ): Promise<EventTicket | null> {
@@ -273,5 +281,11 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
     }, 0)
 
     return `${year}${month.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}EV${maxTicket.toString().padStart(4, '0')}`
+  }
+
+  async delete(id: number): Promise<void> {
+    const itemIndex = this.items.findIndex((item) => item.id === id)
+
+    this.items.splice(itemIndex, 1)
   }
 }
