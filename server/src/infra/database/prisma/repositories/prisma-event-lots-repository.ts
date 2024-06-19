@@ -15,6 +15,8 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
   constructor(private prisma: PrismaService) {}
 
   async create({
+    name,
+    description,
     eventId,
     quantity,
     lot,
@@ -24,6 +26,8 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
   }: Prisma.EventLotUncheckedCreateInput): Promise<EventLot> {
     const eventLot = await this.prisma.eventLot.create({
       data: {
+        name,
+        description,
         eventId,
         quantity,
         lot,
@@ -37,6 +41,8 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
   }
 
   async save({
+    name,
+    description,
     eventId,
     lot,
     quantity,
@@ -51,6 +57,8 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
         },
       },
       data: {
+        name: name ?? undefined,
+        description: description ?? undefined,
         quantity: quantity ?? undefined,
         fulfilledQuantity: fulfilledQuantity ?? undefined,
         updatedBy,

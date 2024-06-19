@@ -31,6 +31,8 @@ describe('Create event lot', () => {
     const event = await inMemoryEventsRepository.create(eventFactory)
 
     const result = await sut.execute({
+      name: 'EBJ 2024',
+      description: 'EBJ 2024',
       eventId: event.id,
       lot: 1,
       quantity: 1,

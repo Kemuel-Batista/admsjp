@@ -13,6 +13,8 @@ export class InMemoryEventLotsRepository implements EventLotsRepository {
 
   async create(data: Prisma.EventLotUncheckedCreateInput): Promise<EventLot> {
     const eventLot = {
+      name: data.name,
+      description: data.description,
       eventId: data.eventId,
       quantity: data.quantity,
       fulfilledQuantity: data.fulfilledQuantity,

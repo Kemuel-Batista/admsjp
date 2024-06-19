@@ -116,7 +116,7 @@ model Event {
   uuid         String     @unique @default(uuid())
   title        String     @unique
   slug         String     @unique
-  description  String
+  description  String     @db.Text
   initialDate  DateTime   @map("initial_date")
   finalDate    DateTime   @map("final_date")
   status       Int
@@ -166,11 +166,13 @@ model EventAddress {
 }
 
 model EventLot {
-  eventId           Int   @map("event_id")
-  event             Event @relation(fields: [eventId], references: [id])
+  eventId           Int    @map("event_id")
+  name              String
+  description       String
+  event             Event  @relation(fields: [eventId], references: [id])
   lot               Int
   quantity          Int
-  fulfilledQuantity Int   @default(0)
+  fulfilledQuantity Int    @default(0)
   value             Int
   status            Int
 

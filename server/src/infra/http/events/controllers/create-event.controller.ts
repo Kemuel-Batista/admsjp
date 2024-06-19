@@ -30,6 +30,8 @@ import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 
 const createEventLotSchema = z
   .object({
+    name: z.string(),
+    description: z.string(),
     quantity: z.number().int().positive(),
     lot: z.number().int().positive(),
     value: z.number().int().positive(),

@@ -2,13 +2,11 @@ import {
   BadRequestException,
   Controller,
   Get,
-  HttpStatus,
   Param,
   Query,
   Req,
-  Res,
 } from '@nestjs/common'
-import { type Request, type Response } from 'express'
+import { type Request } from 'express'
 
 import {
   ParamsSchema,
@@ -33,8 +31,7 @@ export class ListEventLotByEventIdController {
     @Param('id', paramsValidationPipe) id: ParamsSchema,
     @Query(queryValidationPipe) query: PageQueryParamSchema,
     @Req() request: Request,
-    @Res() response: Response,
-  ): Promise<Response> {
+  ) {
     const { page, pageSize, allRecords } = query
     const { search } = request.cookies
 
@@ -59,8 +56,9 @@ export class ListEventLotByEventIdController {
 
     const { eventLots, count } = result.value
 
-    response.setHeader('X-Total-Count', count)
-
-    return response.status(HttpStatus.OK).json(eventLots)
+    return {
+      eventLots,
+      'x-total-count': count,
+    }
   }
 }

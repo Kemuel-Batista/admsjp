@@ -8,6 +8,8 @@ import { EventLotsRepository } from '@/domain/admsjp/repositories/event-lots-rep
 import { EventsRepository } from '../../repositories/events-repository'
 
 export interface CreateEventLotUseCaseRequest {
+  name?: EventLot['name']
+  description?: EventLot['description']
   eventId?: EventLot['eventId']
   quantity?: EventLot['quantity']
   lot?: EventLot['lot']
@@ -31,6 +33,8 @@ export class CreateEventLotUseCase {
   ) {}
 
   async execute({
+    name,
+    description,
     eventId,
     quantity,
     status = 1,
@@ -52,6 +56,8 @@ export class CreateEventLotUseCase {
       await this.eventLotsRepository.findMaxLotByEventId(eventId)
 
     const eventLot = await this.eventLotsRepository.create({
+      name,
+      description,
       eventId,
       quantity,
       lot: maxEventLot + 1,

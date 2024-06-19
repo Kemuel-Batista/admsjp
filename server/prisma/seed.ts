@@ -288,19 +288,51 @@ async function execute(enviroment: string): Promise<void> {
 
     const event = await prisma.event.upsert({
       where: {
-        title: 'UMADSJP',
+        title: 'EBJ 2024',
       },
       create: {
-        title: 'UMADSJP',
-        slug: faker.lorem.slug(),
-        description: faker.lorem.sentences(),
+        title: 'EBJ 2024',
+        slug: 'umadsjp-ebj-2024',
+        description: `ENCOEBD/EBOJ 2024 - Encontro da Escola Bíblica Dominical e Escola Bíblica de Obreiros de Joinville
+
+        A IEADJO - Igreja Evangélica Assembleia de Deus de Joinville (SC) promove dois importantes eventos em uma mesma data, trata-se de uma parceria envolvendo o Departamento de Escola Bíblica Dominical e o Departamento do CCOM (Centro de Capacitação e Orientação Ministerial).
+        São eles: ENCOEBD (ENCONTRO DA ESCOLA BÍBLICA DOMINICAL ) e EBOJ (ESCOLA BÍBLICA DE OBREIROS EM JOINVILLE), e será realizado nos dias 20 a 22 de Junho de 2024 (Quinta, Sexta e Sábado) em reuniões presenciais no Centreventos IEADJO - Assembleia de Deus Joinville.
+        Estr. Arataca, 965 - São Marcos, Joinville - SC, 89214-363.
+        
+        O tema geral do evento é Conduzidos pelo Espírito Santo. As disciplinas do currículo permanente da ENCOEBD/EBOJ estarão baseadas no tema da IEAD JO e da CIADESCP para o ano de 2024.
+        
+        Disciplinas:
+        
+        - Teologia Pastoral;
+        - Homilética;
+        - Hermenêutica;
+        - Missiologia;
+        - Bibliologia;
+        - Teologia Sistemática.
+        
+        Informações gerais:
+        
+        Quinta-feira dia 20/06
+        Noite: 19h00 às 21h30
+        
+        Sexta-feira dia 21/06
+        Noite: 19h00 às 21h30
+        
+        Sábado dia 22/06
+        Manhã: 09h00 às 12h00
+        Tarde: 14h00 às 17h30
+        Noite: 17h00 às 21h30
+        
+        > MAIORES INFORMAÇÕES
+        Whatsapp: +55 47 99743-4047 (Pr. Eduardo Sônego)`,
+
         initialDate: faker.date.soon(),
         finalDate: faker.date.future(),
         status: EventStatus.ACTIVE,
         visible: EventVisible.VISIBLE,
         departmentId: 1,
         eventType: EventType.PRESENCIAL,
-        imagePath: faker.image.url(),
+        imagePath: '614e5ac8-7453-4d05-bf56-4fa733a0892b-ferraro.webp',
         createdBy: admin.id,
       },
       update: {},
@@ -314,10 +346,33 @@ async function execute(enviroment: string): Promise<void> {
         },
       },
       create: {
+        name: 'Inscrição EBJ',
+        description: 'Lote de inscrição da EBJ',
         lot: 1,
         quantity: 50,
         status: EventLotStatus.ACTIVE,
-        value: 20000,
+        value: 2200,
+        eventId: event.id,
+        fulfilledQuantity: 0,
+        createdBy: admin.id,
+      },
+      update: {},
+    })
+
+    await prisma.eventLot.upsert({
+      where: {
+        eventId_lot: {
+          eventId: event.id,
+          lot: 2,
+        },
+      },
+      create: {
+        name: 'Inscrição EBJ + Camisa UMADSJP',
+        description: 'Lote de inscrição da EBJ + Compra da camisa UMADSJP',
+        lot: 2,
+        quantity: 50,
+        status: EventLotStatus.ACTIVE,
+        value: 7000,
         eventId: event.id,
         fulfilledQuantity: 0,
         createdBy: admin.id,
@@ -330,15 +385,15 @@ async function execute(enviroment: string): Promise<void> {
         uuid: randomUUID(),
       },
       create: {
-        street: faker.location.street(),
-        number: String(faker.number.int({ max: 100 })),
-        complement: faker.location.streetAddress(),
-        neighborhood: faker.location.zipCode(),
-        state: faker.number.int({ max: 100 }),
-        city: faker.number.int({ max: 100 }),
+        street: 'Rua joinville',
+        number: '2375',
+        complement: '',
+        neighborhood: 'Pedro Moro',
+        state: 41, // https://servicodados.ibge.gov.br/api/v1/localidades/estados
+        city: 4125506, // https://servicodados.ibge.gov.br/api/v1/localidades/estados/41/municipios
         eventId: event.id,
-        latitude: faker.location.latitude(),
-        longitude: faker.location.longitude(),
+        latitude: -25.5471032,
+        longitude: -49.202677,
         createdBy: admin.id,
       },
       update: {},

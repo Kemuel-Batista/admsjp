@@ -3,12 +3,12 @@ import { PaginateParams, usePaginateQuery } from '@/hooks/use-paginate-query'
 import { EventLot } from '../types/event-lot'
 
 export interface ListEventLotByEventIdResponse {
-  events: EventLot
+  eventLots: EventLot[]
 }
 
 export const ListEventLotByEventId = (
   params: PaginateParams,
-  eventId: number,
+  eventId?: number,
 ) => {
   return usePaginateQuery<ListEventLotByEventIdResponse>(
     'event-lots',

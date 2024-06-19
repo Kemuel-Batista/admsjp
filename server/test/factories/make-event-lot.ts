@@ -11,6 +11,8 @@ export function makeEventLot(
   override: Partial<EventLotProps> = {},
 ): EventLotProps {
   return {
+    name: faker.lorem.word(),
+    description: faker.lorem.sentence(),
     eventId: faker.number.int({ max: 10 }),
     quantity: faker.number.int({ max: 10 }),
     fulfilledQuantity: faker.number.int({ max: 10 }),

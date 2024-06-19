@@ -4,6 +4,7 @@ import { api } from '@/lib/axios'
 
 export type PaginateParams = {
   pageIndex?: number
+  allRecords?: boolean
 }
 
 export const usePaginateQuery = <T>(
@@ -11,13 +12,13 @@ export const usePaginateQuery = <T>(
   endpoint: string,
   params: PaginateParams,
 ): UseQueryResult<T> => {
-  const { pageIndex = 0 } = params
+  const { pageIndex = 0, allRecords = false } = params
 
   const result = useQuery<T>({
-    queryKey: [queryKey, { pageIndex }],
+    queryKey: [queryKey, { pageIndex, allRecords }],
     queryFn: async () => {
       const response = await api.get(endpoint, {
-        params: { page: pageIndex + 1 },
+        params: { page: pageIndex + 1, allRecords },
       })
 
       return response.data as T
