@@ -1,7 +1,9 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
@@ -13,15 +15,35 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/contexts/auth-context'
 import {
   AuthUserFormData,
   authUserSchema,
 } from '@/modules/user/schemas/auth-user-schema'
 
 export function LoginAdminView() {
+  const router = useRouter()
+  const { signIn } = useAuth()
+
   const form = useForm<AuthUserFormData>({
     resolver: zodResolver(authUserSchema),
   })
+
+  const { mutateAsync, isPending } = useMutation<
+    unknown,
+    unknown,
+    AuthUserFormData
+  >({
+    mutationFn: signIn,
+  })
+
+  async function onSubmit(form: AuthUserFormData) {
+    await mutateAsync(form, {
+      onSuccess: () => {
+        router.push('/')
+      },
+    })
+  }
 
   return (
     <Form {...form}>
@@ -39,7 +61,7 @@ export function LoginAdminView() {
         </div>
 
         <div className="relative flex flex-col items-center justify-center">
-          <form className="grid gap-6">
+          <form className="grid gap-6" onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">Login</h1>
               <p className="text-sm text-muted-foreground">
@@ -50,17 +72,17 @@ export function LoginAdminView() {
               <div className="grid gap-1">
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="username"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
                         <Input
-                          placeholder="name@example.com"
-                          type="email"
+                          placeholder="name.umadsjp"
+                          type="text"
                           autoCapitalize="none"
-                          autoComplete="email"
+                          autoComplete="off"
                           autoCorrect="off"
-                          // disabled={isLoading}
+                          disabled={isPending}
                           {...field}
                         />
                       </FormControl>
@@ -78,9 +100,9 @@ export function LoginAdminView() {
                           placeholder="senha"
                           type="password"
                           autoCapitalize="none"
-                          autoComplete="password"
+                          autoComplete="off"
                           autoCorrect="off"
-                          // disabled={isLoading}
+                          disabled={isPending}
                           {...field}
                         />
                       </FormControl>
@@ -89,9 +111,7 @@ export function LoginAdminView() {
                   )}
                 />
               </div>
-              <Button
-              // disabled={isLoading}
-              >
+              <Button disabled={isPending} type="submit">
                 {/* {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )} */}
@@ -108,11 +128,7 @@ export function LoginAdminView() {
                 </span>
               </div>
             </div>
-            <Button
-              variant="outline"
-              type="button"
-              // disabled={isLoading}
-            >
+            <Button variant="outline" type="button" disabled={isPending}>
               {/* {isLoading ? (
             <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
           ) : (

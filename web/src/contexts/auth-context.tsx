@@ -1,7 +1,7 @@
 'use client'
 
-import { deleteCookie, getCookie, setCookie } from 'cookies-next'
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { deleteCookie, setCookie } from 'cookies-next'
+import { createContext, useContext, useMemo, useState } from 'react'
 
 import { api } from '@/lib/axios'
 
@@ -10,20 +10,20 @@ type SignInCredentials = {
   password: string
 }
 
-type AuthContextData = {
-  signIn: (credentials: SignInCredentials) => Promise<void>
-  signOut: () => void
-  getMe: () => void
-  user: User
-  isAuthenticated: boolean
-}
-
 export type User = {
   id: number | null
   username: string
   name: string
   status: number | null
   profileId: number
+}
+
+type AuthContextData = {
+  signIn: (credentials: SignInCredentials) => Promise<void>
+  signOut: () => void
+  getMe: () => void
+  user: User
+  isAuthenticated: boolean
 }
 
 export const signOut = () => {
