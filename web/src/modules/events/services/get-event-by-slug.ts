@@ -8,7 +8,7 @@ export interface GetEventBySlugServiceResponse {
   event: Event
 }
 
-export const GetEventBySlugService: unknown = (slug: string) => {
+export const GetEventBySlugService = (slug: string) => {
   return useQuery({
     queryKey: ['event-details', slug],
     queryFn: async () => {

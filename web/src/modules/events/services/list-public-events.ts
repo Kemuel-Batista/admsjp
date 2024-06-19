@@ -4,7 +4,7 @@ import { Event } from '../types/event'
 
 export interface ListPublicEventsServiceResponse {
   'x-total-count': number
-  events: Event
+  events: Event[]
 }
 
 export const ListPublicEventsService = (params: PaginateParams) => {

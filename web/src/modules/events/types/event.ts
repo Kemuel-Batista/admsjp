@@ -4,18 +4,18 @@ export type Event = {
   title: string
   slug: string
   description: string
-  initialDate: Date
-  finalDate: Date
+  initialDate: string
+  finalDate: string
   status: number
   visible: number
   departmentId: number
   eventType: number
   imagePath: string
   message: string | null
-  createdAt: Date
+  createdAt: string
   createdBy: number
-  updatedAt: Date | null
+  updatedAt: string | null
   updatedBy: number | null
-  deletedAt: Date | null
+  deletedAt: string | null
   deletedBy: number | null
 }
