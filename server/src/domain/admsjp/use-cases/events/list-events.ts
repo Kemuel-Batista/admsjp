@@ -11,8 +11,8 @@ import { UserWithPermission } from '@/domain/admsjp/types/user/user-with-permiss
 interface ListEventsUseCaseRequest {
   profileId: UserWithPermission['profileId']
   departmentId: UserWithPermission['departmentId']
-  options: IListOptions
-  searchParams: ISearchParamDTO[]
+  options?: IListOptions
+  searchParams?: ISearchParamDTO[]
 }
 
 type ListEventsUseCaseResponse = Either<

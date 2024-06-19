@@ -1,19 +1,5 @@
-import {
-  BadRequestException,
-  Controller,
-  Get,
-  HttpStatus,
-  Query,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common'
-import { type Request, type Response } from 'express'
+import { BadRequestException, Controller, Get, UseGuards } from '@nestjs/common'
 
-import {
-  PageQueryParamSchema,
-  queryValidationPipe,
-} from '@/core/schemas/query-params-schema'
 import { UserProfile } from '@/domain/admsjp/enums/user'
 import { ListEventsUseCase } from '@/domain/admsjp/use-cases/events/list-events'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
@@ -28,29 +14,10 @@ export class ListEventsController {
   @Profiles(UserProfile.ADMINISTRADOR, UserProfile.EVENTS)
   @UseGuards(ProfileGuard)
   @Get()
-  async handle(
-    @Query(queryValidationPipe) query: PageQueryParamSchema,
-    @CurrentUser() user: UserPayload,
-    @Req() request: Request,
-    @Res() response: Response,
-  ): Promise<Response> {
-    const { page, pageSize, allRecords } = query
-    const { search } = request.cookies
-
-    const parsedSearch = search ? JSON.parse(search) : []
-    const parsedAllRecords = allRecords === 'true'
-
-    const options = {
-      page,
-      pageSize,
-      allRecords: parsedAllRecords,
-    }
-
+  async handle(@CurrentUser() user: UserPayload) {
     const result = await this.listEventsUseCase.execute({
       profileId: user.sub.profileId,
       departmentId: user.sub.departmentId,
-      options,
-      searchParams: parsedSearch,
     })
 
     if (result.isError()) {
@@ -59,8 +26,9 @@ export class ListEventsController {
 
     const { events, count } = result.value
 
-    response.setHeader('X-Total-Count', count)
-
-    return response.status(HttpStatus.OK).json(events)
+    return {
+      events,
+      'x-total-count': count,
+    }
   }
 }
