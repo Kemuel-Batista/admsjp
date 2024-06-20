@@ -1,31 +1,28 @@
 import { randomUUID } from 'node:crypto'
 
-import { User } from '@prisma/client'
+import { Prisma, User } from '@prisma/client'
 import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
-import {
-  CreateUserDTO,
-  ListUserWithCountDTO,
-  UpdateUserDTO,
-} from '@/domain/admsjp/dtos/user'
+import { ListUserWithCountDTO, UpdateUserDTO } from '@/domain/admsjp/dtos/user'
 import { UsersRepository } from '@/domain/admsjp/repositories/users-repository'
 
 export class InMemoryUsersRepository implements UsersRepository {
   public items: User[] = []
 
-  async create(data: CreateUserDTO): Promise<User> {
+  async create(data: Prisma.UserUncheckedCreateInput): Promise<User> {
     const id = getLastInsertedId(this.items)
 
     const user = {
       id,
       uuid: randomUUID(),
       name: data.name,
-      username: data.username,
       status: data.status,
       profileId: data.profileId,
       email: data.email,
       password: data.password,
+      photo: data.photo,
       departmentId: data.departmentId,
+      provider: data.provider,
       createdAt: new Date(),
       createdBy: data.createdBy,
       updatedAt: new Date(),
@@ -47,7 +44,6 @@ export class InMemoryUsersRepository implements UsersRepository {
     const userUpdated = {
       ...user,
       name: data.name,
-      username: data.username,
       email: data.email,
       password: data.password,
       status: data.status,
@@ -81,8 +77,8 @@ export class InMemoryUsersRepository implements UsersRepository {
     return user
   }
 
-  async findByUsername(username: string): Promise<User> {
-    const user = this.items.find((item) => item.username === username)
+  async findByEmail(email: string): Promise<User> {
+    const user = this.items.find((item) => item.email === email)
 
     if (!user) {
       return null

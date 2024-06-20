@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { RouterModule } from '@nestjs/core'
 
-import { GetUserPermissionsUseCase } from '@/domain/admsjp/use-cases/user/find/me/get-user-permission'
+import { GetUserPermissionUseCase } from '@/domain/admsjp/use-cases/user/get-user-permission'
 import { EventHttpModule } from '@/infra/http/events/event-http.module'
 import { ProfileHttpModule } from '@/infra/http/profile/profile-http.module'
 import { ProfilePermissionHttpModule } from '@/infra/http/profile-permission/profile-permission-http.module'
@@ -72,6 +72,6 @@ import { ParameterHttpModule } from './parameter/parameter-http.module'
     RouterModule.register([{ path: 'order', module: OrderHttpModule }]),
   ],
   controllers: [GetUserPermissionController],
-  providers: [GetUserPermissionsUseCase],
+  providers: [GetUserPermissionUseCase],
 })
 export class HttpModule {}

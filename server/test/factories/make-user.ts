@@ -12,7 +12,6 @@ interface UserProps extends Omit<Prisma.UserUncheckedCreateInput, 'profileId'> {
 export function makeUser(override: Partial<UserProps> = {}): UserProps {
   return {
     name: faker.person.firstName(),
-    username: faker.internet.userName(),
     status: UserStatus.ACTIVE,
     profileId: 1,
     email: faker.internet.email(),
@@ -32,7 +31,7 @@ export class UserFactory {
 
     const createdUser = await this.prisma.user.upsert({
       where: {
-        username: user.username,
+        email: user.email,
       },
       create: user,
       update: {},

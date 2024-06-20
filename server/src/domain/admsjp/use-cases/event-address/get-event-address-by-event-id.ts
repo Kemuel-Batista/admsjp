@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common'
 import { EventAddress } from '@prisma/client'
 
 import { Either, failure, success } from '@/core/either'
@@ -16,6 +17,7 @@ type GetEventAddressByEventIdUseCaseResponse = Either<
   }
 >
 
+@Injectable()
 export class GetEventAddressByEventIdUseCase {
   constructor(
     private eventAddressesRepository: EventAddressesRepository,

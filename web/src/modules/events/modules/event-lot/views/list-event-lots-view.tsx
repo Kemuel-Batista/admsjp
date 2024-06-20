@@ -1,4 +1,5 @@
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { maskCurrency } from '@/utils/masks'
@@ -35,6 +36,11 @@ export function ListEventLotsView({ eventId }: ListEventLotsViewProps) {
           </>
         ))}
       </CardContent>
+      <CardFooter>
+        <Button variant="outline">
+          Faça login na plataforma para comprar um ingresso
+        </Button>
+      </CardFooter>
     </Card>
   )
 }

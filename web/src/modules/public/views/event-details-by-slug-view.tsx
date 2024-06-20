@@ -1,12 +1,16 @@
 'use client'
 
+import { Calendar, MapPin } from 'lucide-react'
 import Image from 'next/image'
 
+import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
 import { env } from '@/env'
 import { GetEventAddressByEventIdService } from '@/modules/events/modules/event-address/services/get-event-address-by-event-id'
 import { ListEventLotsView } from '@/modules/events/modules/event-lot/views/list-event-lots-view'
 import { GetEventBySlugService } from '@/modules/events/services/get-event-by-slug'
+import { maskEventDate } from '@/utils/masks'
 
 import { Nav } from '../components/nav'
 
@@ -20,8 +24,6 @@ export function EventDetailsBySlugView({ slug }: EventDetailsBySlugViewProps) {
 
   const result = GetEventAddressByEventIdService(event?.id)
   const address = result.data?.eventAddress
-
-  console.log(address)
 
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -46,12 +48,57 @@ export function EventDetailsBySlugView({ slug }: EventDetailsBySlugViewProps) {
           />
         </div>
         <div className="grid grid-cols-[10fr_5fr] px-24">
-          <Label className="text-3xl">{event?.title}</Label>
+          <div className="flex flex-col gap-10 justify-center">
+            <Label className="text-3xl font-bold">{event?.title}</Label>
+            <div className="flex gap-2">
+              <Calendar size={24} />
+              <Label className="text-base font-normal">
+                {maskEventDate(event?.initialDate)}
+              </Label>
+              <Label className="text-base font-normal">{'>'}</Label>
+              <Label className="text-base font-normal">
+                {maskEventDate(event?.finalDate)}
+              </Label>
+            </div>
+            {address && (
+              <div className="flex gap-2">
+                <MapPin size={24} />
+                <Label className="text-base font-normal">
+                  Evento presencial em {address.street}, {address.number} -{' '}
+                  {address.neighborhood}
+                </Label>
+              </div>
+            )}
+          </div>
           <ListEventLotsView eventId={event?.id} />
         </div>
         <div className="flex flex-col px-24 w-full gap-10">
           <Label className="text-2xl">Descrição do evento</Label>
           <p>{event?.description}</p>
+          <Separator />
+          {address && (
+            <>
+              <Label className="text-xl">Local do evento</Label>
+              <Label className="text-base font-normal">
+                Evento presencial em {address.street}, {address.number} -{' '}
+                {address.neighborhood}
+              </Label>
+              <a
+                href={`https://maps.google.com/?q=${address.latitude},${address.longitude}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Button
+                  variant="default"
+                  size="lg"
+                  className="mt-2 mx-auto gap-2"
+                >
+                  <MapPin size={24} />
+                  Ver no mapa
+                </Button>
+              </a>
+            </>
+          )}
         </div>
         <footer className="my-10"></footer>
       </main>

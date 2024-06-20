@@ -4,7 +4,7 @@ const pt = {
       keyAlreadyExists: 'Department {{name}} já existe no sistema',
     },
     find: {
-      notFound: 'Não foi possível localizar o department {{department}}',
+      notFound: 'Não foi possível localizar o department {{key}}',
       invalidStatus:
         'Status inválido, esperado {{expectedStatus}} recebido {{receivedStatus}}',
       disable: 'Department está desativado',

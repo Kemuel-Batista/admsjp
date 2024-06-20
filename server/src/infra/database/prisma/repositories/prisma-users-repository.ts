@@ -1,15 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { User } from '@prisma/client'
+import { Prisma, User } from '@prisma/client'
 
 import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { IListOptions } from '@/core/repositories/list-options'
 import { buildSearchFilter } from '@/core/util/filtering/build-search-filter'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
-import {
-  CreateUserDTO,
-  ListUserWithCountDTO,
-  UpdateUserDTO,
-} from '@/domain/admsjp/dtos/user'
+import { ListUserWithCountDTO, UpdateUserDTO } from '@/domain/admsjp/dtos/user'
 import { UsersRepository } from '@/domain/admsjp/repositories/users-repository'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 
@@ -17,21 +13,21 @@ import { PrismaService } from '@/infra/database/prisma/prisma.service'
 export class PrismaUsersRepository implements UsersRepository {
   constructor(private prisma: PrismaService) {}
   async create({
-    username,
     email,
     name,
     password,
+    photo,
     status,
     departmentId,
     profileId,
     createdBy,
-  }: CreateUserDTO): Promise<User> {
+  }: Prisma.UserUncheckedCreateInput): Promise<User> {
     const user = await this.prisma.user.create({
       data: {
-        username,
         email,
         name,
         password,
+        photo,
         status,
         departmentId,
         profileId,
@@ -45,7 +41,6 @@ export class PrismaUsersRepository implements UsersRepository {
 
   async update({
     id,
-    username,
     email,
     name,
     password,
@@ -59,7 +54,6 @@ export class PrismaUsersRepository implements UsersRepository {
         id,
       },
       data: {
-        username: username ?? undefined,
         email: email ?? undefined,
         name: name ?? undefined,
         password: password ?? undefined,
@@ -88,10 +82,11 @@ export class PrismaUsersRepository implements UsersRepository {
           id: true,
           uuid: true,
           name: true,
-          username: true,
           email: true,
           password: false,
           status: true,
+          photo: true,
+          provider: true,
           departmentId: true,
           profileId: true,
           createdAt: true,
@@ -121,10 +116,10 @@ export class PrismaUsersRepository implements UsersRepository {
     return user
   }
 
-  async findByUsername(username: User['username']): Promise<User | null> {
+  async findByEmail(email: User['email']): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
       where: {
-        username,
+        email,
       },
     })
 

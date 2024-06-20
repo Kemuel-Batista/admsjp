@@ -15,9 +15,7 @@ const pt = {
       inactiveUser: 'Usuário desativado',
     },
     create: {
-      username: {
-        alreadyExists: 'O nome de usuário {{username}} já está em uso',
-      },
+      alreadyExists: 'O email {{key}} já está em uso',
     },
     update: {
       id: {

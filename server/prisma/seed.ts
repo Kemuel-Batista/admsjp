@@ -15,7 +15,7 @@ import {
   ParameterVisible,
 } from '@/domain/admsjp/enums/parameter'
 import { UserStatus } from '@/domain/admsjp/enums/user'
-import BCryptHashProvider from '@/infra/cryptography/brcrypt-hash-provider'
+import { BcryptHasher } from '@/infra/cryptography/brcrypt-hasher'
 import { envSchema } from '@/infra/env/env'
 
 const permissions = [
@@ -65,7 +65,7 @@ const permissions = [
 ]
 
 const prisma = new PrismaClient()
-const bcryptHashProvider = new BCryptHashProvider()
+const bcryptHasher = new BcryptHasher()
 
 config({ path: '.env', override: true })
 
@@ -128,8 +128,8 @@ async function execute(enviroment: string): Promise<void> {
 
     await prisma.user.deleteMany({
       where: {
-        username: {
-          not: env.ADMIN_USERNAME,
+        email: {
+          not: env.ADMIN_EMAIL,
         },
       },
     })
@@ -164,9 +164,7 @@ async function execute(enviroment: string): Promise<void> {
   async function createAdmin(): Promise<User> {
     console.time('createAdmin')
 
-    const hashedPassword = await bcryptHashProvider.generateHash(
-      env.ADMIN_PASSWORD,
-    )
+    const hashedPassword = await bcryptHasher.hash(env.ADMIN_PASSWORD)
 
     const profileAdmin = await prisma.profile.upsert({
       where: {
@@ -214,12 +212,11 @@ async function execute(enviroment: string): Promise<void> {
 
     const admin = await prisma.user.upsert({
       where: {
-        username: env.ADMIN_USERNAME,
+        email: env.ADMIN_EMAIL,
       },
       create: {
-        username: env.ADMIN_USERNAME,
-        name: env.ADMIN_NAME,
         email: env.ADMIN_EMAIL,
+        name: env.ADMIN_NAME,
         password: hashedPassword,
         departmentId: adminDepartment.id,
         status: UserStatus.ACTIVE,
@@ -250,16 +247,15 @@ async function execute(enviroment: string): Promise<void> {
         lastName,
       })
 
-      const password = await bcryptHashProvider.generateHash(username)
+      const password = await bcryptHasher.hash(username)
 
       await prisma.user.upsert({
         where: {
-          username,
+          email,
         },
         create: {
-          username,
-          name: `${name} ${lastName}`,
           email,
+          name: `${name} ${lastName}`,
           password,
           departmentId: department.id,
           status: UserStatus.ACTIVE,
@@ -273,8 +269,8 @@ async function execute(enviroment: string): Promise<void> {
     if (flagDeleteUsers) {
       await prisma.user.deleteMany({
         where: {
-          username: {
-            not: 'admin',
+          email: {
+            not: env.ADMIN_EMAIL,
           },
         },
       })
@@ -293,37 +289,37 @@ async function execute(enviroment: string): Promise<void> {
       create: {
         title: 'EBJ 2024',
         slug: 'umadsjp-ebj-2024',
-        description: `ENCOEBD/EBOJ 2024 - Encontro da Escola Bíblica Dominical e Escola Bíblica de Obreiros de Joinville
+        description: `ENCOEBD/EBOJ 2024 - Encontro da Escola Bíblica Dominical e Escola Bíblica de Obreiros de Joinville\n
 
-        A IEADJO - Igreja Evangélica Assembleia de Deus de Joinville (SC) promove dois importantes eventos em uma mesma data, trata-se de uma parceria envolvendo o Departamento de Escola Bíblica Dominical e o Departamento do CCOM (Centro de Capacitação e Orientação Ministerial).
-        São eles: ENCOEBD (ENCONTRO DA ESCOLA BÍBLICA DOMINICAL ) e EBOJ (ESCOLA BÍBLICA DE OBREIROS EM JOINVILLE), e será realizado nos dias 20 a 22 de Junho de 2024 (Quinta, Sexta e Sábado) em reuniões presenciais no Centreventos IEADJO - Assembleia de Deus Joinville.
-        Estr. Arataca, 965 - São Marcos, Joinville - SC, 89214-363.
+        A IEADJO - Igreja Evangélica Assembleia de Deus de Joinville (SC) promove dois importantes eventos em uma mesma data, trata-se de uma parceria envolvendo o Departamento de Escola Bíblica Dominical e o Departamento do CCOM (Centro de Capacitação e Orientação Ministerial).\n
+        São eles: ENCOEBD (ENCONTRO DA ESCOLA BÍBLICA DOMINICAL ) e EBOJ (ESCOLA BÍBLICA DE OBREIROS EM JOINVILLE), e será realizado nos dias 20 a 22 de Junho de 2024 (Quinta, Sexta e Sábado) em reuniões presenciais no Centreventos IEADJO - Assembleia de Deus Joinville.\n
+        Estr. Arataca, 965 - São Marcos, Joinville - SC, 89214-363.\n\n
         
-        O tema geral do evento é Conduzidos pelo Espírito Santo. As disciplinas do currículo permanente da ENCOEBD/EBOJ estarão baseadas no tema da IEAD JO e da CIADESCP para o ano de 2024.
+        O tema geral do evento é Conduzidos pelo Espírito Santo. As disciplinas do currículo permanente da ENCOEBD/EBOJ estarão baseadas no tema da IEAD JO e da CIADESCP para o ano de 2024.\n
         
-        Disciplinas:
+        Disciplinas:\n
         
-        - Teologia Pastoral;
-        - Homilética;
-        - Hermenêutica;
-        - Missiologia;
-        - Bibliologia;
-        - Teologia Sistemática.
+        - Teologia Pastoral;\n
+        - Homilética;\n
+        - Hermenêutica;\n
+        - Missiologia;\n
+        - Bibliologia;\n
+        - Teologia Sistemática.\n
         
-        Informações gerais:
+        Informações gerais:\n
         
-        Quinta-feira dia 20/06
-        Noite: 19h00 às 21h30
+        Quinta-feira dia 20/06\n
+        Noite: 19h00 às 21h30\n
         
-        Sexta-feira dia 21/06
-        Noite: 19h00 às 21h30
+        Sexta-feira dia 21/06\n
+        Noite: 19h00 às 21h30\n
         
-        Sábado dia 22/06
-        Manhã: 09h00 às 12h00
-        Tarde: 14h00 às 17h30
-        Noite: 17h00 às 21h30
+        Sábado dia 22/06\n
+        Manhã: 09h00 às 12h00\n
+        Tarde: 14h00 às 17h30\n
+        Noite: 17h00 às 21h30\n
         
-        > MAIORES INFORMAÇÕES
+        > MAIORES INFORMAÇÕES\n
         Whatsapp: +55 47 99743-4047 (Pr. Eduardo Sônego)`,
 
         initialDate: faker.date.soon(),

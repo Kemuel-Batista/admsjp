@@ -4,7 +4,7 @@ const pt = {
       keyAlreadyExists: 'Profile {{name}} já existe no sistema',
     },
     find: {
-      notFound: 'Não foi possível localizar o profile {{profile}}',
+      notFound: 'Não foi possível localizar o profile {{key}}',
       invalidStatus:
         'Status inválido, esperado {{expectedStatus}} recebido {{receivedStatus}}',
       disable: 'Profile está desativado',

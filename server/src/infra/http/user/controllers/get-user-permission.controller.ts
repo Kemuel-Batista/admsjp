@@ -1,18 +1,34 @@
-import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common'
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common'
 
-import { GetUserPermissionsUseCase } from '@/domain/admsjp/use-cases/user/find/me/get-user-permission'
+import { GetUserPermissionUseCase } from '@/domain/admsjp/use-cases/user/get-user-permission'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
 
 @Controller('/me')
 export class GetUserPermissionController {
-  constructor(private getUserPermission: GetUserPermissionsUseCase) {}
+  constructor(private getUserPermission: GetUserPermissionUseCase) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
   async handle(@CurrentUser() user: UserPayload) {
-    const userPermission = await this.getUserPermission.execute(user.sub.id)
+    const result = await this.getUserPermission.execute({
+      userId: user.sub.id,
+    })
 
-    return userPermission
+    if (result.isError()) {
+      throw new BadRequestException('Erro ao carregar as permissões')
+    }
+
+    const userPermission = result.value.userWithPermission
+
+    return {
+      user: userPermission,
+    }
   }
 }
