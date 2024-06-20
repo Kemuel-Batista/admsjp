@@ -92,14 +92,32 @@ async function execute(enviroment: string): Promise<void> {
 
   if (enviroment === 'deploy') {
     await clearDatabase()
+
+    await createDepartment()
   }
 
   if (enviroment === 'development') {
     await clearDatabase()
 
+    await createDepartment()
+
     await createEvent(admin)
 
     await createParameters(admin)
+
+    await prisma.profile.upsert({
+      where: {
+        name: 'General',
+      },
+      create: {
+        name: 'General',
+        status: 1,
+        visible: 1,
+        createdBy: 0,
+        updatedBy: 0,
+      },
+      update: {},
+    })
     // await createFakeUsers()
   }
 
@@ -148,6 +166,21 @@ async function execute(enviroment: string): Promise<void> {
         name: 'UMADJSP',
         description:
           'Departamento de Jovens da Assembléia de Deus São José dos Pinhais',
+        status: 1,
+        visible: 1,
+        createdBy: 0,
+        updatedBy: 0,
+      },
+      update: {},
+    })
+
+    await prisma.department.upsert({
+      where: {
+        name: 'General',
+      },
+      create: {
+        name: 'General',
+        description: 'Todos os usuários públicos',
         status: 1,
         visible: 1,
         createdBy: 0,

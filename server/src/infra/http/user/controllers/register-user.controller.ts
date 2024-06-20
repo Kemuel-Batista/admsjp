@@ -56,6 +56,7 @@ export class RegisterUserController {
       status,
       departmentId,
       profileId,
+      provider: 'system',
     })
 
     if (result.isError()) {

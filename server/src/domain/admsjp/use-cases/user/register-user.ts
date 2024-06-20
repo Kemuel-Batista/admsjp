@@ -18,6 +18,7 @@ interface RegisterUserUseCaseRequest {
   status: number
   departmentId: number
   profileId: number
+  provider: string
 }
 
 type RegisterUserUseCaseResponse = Either<
@@ -42,6 +43,7 @@ export class RegisterUserUseCase {
     photo,
     departmentId,
     profileId,
+    provider,
   }: RegisterUserUseCaseRequest): Promise<RegisterUserUseCaseResponse> {
     const userAlreadyExists = await this.usersRepository.findByEmail(email)
 
@@ -87,6 +89,7 @@ export class RegisterUserUseCase {
       departmentId,
       profileId,
       createdBy: 1,
+      provider,
     })
   }
 }

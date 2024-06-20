@@ -1,6 +1,8 @@
 import { ChurchIcon, CircleUser, Search } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -11,8 +13,21 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/contexts/auth-context'
 
 export function Nav() {
+  const router = useRouter()
+  const { user, signOut, isAuthenticated } = useAuth()
+
+  function handleNavigateToLogin() {
+    router.push('/login')
+  }
+
+  async function handleSignOut() {
+    await signOut()
+    router.push('/')
+  }
+
   return (
     <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
@@ -41,22 +56,28 @@ export function Nav() {
             />
           </div>
         </form>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="secondary" size="icon" className="rounded-full">
-              <CircleUser className="h-5 w-5" />
-              <span className="sr-only">Toggle user menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Support</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Logout</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {!isAuthenticated ? (
+          <Button onClick={handleNavigateToLogin}>Entrar</Button>
+        ) : (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="secondary" size="icon" className="rounded-full">
+                <Avatar>
+                  <AvatarImage src={user.photo} />
+                  <AvatarFallback>
+                    <CircleUser className="h-5 w-5" />
+                  </AvatarFallback>
+                </Avatar>
+                <span className="sr-only">Toggle user menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Minha conta</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleSignOut}>Sair</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
     </header>
   )

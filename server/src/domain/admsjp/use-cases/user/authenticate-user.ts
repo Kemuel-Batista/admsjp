@@ -47,7 +47,14 @@ export class AuthenticateUserUseCase {
     }
 
     const accessToken = await this.encrypter.encrypt({
-      sub: user.id.toString(),
+      sub: {
+        id: user.id,
+        name: user.name,
+        status: user.status,
+        profileId: user.profileId,
+        departmentId: user.departmentId,
+        email: user.email,
+      },
     })
 
     return success({

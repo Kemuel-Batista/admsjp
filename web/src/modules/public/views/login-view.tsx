@@ -1,5 +1,3 @@
-'use client'
-
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import Link from 'next/link'
@@ -14,20 +12,26 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form'
+import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/contexts/auth-context'
+import { env } from '@/env'
 import {
   AuthUserFormData,
   authUserSchema,
 } from '@/modules/user/schemas/auth-user-schema'
 
-export function LoginAdminView() {
+export function LoginView() {
   const router = useRouter()
   const { signIn } = useAuth()
 
   const form = useForm<AuthUserFormData>({
     resolver: zodResolver(authUserSchema),
   })
+
+  function handleLoginWithGoogle() {
+    window.location.href = `${env.NEXT_PUBLIC_API_URL}/auth/google`
+  }
 
   const { mutateAsync, isPending } = useMutation<
     unknown,
@@ -61,7 +65,7 @@ export function LoginAdminView() {
         </div>
 
         <div className="relative flex flex-col items-center justify-center">
-          <form className="grid gap-6" onSubmit={form.handleSubmit(onSubmit)}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">Login</h1>
               <p className="text-sm text-muted-foreground">
@@ -77,10 +81,10 @@ export function LoginAdminView() {
                     <FormItem>
                       <FormControl>
                         <Input
-                          placeholder="name.umadsjp@.com.br"
-                          type="text"
+                          placeholder="name@example.com"
+                          type="email"
                           autoCapitalize="none"
-                          autoComplete="off"
+                          autoComplete="email"
                           autoCorrect="off"
                           disabled={isPending}
                           {...field}
@@ -100,7 +104,7 @@ export function LoginAdminView() {
                           placeholder="senha"
                           type="password"
                           autoCapitalize="none"
-                          autoComplete="off"
+                          autoComplete="password"
                           autoCorrect="off"
                           disabled={isPending}
                           {...field}
@@ -111,10 +115,10 @@ export function LoginAdminView() {
                   )}
                 />
               </div>
-              <Button disabled={isPending} type="submit">
-                {/* {isLoading && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )} */}
+              <Button disabled={isPending}>
+                {isPending && (
+                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 Entrar
               </Button>
             </div>
@@ -128,12 +132,17 @@ export function LoginAdminView() {
                 </span>
               </div>
             </div>
-            <Button variant="outline" type="button" disabled={isPending}>
-              {/* {isLoading ? (
-            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Icons.google className="mr-2 h-4 w-4" />
-          )}{' '} */}
+            <Button
+              variant="outline"
+              type="button"
+              disabled={isPending}
+              onClick={handleLoginWithGoogle}
+            >
+              {isPending ? (
+                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Icons.google className="mr-2 h-4 w-4" />
+              )}{' '}
               Google
             </Button>
             <p className="px-8 text-center text-sm text-muted-foreground">

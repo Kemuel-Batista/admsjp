@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
+import { Request } from 'express'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import { z } from 'zod'
 
@@ -10,7 +11,6 @@ const tokenPayloadSchema = z.object({
   sub: z.object({
     id: z.number(),
     name: z.string(),
-    username: z.string(),
     status: z.number(),
     profileId: z.number(),
     departmentId: z.number(),
@@ -27,10 +27,24 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const publicKey = config.get('JWT_PUBLIC_KEY', { infer: true })
 
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        JwtStrategy.extractJWT,
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ]),
       secretOrKey: Buffer.from(publicKey, 'base64'),
       algorithms: ['RS256'],
     })
+  }
+
+  private static extractJWT(request: Request): string | null {
+    if (
+      request.cookies &&
+      'nextauth_token' in request.cookies &&
+      request.cookies.nextauth_token.length > 0
+    ) {
+      return request.cookies.nextauth_token
+    }
+    return null
   }
 
   async validate(payload: UserPayload) {

@@ -20,6 +20,7 @@ export class PrismaUsersRepository implements UsersRepository {
     status,
     departmentId,
     profileId,
+    provider,
     createdBy,
   }: Prisma.UserUncheckedCreateInput): Promise<User> {
     const user = await this.prisma.user.create({
@@ -31,6 +32,7 @@ export class PrismaUsersRepository implements UsersRepository {
         status,
         departmentId,
         profileId,
+        provider,
         createdBy,
         updatedBy: createdBy,
       },

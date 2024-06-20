@@ -1,34 +1,35 @@
 'use client'
 
-import { deleteCookie, setCookie } from 'cookies-next'
-import { createContext, useContext, useMemo, useState } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react'
 
 import { api } from '@/lib/axios'
 
 type SignInCredentials = {
-  username: string
+  email: string
   password: string
 }
 
 export type User = {
   id: number | null
-  username: string
+  email: string
   name: string
+  photo: string
   status: number | null
   profileId: number
 }
 
 type AuthContextData = {
   signIn: (credentials: SignInCredentials) => Promise<void>
-  signOut: () => void
+  signOut: () => Promise<void>
   getMe: () => void
   user: User
   isAuthenticated: boolean
-}
-
-export const signOut = () => {
-  deleteCookie('nextauth.token')
-  deleteCookie('nextauth.refreshToken')
 }
 
 export const AuthContext = createContext({} as AuthContextData)
@@ -36,44 +37,43 @@ export const AuthContext = createContext({} as AuthContextData)
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User>({
     id: null,
-    username: '',
+    email: '',
     name: '',
+    photo: '',
     status: null,
     profileId: 0,
   })
 
   const isAuthenticated = !!user
 
+  const signOut = async () => {
+    await api.post('/auth/sessions/logout')
+    setUser({
+      id: null,
+      email: '',
+      name: '',
+      photo: '',
+      status: null,
+      profileId: 0,
+    })
+  }
+
   const getMe = async () => {
     try {
       const me = await api.get('/me')
-      const { id, username, name, status, profileId } = me.data
-      setUser({ id, username, name, status, profileId })
+      const { id, email, name, photo, status, profileId } = me.data.user
+      setUser({ id, email, name, photo, status, profileId })
     } catch (error) {
-      signOut()
+      console.log(error)
     }
   }
 
-  const signIn = async ({ username, password }: SignInCredentials) => {
-    const response = await api.post(`/auth/session`, {
-      username,
+  const signIn = useCallback(async ({ email, password }: SignInCredentials) => {
+    await api.post(`/auth/session`, {
+      email,
       password,
     })
-
-    const { token, refreshToken } = response.data
-
-    setCookie('nextauth.token', token, {
-      maxAge: 60 * 60, // 60 minutos
-      path: '/',
-    })
-
-    setCookie('nextauth.refreshToken', refreshToken, {
-      maxAge: 60 * 60, // 60 minutos
-      path: '/',
-    })
-
-    return response.data
-  }
+  }, [])
 
   const contextBag = useMemo(
     () => ({

@@ -5,6 +5,14 @@ import { Strategy, VerifyCallback } from 'passport-google-oauth2'
 
 import { Env } from '../env/env'
 
+export type UserGooglePayload = {
+  email: string
+  firstName: string
+  lastName: string
+  picture: string
+  accessToken: string
+}
+
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(config: ConfigService<Env, true>) {
@@ -27,7 +35,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     done: VerifyCallback,
   ): Promise<void> {
     const { name, emails, photos } = profile
-    const user = {
+    const user: UserGooglePayload = {
       email: emails[0].value,
       firstName: name.givenName,
       lastName: name.familyName,

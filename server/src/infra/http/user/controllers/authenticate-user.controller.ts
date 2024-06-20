@@ -55,7 +55,7 @@ export class AuthenticateUserController {
     const { accessToken } = result.value
 
     return response
-      .cookie('nextauth.token', accessToken, {
+      .cookie('nextauth_token', accessToken, {
         expires: new Date(Date.now() + 1 * 60 * 60 * 1000), // 1 hora em milissegundos
         httpOnly: true,
         path: '/',
