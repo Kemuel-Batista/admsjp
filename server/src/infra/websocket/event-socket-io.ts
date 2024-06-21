@@ -41,6 +41,8 @@ export class EventSocketIO
     OnGatewayConnection,
     OnGatewayDisconnect
 {
+  private readonly logger = new Logger(EventSocketIO.name)
+
   @WebSocketServer() server: Server
 
   constructor(
@@ -48,24 +50,16 @@ export class EventSocketIO
     private listEventTicketsUnexpiredByUser: ListEventTicketsUnexpiredByUserUseCase,
   ) {}
 
-  private readonly logger = new Logger(EventSocketIO.name)
-
   afterInit(): void {
     this.logger.log('Websocket gateway initialized.')
   }
 
-  async handleConnection(socket: SocketWithAuth) {
+  handleConnection(socket: SocketWithAuth) {
     this.logger.log(`WS Client with ID: ${socket.id} connected`)
-
-    await socket.join(`purchase:${socket.sub.id}`)
   }
 
   handleDisconnect(socket: SocketWithAuth) {
-    this.logger.log(
-      `Socket.id: ${socket.id} | Socket.to: ${String(
-        socket.to,
-      )} - Cliente desconectado`,
-    )
+    this.logger.log(`Socket.id: ${socket.id} - Cliente desconectado`)
   }
 
   async emit(data: EventSocketEmmiter): Promise<void> {
@@ -77,9 +71,8 @@ export class EventSocketIO
   }
 
   @SubscribeMessage('event-entry')
-  async handleEvent(@ConnectedSocket() socket: SocketWithAuth): Promise<void> {
+  async handleEvent(@ConnectedSocket() socket: SocketWithAuth) {
     const userId = socket.sub.id
-
     socket.join(`purchase:${userId}`)
 
     const result = await this.listEventTicketsUnexpiredByUser.execute({

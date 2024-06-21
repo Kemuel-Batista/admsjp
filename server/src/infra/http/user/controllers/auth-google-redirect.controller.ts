@@ -58,7 +58,7 @@ export class AuthGoogleRedirectController {
         photo: reqUser.picture,
         provider: 'google',
         profileId: 2, // General profile
-        departmentId: 2, // General Department
+        departmentId: 3, // General Department
         status: UserStatus.ACTIVE,
       })
 

@@ -16,6 +16,7 @@ type AuthenticateUserUseCaseResponse = Either<
   WrongCredentialsError,
   {
     accessToken: string
+    userProvider: string
   }
 >
 
@@ -59,6 +60,7 @@ export class AuthenticateUserUseCase {
 
     return success({
       accessToken,
+      userProvider: user.provider,
     })
   }
 }

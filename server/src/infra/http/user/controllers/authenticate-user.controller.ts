@@ -52,7 +52,11 @@ export class AuthenticateUserController {
       }
     }
 
-    const { accessToken } = result.value
+    const { accessToken, userProvider } = result.value
+
+    if (userProvider !== 'system') {
+      throw new UnauthorizedException('Logue-se com a sua conta google!')
+    }
 
     return response
       .cookie('nextauth_token', accessToken, {

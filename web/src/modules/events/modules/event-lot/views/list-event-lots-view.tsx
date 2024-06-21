@@ -15,9 +15,13 @@ import { EventLot } from '../types/event-lot'
 
 interface ListEventLotsViewProps {
   eventId?: number
+  eventSlug?: string
 }
 
-export function ListEventLotsView({ eventId }: ListEventLotsViewProps) {
+export function ListEventLotsView({
+  eventId,
+  eventSlug,
+}: ListEventLotsViewProps) {
   const router = useRouter()
   const { isAuthenticated } = useAuth()
 
@@ -68,8 +72,6 @@ export function ListEventLotsView({ eventId }: ListEventLotsViewProps) {
   const { mutateAsync } = CreateEventTicketService()
 
   async function handleCreateEventTickets() {
-    console.log(`re`)
-
     const form: CreateEventTicketFormData = eventLots.map((item, index) => ({
       eventId: Number(eventId),
       lot: index + 1,
@@ -78,7 +80,7 @@ export function ListEventLotsView({ eventId }: ListEventLotsViewProps) {
 
     await mutateAsync(form, {
       onSuccess: () => {
-        router.push('/events/checkout')
+        router.push(`/events/${eventSlug}/checkout`)
       },
     })
   }

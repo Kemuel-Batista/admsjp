@@ -176,10 +176,10 @@ async function execute(enviroment: string): Promise<void> {
 
     await prisma.department.upsert({
       where: {
-        name: 'General',
+        name: 'GENERAL',
       },
       create: {
-        name: 'General',
+        name: 'GENERAL',
         description: 'Todos os usuários públicos',
         status: 1,
         visible: 1,

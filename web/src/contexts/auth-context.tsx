@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react'
@@ -67,6 +68,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.log(error)
     }
   }
+
+  useEffect(() => {
+    getMe()
+  }, [])
 
   const signIn = useCallback(async ({ email, password }: SignInCredentials) => {
     await api.post(`/auth/session`, {

@@ -51,8 +51,6 @@ export class ListEventTicketsUnexpiredByUserUseCase {
       )
     }
 
-    console.log(userId)
-
     const eventTickets =
       await this.eventTicketsRepository.ListUnexpiredByUserId(userId)
 

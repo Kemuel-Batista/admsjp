@@ -70,7 +70,7 @@ export function EventDetailsBySlugView({ slug }: EventDetailsBySlugViewProps) {
               </div>
             )}
           </div>
-          <ListEventLotsView eventId={event?.id} />
+          <ListEventLotsView eventId={event?.id} eventSlug={event?.slug} />
         </div>
         <div className="flex flex-col px-24 w-full gap-10">
           <Label className="text-2xl">Descrição do evento</Label>
