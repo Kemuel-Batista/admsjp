@@ -8,7 +8,6 @@ import {
   Profile,
   ProfilePermission,
   User,
-  UserToken,
 } from '@prisma/client'
 import { Prisma } from 'Prisma'
 
@@ -16,10 +15,6 @@ export interface Models {
   User: {
     model: User
     where: Prisma.UserWhereInput
-  }
-  UserToken: {
-    model: UserToken
-    where: Prisma.UserTokenWhereInput
   }
   Profile: {
     model: Profile

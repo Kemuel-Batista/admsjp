@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto'
+
 import { EventLot, Prisma } from '@prisma/client'
 import { applyFilters } from 'test/utils/filtering'
 
@@ -13,12 +15,13 @@ export class InMemoryEventLotsRepository implements EventLotsRepository {
 
   async create(data: Prisma.EventLotUncheckedCreateInput): Promise<EventLot> {
     const eventLot = {
+      id: randomUUID(),
+      eventId: data.eventId,
       name: data.name,
       description: data.description,
-      eventId: data.eventId,
+      lot: data.lot,
       quantity: data.quantity,
       fulfilledQuantity: data.fulfilledQuantity,
-      lot: data.lot,
       value: data.value,
       status: data.status,
       createdAt: new Date(),

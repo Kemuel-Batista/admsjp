@@ -32,6 +32,8 @@ export class InMemoryEventsRepository implements EventsRepository {
       eventType: data.eventType,
       imagePath: data.imagePath,
       message: data.message,
+      pixKey: data.pixKey,
+      pixType: data.pixType,
       createdAt: new Date(),
       createdBy: data.createdBy,
       updatedAt: null,

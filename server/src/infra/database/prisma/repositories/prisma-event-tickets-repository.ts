@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { EventTicket, Prisma } from '@prisma/client'
 
 import { EventTicketsRepository } from '@/domain/admsjp/repositories/event-tickets-repository'
-import {
-  EventTicketWithEventAndEventLot,
-  EventTicketWithUserAndEventLot,
-} from '@/domain/admsjp/types/event-ticket'
+import { EventTicketWithEventLot } from '@/domain/admsjp/types/event-ticket'
 
 import { PrismaService } from '../prisma.service'
 
@@ -14,28 +11,27 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
   constructor(private prisma: PrismaService) {}
 
   async create({
-    eventId,
-    lot,
+    eventLotId,
+    eventPurchaseId,
+    qrCodeImage,
+    qrCodeText,
     ticket,
-    expiresAt,
-    createdBy,
   }: Prisma.EventTicketUncheckedCreateInput): Promise<EventTicket> {
     const eventTicket = await this.prisma.eventTicket.create({
       data: {
-        eventId,
-        lot,
+        eventLotId,
+        eventPurchaseId,
+        qrCodeImage,
+        qrCodeText,
         ticket,
-        expiresAt,
-        createdBy,
       },
     })
 
     return eventTicket
   }
 
-  async update({
+  async save({
     id,
-    expiresAt,
     name,
     birthday,
     cpf,
@@ -52,7 +48,6 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
         cpf,
         email,
         phone,
-        expiresAt,
       },
     })
 
@@ -71,7 +66,7 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
 
   async findDetailsById(
     id: EventTicket['id'],
-  ): Promise<EventTicketWithEventAndEventLot> {
+  ): Promise<EventTicketWithEventLot> {
     const eventTicket = await this.prisma.eventTicket.findUnique({
       where: {
         id,
@@ -83,125 +78,10 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
             value: true,
           },
         },
-        event: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-            department: {
-              select: {
-                name: true,
-              },
-            },
-            imagePath: true,
-            eventType: true,
-          },
-        },
       },
     })
 
     return eventTicket
-  }
-
-  async listByLot(lot: number): Promise<EventTicket[]> {
-    const eventTickets = await this.prisma.eventTicket.findMany({
-      where: {
-        lot,
-      },
-    })
-
-    return eventTickets
-  }
-
-  async listCloseToExpiry(): Promise<EventTicket[]> {
-    const eventTickets = await this.prisma.eventTicket.findMany({
-      where: {
-        expiresAt: {
-          not: null,
-        },
-      },
-    })
-
-    return eventTickets
-  }
-
-  async ListUnexpiredByUserId(userId: number): Promise<EventTicket[]> {
-    const now = new Date()
-
-    const eventTicket = await this.prisma.eventTicket.findMany({
-      where: {
-        createdBy: userId,
-        expiresAt: {
-          gte: new Date(now.getTime() - 15 * 60 * 1000),
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    })
-
-    return eventTicket
-  }
-
-  async listDetailsByUserId(
-    userId: number,
-  ): Promise<EventTicketWithEventAndEventLot[]> {
-    const eventTickets = await this.prisma.eventTicket.findMany({
-      where: {
-        createdBy: userId,
-      },
-      include: {
-        eventLot: {
-          select: {
-            lot: true,
-            value: true,
-          },
-        },
-        event: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-            department: {
-              select: {
-                name: true,
-              },
-            },
-            imagePath: true,
-            eventType: true,
-          },
-        },
-      },
-    })
-
-    return eventTickets
-  }
-
-  async listDetailsByEventId(
-    eventId: number,
-  ): Promise<EventTicketWithUserAndEventLot[]> {
-    const eventTickets = await this.prisma.eventTicket.findMany({
-      where: {
-        eventId,
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-        eventLot: {
-          select: {
-            lot: true,
-            value: true,
-          },
-        },
-      },
-    })
-
-    return eventTickets
   }
 
   async lastTicket(): Promise<string> {

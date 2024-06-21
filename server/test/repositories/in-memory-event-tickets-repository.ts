@@ -3,45 +3,31 @@ import { randomUUID } from 'node:crypto'
 import { EventTicket, Prisma } from '@prisma/client'
 
 import { EventTicketsRepository } from '@/domain/admsjp/repositories/event-tickets-repository'
-import {
-  EventTicketWithEventAndEventLot,
-  EventTicketWithUserAndEventLot,
-} from '@/domain/admsjp/types/event-ticket'
+import { EventTicketWithEventLot } from '@/domain/admsjp/types/event-ticket'
 
-import { InMemoryDepartmentsRepository } from './in-memory-departments-repository'
 import { InMemoryEventLotsRepository } from './in-memory-event-lots-repository'
-import { InMemoryEventsRepository } from './in-memory-events-repository'
-import { InMemoryUsersRepository } from './in-memory-users-repository'
 
 export class InMemoryEventTicketsRepository implements EventTicketsRepository {
   public items: EventTicket[] = []
 
-  constructor(
-    private usersRepository: InMemoryUsersRepository,
-    private departmentsRepository: InMemoryDepartmentsRepository,
-    private eventsRepository: InMemoryEventsRepository,
-    private eventLotsRepository: InMemoryEventLotsRepository,
-  ) {}
+  constructor(private eventLotsRepository: InMemoryEventLotsRepository) {}
 
   async create(
     data: Prisma.EventTicketUncheckedCreateInput,
   ): Promise<EventTicket> {
     const eventTicket = {
       id: randomUUID(),
-      eventId: data.eventId,
+      eventPurchaseId: data.eventPurchaseId,
+      eventLotId: data.eventLotId,
+      ticket: data.ticket,
+      qrCodeImage: data.qrCodeImage,
+      qrCodeText: data.qrCodeText,
       cpf: data.cpf,
       name: data.name,
       email: data.email,
       phone: data.phone,
       birthday: new Date(data.birthday),
-      lot: data.lot,
-      ticket: data.ticket,
-      expiresAt: new Date(data.expiresAt) ?? null,
-      createdBy: data.createdBy,
       createdAt: new Date(),
-      updatedAt: null,
-      deletedBy: null,
-      deletedAt: null,
     }
 
     this.items.push(eventTicket)
@@ -49,16 +35,23 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
     return eventTicket
   }
 
-  async update(data: EventTicket): Promise<EventTicket> {
-    const itemIndex = this.items.findIndex(
-      (item) => item.eventId === data.eventId && item.lot === data.lot,
-    )
+  async save(data: EventTicket): Promise<EventTicket> {
+    const itemIndex = this.items.findIndex((item) => item.id === data.id)
 
     const event = this.items[itemIndex]
 
     const eventUpdated = {
       ...event,
-      expiresAt: data.expiresAt,
+      eventPurchaseId: data.eventPurchaseId,
+      eventLotId: data.eventLotId,
+      ticket: data.ticket,
+      qrCodeImage: data.qrCodeImage,
+      qrCodeText: data.qrCodeText,
+      cpf: data.cpf,
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      birthday: data.birthday,
     }
 
     this.items[itemIndex] = eventUpdated
@@ -76,166 +69,23 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
     return eventTicket
   }
 
-  async findDetailsById(id: string): Promise<EventTicketWithEventAndEventLot> {
+  async findDetailsById(id: string): Promise<EventTicketWithEventLot> {
     const eventTicket = this.items.find((item) => item.id === id)
 
     const eventLot = this.eventLotsRepository.items.find((eventLot) => {
-      return eventLot.lot === eventTicket.lot
+      return eventLot.id === eventTicket.eventLotId
     })
 
     if (!eventLot) {
       throw new Error(
-        `Event Lot with lot "${eventTicket.lot.toString()}" does not exist.`,
+        `Event Lot with lot "${eventTicket.eventLotId.toString()}" does not exist.`,
       )
     }
-
-    const event = this.eventsRepository.items.find((event) => {
-      return event.id === eventTicket.eventId
-    })
-
-    if (!event) {
-      throw new Error(
-        `Event with "${eventTicket.eventId.toString()}" does not exist.`,
-      )
-    }
-
-    const department = this.departmentsRepository.items.find((department) => {
-      return department.id === event.departmentId
-    })
 
     return {
       ...eventTicket,
       eventLot,
-      event: {
-        id: event.id,
-        title: event.title,
-        description: event.description,
-        department: {
-          name: department.name,
-        },
-        imagePath: event.imagePath,
-        eventType: event.eventType,
-      },
     }
-  }
-
-  async listByLot(lot: number): Promise<EventTicket[]> {
-    const eventTickets = this.items
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .filter((item) => item.lot === lot)
-
-    return eventTickets
-  }
-
-  async listCloseToExpiry(): Promise<EventTicket[]> {
-    const eventTickets = this.items
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .filter((item) => item.expiresAt !== null)
-
-    return eventTickets
-  }
-
-  async ListUnexpiredByUserId(userId: number): Promise<EventTicket[]> {
-    const now = new Date()
-    const fifteenMinutesAgo = new Date(now.getTime() - 15 * 60 * 1000)
-
-    const eventTicket = this.items.filter(
-      (item) =>
-        item.createdBy === userId &&
-        item.expiresAt > fifteenMinutesAgo &&
-        item.expiresAt <= now,
-    )
-
-    return eventTicket
-  }
-
-  async listDetailsByUserId(
-    userId: number,
-  ): Promise<EventTicketWithEventAndEventLot[]> {
-    const eventTickets = this.items
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .filter((item) => item.eventId === userId)
-      .map((eventTicket) => {
-        const eventLot = this.eventLotsRepository.items.find((eventLot) => {
-          return eventLot.lot === eventTicket.lot
-        })
-
-        if (!eventLot) {
-          throw new Error(
-            `Event Lot with lot "${eventTicket.lot.toString()}" does not exist.`,
-          )
-        }
-
-        const event = this.eventsRepository.items.find((event) => {
-          return event.id === eventTicket.eventId
-        })
-
-        if (!event) {
-          throw new Error(
-            `Event with "${eventTicket.eventId.toString()}" does not exist.`,
-          )
-        }
-
-        const department = this.departmentsRepository.items.find(
-          (department) => {
-            return department.id === event.departmentId
-          },
-        )
-
-        return {
-          ...eventTicket,
-          eventLot,
-          event: {
-            id: event.id,
-            title: event.title,
-            description: event.description,
-            department: {
-              name: department.name,
-            },
-            imagePath: event.imagePath,
-            eventType: event.eventType,
-          },
-        }
-      })
-
-    return eventTickets
-  }
-
-  async listDetailsByEventId(
-    eventId: number,
-  ): Promise<EventTicketWithUserAndEventLot[]> {
-    const eventTickets = this.items
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .filter((item) => item.eventId === eventId)
-      .map((eventTicket) => {
-        const user = this.usersRepository.items.find((user) => {
-          return user.id === eventTicket.createdBy
-        })
-
-        if (!user) {
-          throw new Error(
-            `User with ID "${eventTicket.createdBy.toString()}" does not exist.`,
-          )
-        }
-
-        const eventLot = this.eventLotsRepository.items.find((eventLot) => {
-          return eventLot.lot === eventTicket.lot
-        })
-
-        if (!eventLot) {
-          throw new Error(
-            `Event Lot with lot "${eventTicket.lot.toString()}" does not exist.`,
-          )
-        }
-
-        return {
-          ...eventTicket,
-          user,
-          eventLot,
-        }
-      })
-
-    return eventTickets
   }
 
   async lastTicket(): Promise<string> {

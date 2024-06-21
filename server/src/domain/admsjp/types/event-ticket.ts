@@ -1,23 +1,6 @@
 import { Order, Prisma } from '@prisma/client'
 
-export type EventTicketWithUserAndEventLot = Prisma.EventTicketGetPayload<{
-  include: {
-    user: {
-      select: {
-        id: true
-        name: true
-        email: true
-      }
-    }
-    eventLot: {
-      select: {
-        lot: true
-      }
-    }
-  }
-}>
-
-export type EventTicketWithEventAndEventLot = Prisma.EventTicketGetPayload<{
+export type EventTicketWithEventLot = Prisma.EventTicketGetPayload<{
   include: {
     eventLot: {
       select: {
@@ -25,23 +8,9 @@ export type EventTicketWithEventAndEventLot = Prisma.EventTicketGetPayload<{
         value: true
       }
     }
-    event: {
-      select: {
-        id: true
-        title: true
-        description: true
-        department: {
-          select: {
-            name: true
-          }
-        }
-        imagePath: true
-        eventType: true
-      }
-    }
   }
 }>
 
-export type EventTicketWithAllInformation = EventTicketWithEventAndEventLot & {
+export type EventTicketWithAllInformation = EventTicketWithEventLot & {
   orders: Order[]
 }

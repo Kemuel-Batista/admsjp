@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { Event, Prisma } from '@prisma/client'
 
 import {
+  EventPixType,
   EventStatus,
   EventType,
   EventVisible,
@@ -25,6 +26,8 @@ export function makeEvent(override: Partial<EventProps> = {}): EventProps {
     status: EventStatus.ACTIVE,
     visible: EventVisible.VISIBLE,
     departmentId: 1,
+    pixKey: faker.internet.email(),
+    pixType: EventPixType.EMAIL,
     eventType: EventType.REMOTO,
     imagePath: faker.image.url(),
     createdBy: 1,

@@ -13,11 +13,16 @@ export function makeEventTicket(
 ): EventTicketProps {
   return {
     id: randomUUID(),
-    eventId: faker.number.int({ max: 10 }),
-    lot: faker.number.int({ max: 10 }),
-    ticket: faker.lorem.word(),
-    expiresAt: faker.date.future(),
-    createdBy: faker.number.int({ max: 10 }),
+    eventLotId: randomUUID(),
+    eventPurchaseId: randomUUID(),
+    qrCodeImage: faker.internet.url(),
+    qrCodeText: faker.lorem.sentence(),
+    birthday: faker.date.past(),
+    name: faker.person.fullName(),
+    email: faker.internet.email(),
+    phone: faker.phone.number(),
+    ticket: faker.commerce.isbn(13),
+    cpf: '321313213131',
     ...override,
   }
 }

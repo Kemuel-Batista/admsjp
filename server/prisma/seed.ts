@@ -5,6 +5,7 @@ import { Department, PrismaClient, User } from '@prisma/client'
 import { config } from 'dotenv'
 
 import {
+  EventPixType,
   EventStatus,
   EventType,
   EventVisible,
@@ -141,8 +142,6 @@ async function execute(enviroment: string): Promise<void> {
     console.log()
 
     console.time('clearDatabase')
-
-    await prisma.userToken.deleteMany()
 
     await prisma.user.deleteMany({
       where: {
@@ -354,7 +353,8 @@ async function execute(enviroment: string): Promise<void> {
         
         > MAIORES INFORMAÇÕES\n
         Whatsapp: +55 47 99743-4047 (Pr. Eduardo Sônego)`,
-
+        pixKey: '27905dca-cc48-4b9e-baef-946e19af0de4',
+        pixType: EventPixType.CHAVE,
         initialDate: faker.date.soon(),
         finalDate: faker.date.future(),
         status: EventStatus.ACTIVE,
@@ -367,14 +367,8 @@ async function execute(enviroment: string): Promise<void> {
       update: {},
     })
 
-    await prisma.eventLot.upsert({
-      where: {
-        eventId_lot: {
-          eventId: event.id,
-          lot: 1,
-        },
-      },
-      create: {
+    await prisma.eventLot.create({
+      data: {
         name: 'Inscrição EBJ',
         description: 'Lote de inscrição da EBJ',
         lot: 1,
@@ -385,17 +379,10 @@ async function execute(enviroment: string): Promise<void> {
         fulfilledQuantity: 0,
         createdBy: admin.id,
       },
-      update: {},
     })
 
-    await prisma.eventLot.upsert({
-      where: {
-        eventId_lot: {
-          eventId: event.id,
-          lot: 2,
-        },
-      },
-      create: {
+    await prisma.eventLot.create({
+      data: {
         name: 'Inscrição EBJ + Camisa UMADSJP',
         description: 'Lote de inscrição da EBJ + Compra da camisa UMADSJP',
         lot: 2,
@@ -406,7 +393,6 @@ async function execute(enviroment: string): Promise<void> {
         fulfilledQuantity: 0,
         createdBy: admin.id,
       },
-      update: {},
     })
 
     await prisma.eventAddress.upsert({

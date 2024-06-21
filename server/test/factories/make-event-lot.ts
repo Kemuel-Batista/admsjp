@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto'
+
 import { faker } from '@faker-js/faker'
 import { Injectable } from '@nestjs/common'
 import { EventLot, Prisma } from '@prisma/client'
@@ -11,6 +13,7 @@ export function makeEventLot(
   override: Partial<EventLotProps> = {},
 ): EventLotProps {
   return {
+    id: randomUUID(),
     name: faker.lorem.word(),
     description: faker.lorem.sentence(),
     eventId: faker.number.int({ max: 10 }),
@@ -35,10 +38,7 @@ export class EventLotFactory {
 
     const createdEventLot = await this.prisma.eventLot.upsert({
       where: {
-        eventId_lot: {
-          eventId: eventLot.eventId,
-          lot: eventLot.lot,
-        },
+        id: eventLot.id,
       },
       create: eventLot,
       update: {},

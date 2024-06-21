@@ -10,7 +10,6 @@ import { OrdersRepository } from '@/domain/admsjp/repositories/orders-repository
 import { ParametersRepository } from '@/domain/admsjp/repositories/parameters-repository'
 import { ProfilePermissionsRepository } from '@/domain/admsjp/repositories/profile-permissions-repository'
 import { ProfilesRepository } from '@/domain/admsjp/repositories/profiles-repository'
-import { UserTokensRepository } from '@/domain/admsjp/repositories/user-tokens-repository'
 import { UsersRepository } from '@/domain/admsjp/repositories/users-repository'
 
 import { PrismaService } from './prisma/prisma.service'
@@ -24,7 +23,6 @@ import { PrismaOrdersRepository } from './prisma/repositories/prisma-orders-repo
 import { PrismaParametersRepository } from './prisma/repositories/prisma-parameters-repository'
 import { PrismaProfilePermissionsRepository } from './prisma/repositories/prisma-profile-permissions-repository'
 import { PrismaProfilesRepository } from './prisma/repositories/prisma-profiles-repository'
-import { PrismaUserTokensRepository } from './prisma/repositories/prisma-user-tokens-repository'
 import { PrismaUsersRepository } from './prisma/repositories/prisma-users-repository'
 
 @Module({
@@ -41,10 +39,6 @@ import { PrismaUsersRepository } from './prisma/repositories/prisma-users-reposi
     {
       provide: UsersRepository,
       useClass: PrismaUsersRepository,
-    },
-    {
-      provide: UserTokensRepository,
-      useClass: PrismaUserTokensRepository,
     },
     {
       provide: ProfilesRepository,
@@ -84,7 +78,6 @@ import { PrismaUsersRepository } from './prisma/repositories/prisma-users-reposi
     LogsRepository,
     DepartmentsRepository,
     UsersRepository,
-    UserTokensRepository,
     ProfilesRepository,
     ProfilePermissionsRepository,
     EventsRepository,
