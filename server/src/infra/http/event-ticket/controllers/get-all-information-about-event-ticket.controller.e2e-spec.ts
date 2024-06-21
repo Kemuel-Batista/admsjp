@@ -77,7 +77,7 @@ describe('Get all information about event ticket (E2E)', () => {
     const eventTicket = await eventTicketFactory.makePrismaEventTicket({
       eventId: event.id,
       lot: eventLot.lot,
-      userId: user.id,
+      createdBy: user.id,
     })
 
     const order = await orderFactory.makePrismaOrder({

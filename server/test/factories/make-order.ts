@@ -1,6 +1,5 @@
 import { randomUUID } from 'node:crypto'
 
-import { faker } from '@faker-js/faker'
 import { Injectable } from '@nestjs/common'
 import { Order, Prisma } from '@prisma/client'
 
@@ -12,7 +11,7 @@ interface OrderProps extends Prisma.OrderUncheckedCreateInput {}
 export function makeOrder(override: Partial<OrderProps> = {}): OrderProps {
   return {
     uuid: randomUUID(),
-    transactionId: faker.number.int({ max: 100 }),
+    transactionId: randomUUID(),
     paymentMethod: OrderPaymentMethod.PIX,
     status: OrderStatus.PENDING,
     ...override,

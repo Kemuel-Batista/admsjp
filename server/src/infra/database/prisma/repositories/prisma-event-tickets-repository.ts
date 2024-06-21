@@ -14,52 +14,49 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
   constructor(private prisma: PrismaService) {}
 
   async create({
-    userId,
     eventId,
     lot,
     ticket,
     expiresAt,
+    createdBy,
   }: Prisma.EventTicketUncheckedCreateInput): Promise<EventTicket> {
     const eventTicket = await this.prisma.eventTicket.create({
       data: {
-        userId,
         eventId,
         lot,
         ticket,
         expiresAt,
+        createdBy,
       },
     })
 
     return eventTicket
   }
 
-  async update({ expiresAt, uuid }: EventTicket): Promise<EventTicket> {
+  async update({
+    id,
+    expiresAt,
+    name,
+    birthday,
+    cpf,
+    email,
+    phone,
+  }: EventTicket): Promise<EventTicket> {
     const event = await this.prisma.eventTicket.update({
       where: {
-        uuid,
+        id,
       },
       data: {
+        name,
+        birthday,
+        cpf,
+        email,
+        phone,
         expiresAt,
       },
     })
 
     return event
-  }
-
-  async findByEventIdAndUserId(
-    eventId: EventTicket['eventId'],
-    userId: EventTicket['userId'],
-  ): Promise<EventTicket | null> {
-    const eventTicket = await this.prisma.eventTicket.findFirst({
-      where: {
-        eventId,
-        AND: {
-          userId,
-        },
-      },
-    })
-
-    return eventTicket
   }
 
   async findById(id: EventTicket['id']): Promise<EventTicket | null> {
@@ -128,14 +125,12 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
     return eventTickets
   }
 
-  async findFirstLastUnexpiredByUserId(
-    userId: number,
-  ): Promise<EventTicket | null> {
+  async ListUnexpiredByUserId(userId: number): Promise<EventTicket[]> {
     const now = new Date()
 
-    const eventTicket = await this.prisma.eventTicket.findFirst({
+    const eventTicket = await this.prisma.eventTicket.findMany({
       where: {
-        userId,
+        createdBy: userId,
         expiresAt: {
           gte: new Date(now.getTime() - 15 * 60 * 1000),
         },
@@ -153,7 +148,7 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
   ): Promise<EventTicketWithEventAndEventLot[]> {
     const eventTickets = await this.prisma.eventTicket.findMany({
       where: {
-        userId,
+        createdBy: userId,
       },
       include: {
         eventLot: {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { EventTicket } from '@prisma/client'
 
-import { Either, failure } from '@/core/either'
+import { Either, failure, success } from '@/core/either'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 import { i18n } from '@/core/i18n/i18n'
 
@@ -9,17 +9,19 @@ import { EventTicketsRepository } from '../../repositories/event-tickets-reposit
 import { ParametersRepository } from '../../repositories/parameters-repository'
 import { EventSocket } from '../../websocket/event-socket'
 
-interface FindLastEventTicketUnexpiredUseCaseRequest {
-  userId: EventTicket['userId']
+interface ListEventTicketsUnexpiredByUserUseCaseRequest {
+  userId: EventTicket['createdBy']
 }
 
-type FindLastEventTicketUnexpiredUseCaseResponse = Either<
+type ListEventTicketsUnexpiredByUserUseCaseResponse = Either<
   ResourceNotFoundError,
-  void
+  {
+    eventTickets: EventTicket[]
+  }
 >
 
 @Injectable()
-export class FindLastEventTicketUnexpiredUseCase {
+export class ListEventTicketsUnexpiredByUserUseCase {
   constructor(
     private eventTicketsRepository: EventTicketsRepository,
     private parametersRepository: ParametersRepository,
@@ -28,7 +30,7 @@ export class FindLastEventTicketUnexpiredUseCase {
 
   async execute({
     userId,
-  }: FindLastEventTicketUnexpiredUseCaseRequest): Promise<FindLastEventTicketUnexpiredUseCaseResponse> {
+  }: ListEventTicketsUnexpiredByUserUseCaseRequest): Promise<ListEventTicketsUnexpiredByUserUseCaseResponse> {
     const orderPaymentType =
       await this.parametersRepository.findByKey('order.payment.type')
 
@@ -49,25 +51,13 @@ export class FindLastEventTicketUnexpiredUseCase {
       )
     }
 
-    const eventTicket =
-      await this.eventTicketsRepository.findFirstLastUnexpiredByUserId(userId)
+    console.log(userId)
 
-    if (eventTicket) {
-      const data = {
-        eventTicketId: eventTicket.id,
-        orderPaymentType: orderPaymentType.value,
-      }
+    const eventTickets =
+      await this.eventTicketsRepository.ListUnexpiredByUserId(userId)
 
-      await this.eventSocket.emit({
-        to: `purchase:${userId}`,
-        event: 'order-processing-completed',
-        data,
-      })
-    } else {
-      await this.eventSocket.emit({
-        to: `purchase:${userId}`,
-        event: 'order-not-exist',
-      })
-    }
+    return success({
+      eventTickets,
+    })
   }
 }

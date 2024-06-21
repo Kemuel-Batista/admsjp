@@ -59,7 +59,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
     return order
   }
 
-  async listByTransactionId(transactionId: number): Promise<Order[]> {
+  async listByTransactionId(transactionId: string): Promise<Order[]> {
     const orders = await this.prisma.order.findMany({
       where: {
         transactionId,

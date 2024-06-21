@@ -8,8 +8,13 @@ import { UserPayload } from '@/infra/auth/jwt.strategy'
 import { ZodValidationPipe } from '../../pipes/zod-validation-pipe'
 
 const createEventTicketSchema = z.object({
-  eventId: z.number().int().positive(),
-  lot: z.number().int().positive(),
+  data: z.array(
+    z.object({
+      eventId: z.number().int().positive(),
+      lot: z.number().int().positive(),
+      quantity: z.number().int().positive(),
+    }),
+  ),
 })
 
 type CreateEventTicketSchema = z.infer<typeof createEventTicketSchema>
@@ -26,12 +31,13 @@ export class CreateEventTicketController {
     @Body(bodyValidationPipe) body: CreateEventTicketSchema,
     @CurrentUser() user: UserPayload,
   ) {
-    const { eventId, lot } = body
+    const { data } = body
 
-    await this.registerEventQueue.execute({
-      eventId,
-      lot,
+    const events = data.map((item) => ({
+      ...item,
       userId: user.sub.id,
-    })
+    }))
+
+    await this.registerEventQueue.execute(events)
   }
 }

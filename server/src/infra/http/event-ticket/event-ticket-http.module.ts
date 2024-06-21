@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 
+import { CompleteEventTicketInfoUseCase } from '@/domain/admsjp/use-cases/event-ticket/complete-event-ticket-info'
 import { CreateEventTicketUseCase } from '@/domain/admsjp/use-cases/event-ticket/create-event-ticket'
 import { GetAllInformationAboutEventTicketUseCase } from '@/domain/admsjp/use-cases/event-ticket/get-all-information-about-event-ticket'
 import { ListEventTicketsByEventIdUseCase } from '@/domain/admsjp/use-cases/event-ticket/list-event-tickets-by-event-id'
@@ -10,6 +11,7 @@ import { GeneratorsModule } from '@/infra/generators/generators.module'
 import { QueueModule } from '@/infra/queue/queue.module'
 import { WebsocketModule } from '@/infra/websocket/websocket.module'
 
+import { CompleteEventTicketInfoController } from './controllers/complete-event-ticket-info.controller'
 import { CreateEventTicketController } from './controllers/create-event-ticket.controller'
 import { GetAllInformationAboutEventTicketController } from './controllers/get-all-information-about-event-ticket.controller'
 import { ListEventTicketsByEventIdController } from './controllers/list-event-tickets-by-event-id.controller'
@@ -22,6 +24,7 @@ import { ListEventTicketsByUserIdController } from './controllers/list-event-tic
     ListEventTicketsByEventIdController,
     ListEventTicketsByUserIdController,
     GetAllInformationAboutEventTicketController,
+    CompleteEventTicketInfoController,
   ],
   providers: [
     CreateEventTicketUseCase,
@@ -29,6 +32,7 @@ import { ListEventTicketsByUserIdController } from './controllers/list-event-tic
     ListEventTicketsByUserIdUseCase,
     GetAllInformationAboutEventTicketUseCase,
     RegisterEventQueue,
+    CompleteEventTicketInfoUseCase,
   ],
 })
 export class EventTicketHttpModule {}

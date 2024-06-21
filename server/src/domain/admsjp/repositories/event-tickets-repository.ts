@@ -12,10 +12,7 @@ export abstract class EventTicketsRepository {
 
   abstract update(data: EventTicket): Promise<EventTicket>
 
-  abstract findByEventIdAndUserId(
-    eventId: EventTicket['eventId'],
-    userId: EventTicket['userId'],
-  ): Promise<EventTicket | null>
+  abstract update(data: EventTicket): Promise<EventTicket>
 
   abstract findById(id: EventTicket['id']): Promise<EventTicket | null>
   abstract findDetailsById(
@@ -25,12 +22,12 @@ export abstract class EventTicketsRepository {
   abstract listByLot(lot: EventTicket['lot']): Promise<EventTicket[]>
   abstract listCloseToExpiry(): Promise<EventTicket[]>
 
-  abstract findFirstLastUnexpiredByUserId(
-    userId: EventTicket['userId'],
-  ): Promise<EventTicket | null>
+  abstract ListUnexpiredByUserId(
+    createdBy: EventTicket['createdBy'],
+  ): Promise<EventTicket[]>
 
   abstract listDetailsByUserId(
-    userId: EventTicket['userId'],
+    createdBy: EventTicket['createdBy'],
   ): Promise<EventTicketWithEventAndEventLot[]>
 
   abstract listDetailsByEventId(

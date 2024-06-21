@@ -10,11 +10,13 @@ export class RegisterEventQueue {
     private eventSocket: EventSocket,
   ) {}
 
-  async execute(data: EventQueueProps): Promise<void> {
+  async execute(data: EventQueueProps[]): Promise<void> {
     await this.eventQueue.enqueue(data)
 
+    const { userId } = data[0]
+
     await this.eventSocket.emit({
-      to: `purchase:${data.userId}`,
+      to: `purchase:${userId}`,
       event: 'order-queued',
     })
   }

@@ -43,10 +43,10 @@ describe('List orders by transaction id', () => {
     const orderFactory = makeOrder({
       transactionId: eventTicket.id,
     })
-    await inMemoryOrdersRepository.create(orderFactory)
+    const order = await inMemoryOrdersRepository.create(orderFactory)
 
     const result = await sut.execute({
-      transactionId: 1,
+      transactionId: order.transactionId,
     })
 
     expect(result.isSuccess()).toBe(true)

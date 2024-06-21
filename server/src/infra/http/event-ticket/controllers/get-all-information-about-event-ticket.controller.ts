@@ -1,9 +1,5 @@
 import { BadRequestException, Controller, Get, Param } from '@nestjs/common'
 
-import {
-  ParamsSchema,
-  paramsValidationPipe,
-} from '@/core/schemas/params-schema'
 import { GetAllInformationAboutEventTicketUseCase } from '@/domain/admsjp/use-cases/event-ticket/get-all-information-about-event-ticket'
 
 @Controller('/:id')
@@ -13,7 +9,7 @@ export class GetAllInformationAboutEventTicketController {
   ) {}
 
   @Get()
-  async handle(@Param('id', paramsValidationPipe) id: ParamsSchema) {
+  async handle(@Param('id') id: string) {
     const result = await this.getAllInformationAboutEventTicketUseCase.execute({
       eventTicketId: id,
     })

@@ -33,8 +33,8 @@ model User {
   deletedBy Int?      @map("deleted_by")
 
   userTokens   UserToken[]
-  eventTickets EventTicket[]
   logs         Log[]
+  eventTickets EventTicket[]
 
   @@map("users")
 }
@@ -191,18 +191,22 @@ model EventLot {
 }
 
 model EventTicket {
-  id       Int      @id @default(autoincrement())
-  uuid     String   @unique @default(uuid())
+  id       String   @id @unique @default(uuid())
   eventId  Int      @map("event_id")
   event    Event    @relation(fields: [eventId], references: [id])
   lot      Int
   eventLot EventLot @relation(fields: [eventId, lot], references: [eventId, lot])
-  userId   Int      @map("user_id")
-  user     User     @relation(fields: [userId], references: [id])
+  cpf      String   @default("")
+  name     String   @default("")
+  email    String   @default("")
+  phone    String   @default("")
+  birthday DateTime @default(now())
   ticket   String
 
   expiresAt DateTime  @map("expires_at")
   createdAt DateTime  @default(now()) @map("created_at")
+  createdBy Int       @map("created_by")
+  user      User      @relation(fields: [createdBy], references: [id])
   updatedAt DateTime? @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
   deletedBy Int?      @map("deleted_by")
@@ -217,7 +221,7 @@ enum TransactionType {
 model Order {
   id              Int             @id @default(autoincrement())
   uuid            String          @unique @default(uuid())
-  transactionId   Int             @map("transaction_id")
+  transactionId   String          @map("transaction_id")
   transactionType TransactionType @default(EVENTS) @map("transaction_type")
   paymentMethod   Int             @map("payment_method")
   status          Int

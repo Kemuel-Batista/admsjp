@@ -68,7 +68,7 @@ export class CreateManualOrderPaymentUseCase {
       )
     }
 
-    if (eventTicket.userId !== paidBy) {
+    if (eventTicket.createdBy !== paidBy) {
       return failure(
         new IncorrectAssociationError({
           errorKey: 'order.payment.ticketOwnerIsNotSame',

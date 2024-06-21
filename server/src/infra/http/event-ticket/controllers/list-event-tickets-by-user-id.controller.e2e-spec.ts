@@ -74,7 +74,7 @@ describe('List event tickets by user id (E2E)', () => {
       eventTicketFactory.makePrismaEventTicket({
         eventId: event.id,
         lot: eventLot.lot,
-        userId: user.id,
+        createdBy: user.id,
       }),
     ])
 

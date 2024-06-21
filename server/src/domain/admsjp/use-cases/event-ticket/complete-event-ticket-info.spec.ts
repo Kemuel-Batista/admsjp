@@ -2,27 +2,24 @@ import { makeDepartment } from 'test/factories/make-department'
 import { makeEvent } from 'test/factories/make-event'
 import { makeEventLot } from 'test/factories/make-event-lot'
 import { makeEventTicket } from 'test/factories/make-event-ticket'
-import { makeOrder } from 'test/factories/make-order'
 import { makeUser } from 'test/factories/make-user'
 import { InMemoryDepartmentsRepository } from 'test/repositories/in-memory-departments-repository'
 import { InMemoryEventLotsRepository } from 'test/repositories/in-memory-event-lots-repository'
 import { InMemoryEventTicketsRepository } from 'test/repositories/in-memory-event-tickets-repository'
 import { InMemoryEventsRepository } from 'test/repositories/in-memory-events-repository'
-import { InMemoryOrdersRepository } from 'test/repositories/in-memory-orders-repository'
 import { InMemoryUsersRepository } from 'test/repositories/in-memory-users-repository'
 
-import { GetAllInformationAboutEventTicketUseCase } from './get-all-information-about-event-ticket'
+import { CompleteEventTicketInfoUseCase } from './complete-event-ticket-info'
 
 let inMemoryUsersRepository: InMemoryUsersRepository
 let inMemoryDepartmentsRepository: InMemoryDepartmentsRepository
 let inMemoryEventsRepository: InMemoryEventsRepository
 let inMemoryEventLotsRepository: InMemoryEventLotsRepository
 let inMemoryEventTicketsRepository: InMemoryEventTicketsRepository
-let inMemoryOrdersRepository: InMemoryOrdersRepository
 
-let sut: GetAllInformationAboutEventTicketUseCase
+let sut: CompleteEventTicketInfoUseCase
 
-describe('Get all information about event ticket', () => {
+describe('Complete event ticket info', () => {
   beforeEach(() => {
     inMemoryUsersRepository = new InMemoryUsersRepository()
     inMemoryDepartmentsRepository = new InMemoryDepartmentsRepository()
@@ -34,15 +31,11 @@ describe('Get all information about event ticket', () => {
       inMemoryEventsRepository,
       inMemoryEventLotsRepository,
     )
-    inMemoryOrdersRepository = new InMemoryOrdersRepository()
 
-    sut = new GetAllInformationAboutEventTicketUseCase(
-      inMemoryEventTicketsRepository,
-      inMemoryOrdersRepository,
-    )
+    sut = new CompleteEventTicketInfoUseCase(inMemoryEventTicketsRepository)
   })
 
-  it('should be able to get all information about event ticket', async () => {
+  it('should be able to complete an event ticket information', async () => {
     const userFactory = makeUser()
     const user = await inMemoryUsersRepository.create(userFactory)
 
@@ -68,35 +61,30 @@ describe('Get all information about event ticket', () => {
     const eventTicket =
       await inMemoryEventTicketsRepository.create(eventTicketFactory)
 
-    const orderFactory = makeOrder({
-      transactionId: eventTicket.id,
-    })
-    await inMemoryOrdersRepository.create(orderFactory)
-
     const result = await sut.execute({
-      eventTicketId: eventTicket.id,
+      id: eventTicket.id,
+      name: user.name,
+      email: user.email,
+      cpf: '123124234312',
+      phone: '81989943240',
+      birthday: new Date(),
+      requestedBy: user.id,
     })
 
     expect(result.isSuccess()).toBe(true)
-    expect(result.value).toEqual({
-      eventTicketDetails: expect.objectContaining({
-        event: expect.objectContaining({
-          id: event.id,
-          title: event.title,
-          department: expect.objectContaining({
-            name: department.name,
-          }),
+
+    expect(inMemoryEventTicketsRepository.items).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: eventTicket.id,
+          name: user.name,
+          email: user.email,
+          cpf: '123124234312',
+          phone: '81989943240',
+          birthday: expect.any(Date),
+          createdBy: user.id,
         }),
-        eventLot: expect.objectContaining({
-          lot: eventLot.lot,
-          value: eventLot.value,
-        }),
-        orders: expect.arrayContaining([
-          expect.objectContaining({
-            transactionId: orderFactory.transactionId,
-          }),
-        ]),
-      }),
-    })
+      ]),
+    )
   })
 })

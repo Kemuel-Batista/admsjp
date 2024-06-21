@@ -57,21 +57,21 @@ describe('List event tickets by user id', () => {
     const eventLot = await inMemoryEventLotsRepository.create(eventLotFactory)
 
     const eventTicketFactory = makeEventTicket({
-      userId: user.id,
+      createdBy: user.id,
       eventId: event.id,
       lot: eventLot.lot,
     })
     await inMemoryEventTicketsRepository.create(eventTicketFactory)
 
     const result = await sut.execute({
-      userId: user.id,
+      createdBy: user.id,
     })
 
     expect(result.isSuccess()).toBe(true)
     expect(result.value).toEqual({
       eventTickets: expect.arrayContaining([
         expect.objectContaining({
-          userId: user.id,
+          createdBy: user.id,
           eventId: event.id,
           lot: eventLot.lot,
           eventLot: expect.objectContaining({

@@ -66,7 +66,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     return order
   }
 
-  async listByTransactionId(transactionId: number): Promise<Order[]> {
+  async listByTransactionId(transactionId: string): Promise<Order[]> {
     const orders = this.items
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .filter((item) => item.transactionId === transactionId)

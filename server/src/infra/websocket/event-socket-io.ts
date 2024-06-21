@@ -1,7 +1,6 @@
 import { forwardRef, Inject, Logger } from '@nestjs/common'
 import {
   ConnectedSocket,
-  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
@@ -9,9 +8,10 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets'
-import { Server, Socket } from 'socket.io'
+import { EventTicket } from '@prisma/client'
+import { Server } from 'socket.io'
 
-import { FindLastEventTicketUnexpiredUseCase } from '@/domain/admsjp/use-cases/event-ticket/find-last-event-ticket-unexpired'
+import { ListEventTicketsUnexpiredByUserUseCase } from '@/domain/admsjp/use-cases/event-ticket/list-event-tickets-unexpired-by-user'
 import {
   EventSocket,
   EventSocketEmmiter,
@@ -19,7 +19,21 @@ import {
 
 import { SocketWithAuth } from './socket-io-adapter'
 
-@WebSocketGateway()
+@WebSocketGateway(0, {
+  cors: {
+    origin: 'http://localhost:3000',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATH', 'OPTIONS', 'HEAD'],
+    allowedHeaders: [
+      'Access-Control-Allow-Origin',
+      'Authorization',
+      'Content-Type',
+      'Accept',
+      'Origin',
+      'X-Request-With',
+    ],
+  },
+})
 export class EventSocketIO
   implements
     EventSocket,
@@ -30,8 +44,8 @@ export class EventSocketIO
   @WebSocketServer() server: Server
 
   constructor(
-    @Inject(forwardRef(() => FindLastEventTicketUnexpiredUseCase))
-    private findLastEventTicketUnexpiredUseCase: FindLastEventTicketUnexpiredUseCase,
+    @Inject(forwardRef(() => ListEventTicketsUnexpiredByUserUseCase))
+    private listEventTicketsUnexpiredByUser: ListEventTicketsUnexpiredByUserUseCase,
   ) {}
 
   private readonly logger = new Logger(EventSocketIO.name)
@@ -56,21 +70,30 @@ export class EventSocketIO
 
   async emit(data: EventSocketEmmiter): Promise<void> {
     if (data !== null) {
-      this.server.emit(data.to, JSON.stringify(data))
+      this.server.to(data.to).emit(data.event, JSON.stringify(data))
     } else {
-      this.server.emit(data.to, JSON.stringify(data))
+      this.server.to(data.to).emit(data.event)
     }
   }
 
   @SubscribeMessage('event-entry')
-  async handleEvent(
-    @MessageBody() data: { userId: number },
-    @ConnectedSocket() socket: Socket,
-  ): Promise<void> {
-    await socket.join(`purchase:${data.userId}`)
+  async handleEvent(@ConnectedSocket() socket: SocketWithAuth): Promise<void> {
+    const userId = socket.sub.id
 
-    await this.findLastEventTicketUnexpiredUseCase.execute({
-      userId: data.userId,
+    socket.join(`purchase:${userId}`)
+
+    const result = await this.listEventTicketsUnexpiredByUser.execute({
+      userId,
     })
+
+    let eventTickets: EventTicket[] = []
+
+    if (result.isSuccess()) {
+      eventTickets = result.value.eventTickets
+    }
+
+    this.server
+      .to(`purchase:${userId}`)
+      .emit('load-unexpired-tickets', eventTickets)
   }
 }

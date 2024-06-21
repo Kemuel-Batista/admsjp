@@ -8,7 +8,7 @@ import { FakeEventSocket } from 'test/websocket/fake-event-socket'
 
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 
-import { FindLastEventTicketUnexpiredUseCase } from './find-last-event-ticket-unexpired'
+import { ListEventTicketsUnexpiredByUserUseCase } from './list-event-tickets-unexpired-by-user'
 
 let inMemoryUsersRepository: InMemoryUsersRepository
 let inMemoryDepartmentsRepository: InMemoryDepartmentsRepository
@@ -18,7 +18,7 @@ let inMemoryEventTicketsRepository: InMemoryEventTicketsRepository
 let inMemoryParametersRepository: InMemoryParametersRepository
 let fakeEventSocket: FakeEventSocket
 
-let sut: FindLastEventTicketUnexpiredUseCase
+let sut: ListEventTicketsUnexpiredByUserUseCase
 
 describe('Find last event ticket unexpired', () => {
   beforeEach(() => {
@@ -35,7 +35,7 @@ describe('Find last event ticket unexpired', () => {
     inMemoryParametersRepository = new InMemoryParametersRepository()
     fakeEventSocket = new FakeEventSocket()
 
-    sut = new FindLastEventTicketUnexpiredUseCase(
+    sut = new ListEventTicketsUnexpiredByUserUseCase(
       inMemoryEventTicketsRepository,
       inMemoryParametersRepository,
       fakeEventSocket,

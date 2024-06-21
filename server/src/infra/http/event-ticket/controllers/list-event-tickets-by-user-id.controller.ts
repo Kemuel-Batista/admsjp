@@ -13,7 +13,7 @@ export class ListEventTicketsByUserIdController {
   @Get()
   async handle(@CurrentUser() user: UserPayload) {
     const result = await this.listEventTicketsByUserIdUseCase.execute({
-      userId: user.sub.id,
+      createdBy: user.sub.id,
     })
 
     if (result.isError()) {

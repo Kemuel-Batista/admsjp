@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto'
 
 import { EventTicket, Prisma } from '@prisma/client'
-import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
 import { EventTicketsRepository } from '@/domain/admsjp/repositories/event-tickets-repository'
 import {
@@ -27,16 +26,18 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
   async create(
     data: Prisma.EventTicketUncheckedCreateInput,
   ): Promise<EventTicket> {
-    const id = getLastInsertedId(this.items)
-
     const eventTicket = {
-      id,
-      uuid: randomUUID(),
+      id: randomUUID(),
       eventId: data.eventId,
-      userId: data.userId,
+      cpf: data.cpf,
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      birthday: new Date(data.birthday),
       lot: data.lot,
       ticket: data.ticket,
       expiresAt: new Date(data.expiresAt) ?? null,
+      createdBy: data.createdBy,
       createdAt: new Date(),
       updatedAt: null,
       deletedBy: null,
@@ -65,22 +66,7 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
     return event
   }
 
-  async findByEventIdAndUserId(
-    eventId: number,
-    userId: number,
-  ): Promise<EventTicket | null> {
-    const event = this.items.find(
-      (item) => item.eventId === eventId && item.userId === userId,
-    )
-
-    if (!event) {
-      return null
-    }
-
-    return event
-  }
-
-  async findById(id: number): Promise<EventTicket> {
+  async findById(id: string): Promise<EventTicket> {
     const eventTicket = this.items.find((item) => item.id === id)
 
     if (!eventTicket) {
@@ -90,7 +76,7 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
     return eventTicket
   }
 
-  async findDetailsById(id: number): Promise<EventTicketWithEventAndEventLot> {
+  async findDetailsById(id: string): Promise<EventTicketWithEventAndEventLot> {
     const eventTicket = this.items.find((item) => item.id === id)
 
     const eventLot = this.eventLotsRepository.items.find((eventLot) => {
@@ -149,15 +135,13 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
     return eventTickets
   }
 
-  async findFirstLastUnexpiredByUserId(
-    userId: number,
-  ): Promise<EventTicket | null> {
+  async ListUnexpiredByUserId(userId: number): Promise<EventTicket[]> {
     const now = new Date()
     const fifteenMinutesAgo = new Date(now.getTime() - 15 * 60 * 1000)
 
-    const eventTicket = this.items.find(
+    const eventTicket = this.items.filter(
       (item) =>
-        item.userId === userId &&
+        item.createdBy === userId &&
         item.expiresAt > fifteenMinutesAgo &&
         item.expiresAt <= now,
     )
@@ -225,12 +209,12 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
       .filter((item) => item.eventId === eventId)
       .map((eventTicket) => {
         const user = this.usersRepository.items.find((user) => {
-          return user.id === eventTicket.userId
+          return user.id === eventTicket.createdBy
         })
 
         if (!user) {
           throw new Error(
-            `User with ID "${eventTicket.userId.toString()}" does not exist.`,
+            `User with ID "${eventTicket.createdBy.toString()}" does not exist.`,
           )
         }
 
@@ -283,7 +267,7 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
     return `${year}${month.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}EV${maxTicket.toString().padStart(4, '0')}`
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     const itemIndex = this.items.findIndex((item) => item.id === id)
 
     this.items.splice(itemIndex, 1)

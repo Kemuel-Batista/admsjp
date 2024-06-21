@@ -9,7 +9,7 @@ import { UsersRepository } from '../../repositories/users-repository'
 import { EventTicketWithEventAndEventLot } from '../../types/event-ticket'
 
 interface ListEventTicketsByUserIdUseCaseRequest {
-  userId: EventTicket['userId']
+  createdBy: EventTicket['createdBy']
 }
 
 type ListEventTicketsByUserIdUseCaseResponse = Either<
@@ -27,9 +27,9 @@ export class ListEventTicketsByUserIdUseCase {
   ) {}
 
   async execute({
-    userId,
+    createdBy,
   }: ListEventTicketsByUserIdUseCaseRequest): Promise<ListEventTicketsByUserIdUseCaseResponse> {
-    const user = await this.usersRepository.findById(userId)
+    const user = await this.usersRepository.findById(createdBy)
 
     if (!user) {
       return failure(
@@ -40,7 +40,7 @@ export class ListEventTicketsByUserIdUseCase {
     }
 
     const eventTickets =
-      await this.eventTicketsRepository.listDetailsByUserId(userId)
+      await this.eventTicketsRepository.listDetailsByUserId(createdBy)
 
     return success({
       eventTickets,

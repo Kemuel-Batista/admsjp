@@ -1,9 +1,5 @@
 import { BadRequestException, Controller, Get, Param } from '@nestjs/common'
 
-import {
-  ParamsSchema,
-  paramsValidationPipe,
-} from '@/core/schemas/params-schema'
 import { ListOrdersByTransactionIdUseCase } from '@/domain/admsjp/use-cases/orders/list-orders-by-transaction-id'
 
 @Controller('/transactions/:transactionId')
@@ -13,9 +9,7 @@ export class ListOrdersByTransactionIdController {
   ) {}
 
   @Get()
-  async handle(
-    @Param('transactionId', paramsValidationPipe) transactionId: ParamsSchema,
-  ) {
+  async handle(@Param('transactionId') transactionId: string) {
     const result = await this.listOrdersByTransactionIdUseCase.execute({
       transactionId,
     })

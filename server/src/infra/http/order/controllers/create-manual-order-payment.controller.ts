@@ -20,10 +20,6 @@ import { IncorrectAssociationError } from '@/core/errors/errors/incorrect-associ
 import { InvalidAttachmentTypeError } from '@/core/errors/errors/invalid-attachment-type-error'
 import { OrderPaymentAlreadyCompletedError } from '@/core/errors/errors/order-payment-already-completed-error'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
-import {
-  ParamsSchema,
-  paramsValidationPipe,
-} from '@/core/schemas/params-schema'
 import { CreateManualOrderPaymentUseCase } from '@/domain/admsjp/use-cases/orders/create-manual-order-payment'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
@@ -49,7 +45,7 @@ export class CreateManualOrderPaymentController {
       }),
     )
     file: Express.Multer.File,
-    @Param('transactionId', paramsValidationPipe) transactionId: ParamsSchema,
+    @Param('transactionId') transactionId: string,
     @CurrentUser() user: UserPayload,
   ) {
     const result = await this.createManualOrderPayment.execute({

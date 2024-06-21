@@ -12,12 +12,12 @@ export function makeEventTicket(
   override: Partial<EventTicketProps> = {},
 ): EventTicketProps {
   return {
-    uuid: randomUUID(),
+    id: randomUUID(),
     eventId: faker.number.int({ max: 10 }),
     lot: faker.number.int({ max: 10 }),
-    userId: faker.number.int({ max: 10 }),
     ticket: faker.lorem.word(),
     expiresAt: faker.date.future(),
+    createdBy: faker.number.int({ max: 10 }),
     ...override,
   }
 }
@@ -33,7 +33,7 @@ export class EventTicketFactory {
 
     const createdEventTicket = await this.prisma.eventTicket.upsert({
       where: {
-        uuid: eventTicket.uuid,
+        id: eventTicket.id,
       },
       create: eventTicket,
       update: {},

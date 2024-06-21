@@ -50,7 +50,7 @@ describe('Create manual order payment', () => {
     const user = await inMemoryUsersRepository.create(userFactory)
 
     const eventTicketFactory = makeEventTicket({
-      userId: user.id,
+      createdBy: user.id,
     })
     const eventTicket =
       await inMemoryEventTicketsRepository.create(eventTicketFactory)
@@ -81,7 +81,7 @@ describe('Create manual order payment', () => {
     const user = await inMemoryUsersRepository.create(userFactory)
 
     const eventTicketFactory = makeEventTicket({
-      userId: 2,
+      createdBy: 2,
     })
     const eventTicket =
       await inMemoryEventTicketsRepository.create(eventTicketFactory)
@@ -103,7 +103,7 @@ describe('Create manual order payment', () => {
     const user = await inMemoryUsersRepository.create(userFactory)
 
     const eventTicketFactory = makeEventTicket({
-      userId: user.id,
+      createdBy: user.id,
       expiresAt: new Date(),
     })
     const eventTicket =

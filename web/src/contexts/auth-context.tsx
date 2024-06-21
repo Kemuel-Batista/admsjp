@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     profileId: 0,
   })
 
-  const isAuthenticated = !!user
+  const isAuthenticated = user.id !== null
 
   const signOut = async () => {
     await api.post('/auth/sessions/logout')

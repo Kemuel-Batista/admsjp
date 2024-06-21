@@ -74,7 +74,7 @@ describe('Create manual order payment (E2E)', () => {
     const eventTicket = await eventTicketFactory.makePrismaEventTicket({
       eventId: event.id,
       lot: eventLot.lot,
-      userId: user.id,
+      createdBy: user.id,
     })
 
     const response = await request(app.getHttpServer())

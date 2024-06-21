@@ -18,7 +18,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(config: ConfigService<Env, true>) {
     const clientId = config.get('GOOGLE_CLIENT_ID', { infer: true })
     const clientSecret = config.get('GOOGLE_CLIENT_SECRET', { infer: true })
-    const baseURL = config.get('BASE_URL', { infer: true })
+    const baseURL = config.get('API_BASE_URL', { infer: true })
 
     super({
       clientID: clientId,

@@ -2,7 +2,9 @@ import { INestApplicationContext, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { IoAdapter } from '@nestjs/platform-socket.io'
+import * as cookie from 'cookie'
 import { Server, ServerOptions, Socket } from 'socket.io'
+import { ExtendedError } from 'socket.io/dist/namespace'
 
 import { UserPayload } from '../auth/jwt.strategy'
 
@@ -19,40 +21,35 @@ export class SocketIOAdapter extends IoAdapter {
   }
 
   createIOServer(port: number, options?: ServerOptions) {
-    port = this.configService.get('SOCKETIO_SERVER_PORT')
-    const path = this.configService.get('SOCKETIO_SERVER_PATH')
-
-    options.path = path
-    options.cors = {
-      origin: '*',
-    }
-
     this.logger.log('Configuring SocketIO server')
 
-    const jwtService = this.app.get(JwtService)
     const server: Server = super.createIOServer(port, options)
 
-    server.use(this.createTokenMiddleware(jwtService, this.logger))
+    const jwtService = this.app.get(JwtService)
+
+    server.use(
+      (socket: SocketWithAuth, next: (err?: ExtendedError) => void) => {
+        try {
+          const cookies = cookie.parse(socket.handshake.headers.cookie || '')
+          const token = cookies.nextauth_token
+
+          const jwtKey = this.configService.get('JWT_KEY')
+          const payload: UserPayload = jwtService.verify(token, {
+            secret: jwtKey,
+          })
+
+          socket.sub = payload.sub
+
+          next()
+        } catch (error) {
+          this.logger.error('Error verifying JWT token:', error)
+          next(new Error('Unauthorized'))
+        }
+      },
+    )
+
+    this.logger.log('Server connected')
 
     return server
   }
-
-  createTokenMiddleware =
-    (jwtService: JwtService, logger: Logger) =>
-    (socket: SocketWithAuth, next) => {
-      const token =
-        socket.handshake.auth.token || socket.handshake.headers.token
-
-      logger.debug(`Validating auth token before connection: ${token}`)
-
-      try {
-        const payload: UserPayload = jwtService.verify(token)
-
-        socket.sub = payload.sub
-
-        next()
-      } catch (error) {
-        next(new Error('FORBIDDEN'))
-      }
-    }
 }

@@ -104,7 +104,7 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
 
     const search = buildSearchFilter<EventLot>(searchParams)
 
-    const [eventLots, count] = await this.prisma.$transaction([
+    let [eventLots, count] = await this.prisma.$transaction([
       this.prisma.eventLot.findMany({
         where: search,
         skip,
@@ -113,6 +113,10 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
       }),
       this.prisma.eventLot.count({ where: search }),
     ])
+
+    eventLots = eventLots.filter(
+      (item) => item.fulfilledQuantity <= item.quantity,
+    )
 
     return { eventLots, count }
   }
