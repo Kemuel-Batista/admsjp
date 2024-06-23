@@ -13,6 +13,5 @@ export abstract class EventTicketsRepository {
     id: EventTicket['id'],
   ): Promise<EventTicketWithEventLot | null>
 
-  abstract lastTicket(): Promise<string>
   abstract delete(id: EventTicket['id']): Promise<void>
 }

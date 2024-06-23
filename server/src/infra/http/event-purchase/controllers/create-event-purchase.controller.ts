@@ -7,37 +7,36 @@ import { UserPayload } from '@/infra/auth/jwt.strategy'
 
 import { ZodValidationPipe } from '../../pipes/zod-validation-pipe'
 
-const createEventTicketSchema = z.object({
-  data: z.array(
+const createEventPurchaseSchema = z.object({
+  eventId: z.number().int().positive(),
+  eventLotInfo: z.array(
     z.object({
-      eventId: z.number().int().positive(),
-      lot: z.number().int().positive(),
+      eventLotId: z.string().uuid(),
       quantity: z.number().int().positive(),
     }),
   ),
 })
 
-type CreateEventTicketSchema = z.infer<typeof createEventTicketSchema>
+type CreateEventPurchaseSchema = z.infer<typeof createEventPurchaseSchema>
 
-const bodyValidationPipe = new ZodValidationPipe(createEventTicketSchema)
+const bodyValidationPipe = new ZodValidationPipe(createEventPurchaseSchema)
 
 @Controller('/')
-export class CreateEventTicketController {
+export class CreateEventPurchaseController {
   constructor(private registerEventQueue: RegisterEventQueue) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async handle(
-    @Body(bodyValidationPipe) body: CreateEventTicketSchema,
+    @Body(bodyValidationPipe) body: CreateEventPurchaseSchema,
     @CurrentUser() user: UserPayload,
   ) {
-    const { data } = body
+    const { eventId, eventLotInfo } = body
 
-    const events = data.map((item) => ({
-      ...item,
-      userId: user.sub.id,
-    }))
-
-    await this.registerEventQueue.execute(events)
+    await this.registerEventQueue.execute({
+      eventId,
+      buyerId: user.sub.id,
+      eventLotInfo,
+    })
   }
 }

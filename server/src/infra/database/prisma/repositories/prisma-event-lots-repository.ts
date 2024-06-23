@@ -41,6 +41,7 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
   }
 
   async save({
+    id,
     name,
     description,
     eventId,
@@ -51,12 +52,11 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
   }: EventLot): Promise<EventLot> {
     const event = await this.prisma.eventLot.update({
       where: {
-        eventId_lot: {
-          eventId,
-          lot,
-        },
+        id,
       },
       data: {
+        eventId: eventId ?? undefined,
+        lot: lot ?? undefined,
         name: name ?? undefined,
         description: description ?? undefined,
         quantity: quantity ?? undefined,
@@ -121,13 +121,10 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
     return { eventLots, count }
   }
 
-  async findByEventIdAndLot(eventId: number, lot: number): Promise<EventLot> {
+  async findById(id: EventLot['id']): Promise<EventLot | null> {
     const eventLot = await this.prisma.eventLot.findUnique({
       where: {
-        eventId_lot: {
-          eventId,
-          lot,
-        },
+        id,
       },
     })
 

@@ -7,6 +7,8 @@ const pt = {
       notFound: 'Não foi possível localizar o event lot {{key}}',
     },
     sales: {
+      'remaining-qty-not-enough':
+        'Não existem ingressos suficientes para sua solicitação',
       'sold-out': 'Ingressos esgotados para esse lote {{key}}',
     },
   },

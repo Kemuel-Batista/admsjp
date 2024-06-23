@@ -4,7 +4,10 @@ import { EventPurchase, Prisma } from '@prisma/client'
 import { IListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import { EventPurchasesRepository } from '@/domain/admsjp/repositories/event-purchases-repository'
-import { EventPurchaseWithEvent } from '@/domain/admsjp/types/event-purchase'
+import {
+  EventPurchaseWithEvent,
+  EventPurchaseWithEventTickets,
+} from '@/domain/admsjp/types/event-purchase'
 
 import { PrismaService } from '../prisma.service'
 
@@ -58,6 +61,39 @@ export class PrismaEventPurchasesRepository
     return eventPurchase
   }
 
+  async lastInvoiceNumber(): Promise<string> {
+    const now = new Date()
+
+    const year = now.getFullYear()
+    const month = now.getMonth() + 1
+    const day = now.getDate()
+
+    const eventPurchases = await this.prisma.eventPurchase.findMany()
+
+    const relevantInvoiceNumbers = eventPurchases
+      .filter((item) => {
+        const itemYear = item.createdAt.getFullYear()
+        const itemMonth = item.createdAt.getMonth() + 1
+        const itemDay = item.createdAt.getDate()
+        return itemYear === year && itemMonth === month && itemDay === day
+      })
+      .map((item) => item.invoiceNumber)
+
+    if (relevantInvoiceNumbers.length === 0) {
+      return ''
+    }
+
+    const maxInvoiceNumber = relevantInvoiceNumbers.reduce(
+      (max, invoiceNumber) => {
+        const invoiceNumberCount = parseInt(invoiceNumber.substring(12), 10) // Removendo "ANO_MES_DIA_EV_" e convertendo para número
+        return Math.max(max, invoiceNumberCount)
+      },
+      0,
+    )
+
+    return `${year}${month.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}EV${maxInvoiceNumber.toString().padStart(4, '0')}`
+  }
+
   async list(options?: IListOptions): Promise<EventPurchase[]> {
     const { skip, take } = calcPagination(options)
 
@@ -103,7 +139,7 @@ export class PrismaEventPurchasesRepository
 
   async listUnexpiredByUserId(
     buyerId: EventPurchase['buyerId'],
-  ): Promise<EventPurchase[]> {
+  ): Promise<EventPurchaseWithEventTickets[]> {
     const now = new Date()
 
     const eventPurchases = await this.prisma.eventPurchase.findMany({
@@ -115,6 +151,9 @@ export class PrismaEventPurchasesRepository
       },
       orderBy: {
         createdAt: 'desc',
+      },
+      include: {
+        eventTickets: true,
       },
     })
 

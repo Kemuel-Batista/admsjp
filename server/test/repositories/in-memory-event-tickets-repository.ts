@@ -88,35 +88,6 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
     }
   }
 
-  async lastTicket(): Promise<string> {
-    const now = new Date()
-
-    const year = now.getFullYear()
-    const month = now.getMonth() + 1
-    const day = now.getDate()
-
-    const relevantTickets = this.items
-      .filter((item) => {
-        const itemYear = item.createdAt.getFullYear()
-        const itemMonth = item.createdAt.getMonth() + 1
-        const itemDay = item.createdAt.getDate()
-        return itemYear === year && itemMonth === month && itemDay === day
-      })
-      .map((item) => item.ticket)
-
-    if (relevantTickets.length === 0) {
-      return ''
-    }
-
-    // Encontrando o maior ticket
-    const maxTicket = relevantTickets.reduce((max, ticket) => {
-      const ticketCount = parseInt(ticket.substring(12), 10) // Removendo "ANO_MES_DIA_PL_" e convertendo para número
-      return Math.max(max, ticketCount)
-    }, 0)
-
-    return `${year}${month.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}EV${maxTicket.toString().padStart(4, '0')}`
-  }
-
   async delete(id: string): Promise<void> {
     const itemIndex = this.items.findIndex((item) => item.id === id)
 

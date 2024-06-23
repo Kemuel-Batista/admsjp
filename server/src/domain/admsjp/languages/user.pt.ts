@@ -33,7 +33,7 @@ const pt = {
       id: {
         notFound: 'Não foi possível encontrar o usuário no sistema',
       },
-      notFound: 'Não foi possível encontrar o usuário {{username}}',
+      notFound: 'Não foi possível encontrar o usuário {{key}}',
     },
     profile: {
       action: {

@@ -2,7 +2,10 @@ import { EventPurchase, Prisma } from '@prisma/client'
 
 import { IListOptions } from '@/core/repositories/list-options'
 
-import { EventPurchaseWithEvent } from '../types/event-purchase'
+import {
+  EventPurchaseWithEvent,
+  EventPurchaseWithEventTickets,
+} from '../types/event-purchase'
 
 export abstract class EventPurchasesRepository {
   abstract create(
@@ -10,6 +13,7 @@ export abstract class EventPurchasesRepository {
   ): Promise<EventPurchase>
 
   abstract save(data: EventPurchase): Promise<EventPurchase>
+  abstract lastInvoiceNumber(): Promise<string>
   abstract list(options?: IListOptions): Promise<EventPurchase[]>
   abstract listByBuyerId(
     buyerId: EventPurchase['buyerId'],
@@ -18,5 +22,5 @@ export abstract class EventPurchasesRepository {
 
   abstract listUnexpiredByUserId(
     buyerId: EventPurchase['buyerId'],
-  ): Promise<EventPurchase[]>
+  ): Promise<EventPurchaseWithEventTickets[]>
 }

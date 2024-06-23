@@ -5,6 +5,7 @@ import request from 'supertest'
 import { DepartmentFactory } from 'test/factories/make-department'
 import { EventFactory } from 'test/factories/make-event'
 import { EventLotFactory } from 'test/factories/make-event-lot'
+import { EventPurchaseFactory } from 'test/factories/make-event-purchase'
 import { EventTicketFactory } from 'test/factories/make-event-ticket'
 import { ProfileFactory } from 'test/factories/make-profile'
 import { UserFactory } from 'test/factories/make-user'
@@ -23,6 +24,7 @@ describe('Create manual order payment (E2E)', () => {
   let userFactory: UserFactory
   let eventFactory: EventFactory
   let eventLotFactory: EventLotFactory
+  let eventPurchaseFactory: EventPurchaseFactory
   let eventTicketFactory: EventTicketFactory
 
   beforeAll(async () => {
@@ -34,6 +36,7 @@ describe('Create manual order payment (E2E)', () => {
         UserFactory,
         EventFactory,
         EventLotFactory,
+        EventPurchaseFactory,
         EventTicketFactory,
       ],
     }).compile()
@@ -46,6 +49,7 @@ describe('Create manual order payment (E2E)', () => {
     userFactory = moduleRef.get(UserFactory)
     eventFactory = moduleRef.get(EventFactory)
     eventLotFactory = moduleRef.get(EventLotFactory)
+    eventPurchaseFactory = moduleRef.get(EventPurchaseFactory)
     eventTicketFactory = moduleRef.get(EventTicketFactory)
 
     await app.init()
@@ -71,14 +75,18 @@ describe('Create manual order payment (E2E)', () => {
       eventId: event.id,
     })
 
-    const eventTicket = await eventTicketFactory.makePrismaEventTicket({
+    const eventPurchase = await eventPurchaseFactory.makePrismaEventPurchase({
       eventId: event.id,
-      lot: eventLot.lot,
-      createdBy: user.id,
+      buyerId: user.id,
+    })
+
+    const eventTicket = await eventTicketFactory.makePrismaEventTicket({
+      eventPurchaseId: eventPurchase.id,
+      eventLotId: eventLot.id,
     })
 
     const response = await request(app.getHttpServer())
-      .post(`/order/manual/${eventTicket.id}`)
+      .post(`/order/manual/${eventPurchase.id}`)
       .set('Authorization', `Bearer ${accessToken}`)
       .attach('file', './test/e2e/sample-upload.png')
 

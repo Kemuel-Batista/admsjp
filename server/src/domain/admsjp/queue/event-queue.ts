@@ -1,12 +1,14 @@
-import { EventTicket, User } from '@prisma/client'
+import { EventLot, EventPurchase } from '@prisma/client'
 
 export interface EventQueueProps {
-  lot?: EventTicket['lot']
-  eventId?: EventTicket['eventId']
-  quantity?: number
-  userId?: User['id']
+  eventId?: EventPurchase['eventId']
+  buyerId?: EventPurchase['buyerId']
+  eventLotInfo: {
+    eventLotId?: EventLot['id']
+    quantity?: number
+  }[]
 }
 
 export abstract class EventQueue {
-  abstract enqueue(event: EventQueueProps[]): Promise<void>
+  abstract enqueue(event: EventQueueProps): Promise<void>
 }

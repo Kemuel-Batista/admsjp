@@ -93,10 +93,8 @@ export class InMemoryEventLotsRepository implements EventLotsRepository {
     return { eventLots: paginatedEvents, count }
   }
 
-  async findByEventIdAndLot(eventId: number, lot: number): Promise<EventLot> {
-    const eventLot = this.items.find(
-      (item) => item.eventId === eventId && item.lot === lot,
-    )
+  async findById(id: string): Promise<EventLot> {
+    const eventLot = this.items.find((item) => item.id === id)
 
     if (!eventLot) {
       return null

@@ -8,6 +8,7 @@ import { EventLotsRepository } from '../../repositories/event-lots-repository'
 import { EventTicketsRepository } from '../../repositories/event-tickets-repository'
 
 interface EditEventLotUseCaseRequest {
+  id: string
   eventId: number
   lot: number
   quantity: number
@@ -28,16 +29,14 @@ export class EditEventLotUseCase {
   ) {}
 
   async execute({
+    id,
     eventId,
     lot,
     quantity,
     value,
     status,
   }: EditEventLotUseCaseRequest): Promise<EditEventLotUseCaseResponse> {
-    const eventLot = await this.eventLotsRepository.findByEventIdAndLot(
-      eventId,
-      lot,
-    )
+    const eventLot = await this.eventLotsRepository.findById(id)
 
     if (!eventLot) {
       return failure(

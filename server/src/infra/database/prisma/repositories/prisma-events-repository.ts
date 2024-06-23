@@ -24,6 +24,8 @@ export class PrismaEventsRepository implements EventsRepository {
     eventType,
     imagePath,
     message,
+    pixKey,
+    pixType,
     createdBy,
   }: Prisma.EventUncheckedCreateInput): Promise<Event> {
     const event = await this.prisma.event.create({
@@ -39,6 +41,8 @@ export class PrismaEventsRepository implements EventsRepository {
         eventType,
         imagePath,
         message,
+        pixKey,
+        pixType,
         createdBy,
         updatedBy: createdBy,
       },
@@ -59,6 +63,8 @@ export class PrismaEventsRepository implements EventsRepository {
     eventType,
     imagePath,
     message,
+    pixKey,
+    pixType,
     updatedBy,
   }: Event): Promise<Event> {
     const event = await this.prisma.event.update({
@@ -76,6 +82,8 @@ export class PrismaEventsRepository implements EventsRepository {
         eventType: eventType ?? undefined,
         imagePath: imagePath ?? undefined,
         message: message ?? undefined,
+        pixKey: pixKey ?? undefined,
+        pixType: pixType ?? undefined,
         updatedBy,
       },
     })

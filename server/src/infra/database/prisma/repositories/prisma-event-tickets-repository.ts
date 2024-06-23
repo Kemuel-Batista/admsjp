@@ -84,36 +84,6 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
     return eventTicket
   }
 
-  async lastTicket(): Promise<string> {
-    const now = new Date()
-
-    const year = now.getFullYear()
-    const month = now.getMonth() + 1
-    const day = now.getDate()
-
-    const eventTickets = await this.prisma.eventTicket.findMany()
-
-    const relevantTickets = eventTickets
-      .filter((item) => {
-        const itemYear = item.createdAt.getFullYear()
-        const itemMonth = item.createdAt.getMonth() + 1
-        const itemDay = item.createdAt.getDate()
-        return itemYear === year && itemMonth === month && itemDay === day
-      })
-      .map((item) => item.ticket)
-
-    if (relevantTickets.length === 0) {
-      return ''
-    }
-
-    const maxTicket = relevantTickets.reduce((max, ticket) => {
-      const ticketCount = parseInt(ticket.substring(12), 10) // Removendo "ANO_MES_DIA_EV_" e convertendo para número
-      return Math.max(max, ticketCount)
-    }, 0)
-
-    return `${year}${month.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}EV${maxTicket.toString().padStart(4, '0')}`
-  }
-
   async delete(id: EventTicket['id']): Promise<void> {
     await this.prisma.eventTicket.delete({
       where: { id },

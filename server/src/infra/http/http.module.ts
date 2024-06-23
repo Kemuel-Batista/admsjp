@@ -13,6 +13,7 @@ import { DatabaseModule } from '../database/database.module'
 import { DepartmentsHttpModule } from './departments/departments-http.module'
 import { EventAddressHttpModule } from './event-address/event-address-http.module'
 import { EventLotHttpModule } from './event-lot/event-lot-http.module'
+import { EventPurchaseHttpModule } from './event-purchase/event-purchase-http.module'
 import { EventTicketHttpModule } from './event-ticket/event-ticket-http.module'
 import { OrderHttpModule } from './order/order-http.module'
 import { ParameterHttpModule } from './parameter/parameter-http.module'
@@ -58,6 +59,10 @@ import { ParameterHttpModule } from './parameter/parameter-http.module'
           {
             path: 'lot',
             module: EventLotHttpModule,
+          },
+          {
+            path: 'purchases',
+            module: EventPurchaseHttpModule,
           },
           {
             path: 'tickets',

@@ -27,7 +27,7 @@ export class EventQueueRabbitMQ implements EventQueue {
     }
   }
 
-  async enqueue(event: EventQueueProps[]): Promise<void> {
+  async enqueue(event: EventQueueProps): Promise<void> {
     if (!this.channel) {
       throw new Error('Channel is not initialized')
     }
