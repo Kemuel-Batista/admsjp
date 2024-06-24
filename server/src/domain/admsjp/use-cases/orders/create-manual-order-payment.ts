@@ -7,6 +7,7 @@ import { InvalidAttachmentTypeError } from '@/core/errors/errors/invalid-attachm
 import { OrderPaymentAlreadyCompletedError } from '@/core/errors/errors/order-payment-already-completed-error'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 
+import { EventPurchaseStatus } from '../../enums/event-purchase'
 import { OrderPaymentMethod, OrderStatus } from '../../enums/order'
 import { EventPurchasesRepository } from '../../repositories/event-purchases-repository'
 import { OrdersRepository } from '../../repositories/orders-repository'
@@ -100,6 +101,7 @@ export class CreateManualOrderPaymentUseCase {
     })
 
     eventPurchase.expiresAt = null
+    eventPurchase.status = EventPurchaseStatus.WAITING_CONFIRMATION
 
     await this.eventPurchasesRepository.save(eventPurchase)
 

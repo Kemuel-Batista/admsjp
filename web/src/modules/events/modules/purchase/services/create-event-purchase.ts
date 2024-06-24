@@ -8,7 +8,7 @@ import { CreateEventPurchaseFormData } from '../schemas/create-validation-schema
 export const CreateEventPurchaseService = () => {
   return useMutation<Response, unknown, CreateEventPurchaseFormData>({
     mutationFn: async (data) => {
-      const response = await api.post('/events/purchases/', data)
+      const response = await api.post('/events/purchases', data)
 
       return response.data
     },

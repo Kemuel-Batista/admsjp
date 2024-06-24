@@ -45,7 +45,8 @@ import {
 } from '../../tickets/schemas/complete-ticket-info-schema'
 import { CompleteEventTicketInfoService } from '../../tickets/services/complete-event-ticket-info'
 import { EventTicket } from '../../tickets/types/event-ticket'
-import { ListEventPurchasesUnexpired } from '../services/list-event-tickets-unexpired'
+import { PurchaseCountdown } from '../components/purchase-countdown'
+import { ListEventPurchasesUnexpired } from '../services/list-event-purchases-unexpired'
 import { EventPurchaseInfo } from '../types/event-purchase-info'
 import { CheckoutSummaryView } from './checkout-summary-view'
 
@@ -60,6 +61,7 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
     allRecords: true,
   })
   const purchases = purchasesResult?.eventPurchases || []
+
   let tickets: EventTicket[] = []
 
   purchases.forEach((purchase) => {
@@ -137,7 +139,7 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
       </div>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="grid grid-cols-[10fr_4fr] px-24 p-6 mobile:px-12 mobile:grid-cols-1 mobile:gap-4"
+        className="grid grid-cols-[10fr_4fr] px-24 p-6 gap-4 mobile:px-12 mobile:grid-cols-1"
       >
         <main>
           <div className="flex flex-col gap-4 justify-center">
@@ -305,7 +307,12 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
             ))}
           </div>
         </main>
-        <CheckoutSummaryView tickets={tickets} eventId={event?.id} />
+        <div className="flex flex-col gap-2">
+          <CheckoutSummaryView tickets={tickets} eventId={event?.id} />
+          <PurchaseCountdown
+            expiresAt={purchases.length > 0 ? purchases[0].expiresAt : ''}
+          />
+        </div>
         <Button type="submit" disabled={isPending}>
           Continuar para pagamento
         </Button>

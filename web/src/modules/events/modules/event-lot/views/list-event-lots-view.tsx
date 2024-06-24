@@ -72,10 +72,21 @@ export function ListEventLotsView({
   const { mutateAsync } = CreateEventPurchaseService()
 
   async function handleCreateEventTickets() {
-    const eventLotInfo = eventLots.map((item, index) => ({
-      eventLotId: item.id,
-      quantity: counts[index],
-    }))
+    const eventLotInfo: {
+      eventLotId: string
+      quantity: number
+    }[] = []
+
+    eventLots.forEach((item, index) => {
+      const quantity = counts[index]
+
+      if (quantity > 0) {
+        eventLotInfo.push({
+          eventLotId: item.id,
+          quantity,
+        })
+      }
+    })
 
     const form: CreateEventPurchaseFormData = {
       eventId: Number(eventId),

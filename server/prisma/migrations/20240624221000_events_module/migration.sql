@@ -77,9 +77,9 @@ CREATE TABLE "event_purchases" (
     "id" TEXT NOT NULL,
     "invoice_number" TEXT NOT NULL,
     "event_id" INTEGER NOT NULL,
-    "created_by" INTEGER NOT NULL,
+    "buyer_id" INTEGER NOT NULL,
     "status" INTEGER NOT NULL,
-    "expires_at" TIMESTAMP(3) NOT NULL,
+    "expires_at" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3),
     "deleted_at" TIMESTAMP(3),
@@ -166,7 +166,7 @@ ALTER TABLE "events_lots" ADD CONSTRAINT "events_lots_event_id_fkey" FOREIGN KEY
 ALTER TABLE "event_purchases" ADD CONSTRAINT "event_purchases_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "events"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "event_purchases" ADD CONSTRAINT "event_purchases_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "event_purchases" ADD CONSTRAINT "event_purchases_buyer_id_fkey" FOREIGN KEY ("buyer_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "events_tickets" ADD CONSTRAINT "events_tickets_event_purchase_id_fkey" FOREIGN KEY ("event_purchase_id") REFERENCES "event_purchases"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

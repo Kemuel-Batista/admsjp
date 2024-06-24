@@ -38,23 +38,13 @@ export class PrismaEventPurchasesRepository
     return eventPurchase
   }
 
-  async save({
-    id,
-    buyerId,
-    eventId,
-    expiresAt,
-    invoiceNumber,
-    status,
-  }: EventPurchase): Promise<EventPurchase> {
+  async save({ id, expiresAt, status }: EventPurchase): Promise<EventPurchase> {
     const eventPurchase = await this.prisma.eventPurchase.update({
       where: {
         id,
       },
       data: {
-        buyerId: buyerId ?? undefined,
-        eventId: eventId ?? undefined,
-        expiresAt: expiresAt ?? undefined,
-        invoiceNumber: invoiceNumber ?? undefined,
+        expiresAt,
         status: status ?? undefined,
         updatedAt: new Date(),
       },

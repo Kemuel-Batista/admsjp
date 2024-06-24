@@ -45,14 +45,16 @@ export function CheckoutPaymentView() {
     navigator.clipboard.writeText(eventPurchase.pixKey)
   }
 
-  const { mutateAsync } = CreateManualPaymentService()
+  const { mutateAsync, isPending } = CreateManualPaymentService()
 
   async function onSubmit(data: CreateManualPaymentFormData) {
     await mutateAsync(data, {
       onSuccess: () => {
         router.push('/')
 
-        deleteCookie('admsjp.event-purchase')
+        if (!isPending) {
+          deleteCookie('admsjp.event-purchase')
+        }
       },
     })
   }
@@ -83,20 +85,24 @@ export function CheckoutPaymentView() {
               </Label>
             </div>
             <Label className="text-muted-foreground">Banco Inter</Label>
-            <Label className="text-muted-foreground">Chave PIX</Label>
-            <div className="flex flex-row justify-between items-center gap-2">
-              <Input
-                value={eventPurchase.pixKey}
-                placeholder={eventPurchase.pixKey}
-              />
-              <Button
-                onClick={handleCopyPixCodeText}
-                className="gap-2"
-                type="button"
-                variant="secondary"
-              >
-                <Copy size={20} color="#2563eb" />
-              </Button>
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-muted-foreground">Chave PIX</Label>
+
+              <div className="flex flex-row justify-between items-center gap-2">
+                <Input
+                  value={eventPurchase.pixKey}
+                  placeholder={eventPurchase.pixKey}
+                />
+                <Button
+                  onClick={handleCopyPixCodeText}
+                  className="gap-2"
+                  type="button"
+                  variant="secondary"
+                >
+                  <Copy size={20} color="#f97015" />
+                </Button>
+              </div>
             </div>
           </div>
         </main>
@@ -118,7 +124,9 @@ export function CheckoutPaymentView() {
             </FormItem>
           )}
         />
-        <Button>Concluir pagamento</Button>
+        <Button type="submit" disabled={isPending}>
+          Concluir pagamento
+        </Button>
       </form>
     </Form>
   )

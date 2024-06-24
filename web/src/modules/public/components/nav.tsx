@@ -1,4 +1,4 @@
-import { ChurchIcon, CircleUser, Search } from 'lucide-react'
+import { ChurchIcon, CircleUser } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -12,7 +12,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
 import { useAuth } from '@/contexts/auth-context'
 
 export function Nav() {
@@ -26,6 +25,10 @@ export function Nav() {
   async function handleSignOut() {
     await signOut()
     router.push('/')
+  }
+
+  function handleNavigateToMyTickets() {
+    router.push('/purchases')
   }
 
   return (
@@ -46,16 +49,7 @@ export function Nav() {
         </Link>
       </nav>
       <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-        <form className="ml-auto flex-1 sm:flex-initial">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Procurar eventos..."
-              className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
-            />
-          </div>
-        </form>
+        <form className="ml-auto flex-1 sm:flex-initial"></form>
         {!isAuthenticated ? (
           <Button onClick={handleNavigateToLogin}>Entrar</Button>
         ) : (
@@ -73,6 +67,12 @@ export function Nav() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Minha conta</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={handleNavigateToMyTickets}
+                className="hover:cursor-pointer"
+              >
+                Meus ingressos
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleSignOut}>Sair</DropdownMenuItem>
             </DropdownMenuContent>
