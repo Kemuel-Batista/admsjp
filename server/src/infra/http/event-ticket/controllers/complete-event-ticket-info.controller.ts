@@ -22,6 +22,7 @@ const completeEventTicketInfoSchema = z.object({
   data: z.array(
     z.object({
       id: z.string().uuid(),
+      eventPurchaseId: z.string().uuid(),
       name: z.string(),
       email: z.string().email(),
       cpf: z.string().min(11).max(11),
@@ -54,6 +55,7 @@ export class CompleteEventTicketInfoController {
     for (const eventTicket of data) {
       const result = await this.completeEventTicketInfo.execute({
         id: eventTicket.id,
+        eventPurchaseId: eventTicket.eventPurchaseId,
         name: eventTicket.name,
         email: eventTicket.email,
         cpf: eventTicket.cpf,

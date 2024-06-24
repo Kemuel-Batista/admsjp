@@ -14,7 +14,7 @@ import { EventsRepository } from '@/domain/admsjp/repositories/events-repository
 import { Uploader } from '@/domain/admsjp/storage/uploader'
 
 import { MailNotifier } from '../../notifiers/mail-notifier'
-import { EventTicketsRepository } from '../../repositories/event-tickets-repository'
+import { EventPurchasesRepository } from '../../repositories/event-purchases-repository'
 
 interface EditEventUseCaseRequest {
   id: Event['id']
@@ -45,7 +45,7 @@ type EditEventUseCaseResponse = Either<
 export class EditEventUseCase {
   constructor(
     private eventsRepository: EventsRepository,
-    private eventTicketsRepository: EventTicketsRepository,
+    private eventPurchasesRepository: EventPurchasesRepository,
     private uploader: Uploader,
     private mailNotifier: MailNotifier,
   ) {}
@@ -163,13 +163,12 @@ export class EditEventUseCase {
 
     await this.eventsRepository.update(event)
 
-    const eventTickets = await this.eventTicketsRepository.listDetailsByEventId(
-      event.id,
-    )
+    const eventPurchases =
+      await this.eventPurchasesRepository.listBuyerDetailsByEventId(event.id)
 
-    for (const eventTicket of eventTickets) {
+    for (const eventPurchase of eventPurchases) {
       await this.mailNotifier.send({
-        email: eventTicket.user.email,
+        email: eventPurchase.user.email,
         title: 'Evento foi atualizado!',
         content:
           'O evento que você tem uma inscrição foi atualizado! Verique os detalhes abaixo.',

@@ -8,7 +8,7 @@ import { OrderPaymentAlreadyCompletedError } from '@/core/errors/errors/order-pa
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 
 import { OrderPaymentMethod, OrderStatus } from '../../enums/order'
-import { EventTicketsRepository } from '../../repositories/event-tickets-repository'
+import { EventPurchasesRepository } from '../../repositories/event-purchases-repository'
 import { OrdersRepository } from '../../repositories/orders-repository'
 import { Uploader } from '../../storage/uploader'
 
@@ -32,7 +32,7 @@ type CreateManualOrderPaymentUseCaseResponse = Either<
 export class CreateManualOrderPaymentUseCase {
   constructor(
     private ordersRepository: OrdersRepository,
-    private eventTicketsRepository: EventTicketsRepository,
+    private eventPurchasesRepository: EventPurchasesRepository,
     private uploader: Uploader,
   ) {}
 
@@ -56,19 +56,19 @@ export class CreateManualOrderPaymentUseCase {
       )
     }
 
-    const eventTicket =
-      await this.eventTicketsRepository.findById(transactionId)
+    const eventPurchase =
+      await this.eventPurchasesRepository.findById(transactionId)
 
-    if (!eventTicket) {
+    if (!eventPurchase) {
       return failure(
         new ResourceNotFoundError({
-          errorKey: 'eventTicket.find.notFound',
+          errorKey: 'eventPurchase.find.notFound',
           key: transactionId.toString(),
         }),
       )
     }
 
-    if (eventTicket.createdBy !== paidBy) {
+    if (eventPurchase.buyerId !== paidBy) {
       return failure(
         new IncorrectAssociationError({
           errorKey: 'order.payment.ticketOwnerIsNotSame',
@@ -77,7 +77,7 @@ export class CreateManualOrderPaymentUseCase {
       )
     }
 
-    if (eventTicket.expiresAt === null) {
+    if (eventPurchase.expiresAt === null) {
       return failure(
         new OrderPaymentAlreadyCompletedError({
           errorKey: 'order.payment.alreadyCompleted',
@@ -99,9 +99,9 @@ export class CreateManualOrderPaymentUseCase {
       attachment: url,
     })
 
-    eventTicket.expiresAt = null
+    eventPurchase.expiresAt = null
 
-    await this.eventTicketsRepository.update(eventTicket)
+    await this.eventPurchasesRepository.save(eventPurchase)
 
     return success(null)
   }

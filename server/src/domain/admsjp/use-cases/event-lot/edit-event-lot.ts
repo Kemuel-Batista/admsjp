@@ -30,7 +30,6 @@ export class EditEventLotUseCase {
 
   async execute({
     id,
-    eventId,
     lot,
     quantity,
     value,
@@ -48,7 +47,7 @@ export class EditEventLotUseCase {
     }
 
     const doesEventLotHasAssociations =
-      await this.eventTicketsRepository.listByLot(lot)
+      await this.eventTicketsRepository.listByEventLotId(id)
 
     if (doesEventLotHasAssociations.length === 0) {
       eventLot.value = value

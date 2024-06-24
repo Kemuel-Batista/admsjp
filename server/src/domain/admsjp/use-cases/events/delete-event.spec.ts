@@ -1,8 +1,9 @@
 import { makeEvent } from 'test/factories/make-event'
 import { makeEventLot } from 'test/factories/make-event-lot'
+import { makeEventPurchase } from 'test/factories/make-event-purchase'
 import { makeEventTicket } from 'test/factories/make-event-ticket'
-import { InMemoryDepartmentsRepository } from 'test/repositories/in-memory-departments-repository'
 import { InMemoryEventLotsRepository } from 'test/repositories/in-memory-event-lots-repository'
+import { InMemoryEventPurchasesRepository } from 'test/repositories/in-memory-event-purchases-repository'
 import { InMemoryEventTicketsRepository } from 'test/repositories/in-memory-event-tickets-repository'
 import { InMemoryEventsRepository } from 'test/repositories/in-memory-events-repository'
 import { InMemoryUsersRepository } from 'test/repositories/in-memory-users-repository'
@@ -12,24 +13,25 @@ import { ResourceHasAssociationsError } from '@/core/errors/errors/resource-has-
 import { DeleteEventUseCase } from './delete-event'
 
 let inMemoryUsersRepository: InMemoryUsersRepository
-let inMemoryDepartmentsRepository: InMemoryDepartmentsRepository
 let inMemoryEventsRepository: InMemoryEventsRepository
 let inMemoryEventLotsRepository: InMemoryEventLotsRepository
 let inMemoryEventTicketsRepository: InMemoryEventTicketsRepository
+let inMemoryEventPurchasesRepository: InMemoryEventPurchasesRepository
 
 let sut: DeleteEventUseCase
 
 describe('Delete Event', () => {
   beforeEach(() => {
     inMemoryUsersRepository = new InMemoryUsersRepository()
-    inMemoryDepartmentsRepository = new InMemoryDepartmentsRepository()
     inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
     inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
-      inMemoryUsersRepository,
-      inMemoryDepartmentsRepository,
-      inMemoryEventsRepository,
       inMemoryEventLotsRepository,
+    )
+    inMemoryEventPurchasesRepository = new InMemoryEventPurchasesRepository(
+      inMemoryUsersRepository,
+      inMemoryEventsRepository,
+      inMemoryEventTicketsRepository,
     )
 
     sut = new DeleteEventUseCase(
@@ -61,9 +63,15 @@ describe('Delete Event', () => {
     })
     const eventLot = await inMemoryEventLotsRepository.create(eventLotFactory)
 
-    const eventTicketFactory = makeEventTicket({
+    const eventPurchaseFactory = makeEventPurchase({
       eventId: event.id,
-      lot: eventLot.lot,
+    })
+    const eventPurchase =
+      await inMemoryEventPurchasesRepository.create(eventPurchaseFactory)
+
+    const eventTicketFactory = makeEventTicket({
+      eventPurchaseId: eventPurchase.id,
+      eventLotId: eventLot.id,
     })
     await inMemoryEventTicketsRepository.create(eventTicketFactory)
 

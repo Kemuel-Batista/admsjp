@@ -1,7 +1,7 @@
-import { makeEventTicket } from 'test/factories/make-event-ticket'
+import { makeEventPurchase } from 'test/factories/make-event-purchase'
 import { makeUser } from 'test/factories/make-user'
-import { InMemoryDepartmentsRepository } from 'test/repositories/in-memory-departments-repository'
 import { InMemoryEventLotsRepository } from 'test/repositories/in-memory-event-lots-repository'
+import { InMemoryEventPurchasesRepository } from 'test/repositories/in-memory-event-purchases-repository'
 import { InMemoryEventTicketsRepository } from 'test/repositories/in-memory-event-tickets-repository'
 import { InMemoryEventsRepository } from 'test/repositories/in-memory-events-repository'
 import { InMemoryOrdersRepository } from 'test/repositories/in-memory-orders-repository'
@@ -14,9 +14,9 @@ import { OrderPaymentMethod, OrderStatus } from '../../enums/order'
 import { CreateManualOrderPaymentUseCase } from './create-manual-order-payment'
 
 let inMemoryUsersRepository: InMemoryUsersRepository
-let inMemoryDepartmentsRepository: InMemoryDepartmentsRepository
 let inMemoryEventsRepository: InMemoryEventsRepository
 let inMemoryEventLotsRepository: InMemoryEventLotsRepository
+let inMemoryEventPurchasesRepository: InMemoryEventPurchasesRepository
 let inMemoryEventTicketsRepository: InMemoryEventTicketsRepository
 let inMemoryOrdersRepository: InMemoryOrdersRepository
 let fakeUploader: FakeUploader
@@ -26,21 +26,22 @@ let sut: CreateManualOrderPaymentUseCase
 describe('Create manual order payment', () => {
   beforeEach(() => {
     inMemoryUsersRepository = new InMemoryUsersRepository()
-    inMemoryDepartmentsRepository = new InMemoryDepartmentsRepository()
     inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
     inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
-      inMemoryUsersRepository,
-      inMemoryDepartmentsRepository,
-      inMemoryEventsRepository,
       inMemoryEventLotsRepository,
+    )
+    inMemoryEventPurchasesRepository = new InMemoryEventPurchasesRepository(
+      inMemoryUsersRepository,
+      inMemoryEventsRepository,
+      inMemoryEventTicketsRepository,
     )
     inMemoryOrdersRepository = new InMemoryOrdersRepository()
     fakeUploader = new FakeUploader()
 
     sut = new CreateManualOrderPaymentUseCase(
       inMemoryOrdersRepository,
-      inMemoryEventTicketsRepository,
+      inMemoryEventPurchasesRepository,
       fakeUploader,
     )
   })
@@ -49,14 +50,14 @@ describe('Create manual order payment', () => {
     const userFactory = makeUser()
     const user = await inMemoryUsersRepository.create(userFactory)
 
-    const eventTicketFactory = makeEventTicket({
-      createdBy: user.id,
+    const eventPurchaseFactory = makeEventPurchase({
+      buyerId: user.id,
     })
-    const eventTicket =
-      await inMemoryEventTicketsRepository.create(eventTicketFactory)
+    const eventPurchase =
+      await inMemoryEventPurchasesRepository.create(eventPurchaseFactory)
 
     const result = await sut.execute({
-      transactionId: eventTicket.id,
+      transactionId: eventPurchase.id,
       fileName: 'attachment.png',
       fileType: 'image/png',
       body: Buffer.from(''),
@@ -68,7 +69,7 @@ describe('Create manual order payment', () => {
     expect(inMemoryOrdersRepository.items).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          transactionId: eventTicket.id,
+          transactionId: eventPurchase.id,
           status: OrderStatus.WAITING_CONFIRMATION,
           paymentMethod: OrderPaymentMethod.MANUAL,
         }),
@@ -80,14 +81,14 @@ describe('Create manual order payment', () => {
     const userFactory = makeUser()
     const user = await inMemoryUsersRepository.create(userFactory)
 
-    const eventTicketFactory = makeEventTicket({
-      createdBy: 2,
+    const eventPurchaseFactory = makeEventPurchase({
+      buyerId: 2,
     })
-    const eventTicket =
-      await inMemoryEventTicketsRepository.create(eventTicketFactory)
+    const eventPurchase =
+      await inMemoryEventPurchasesRepository.create(eventPurchaseFactory)
 
     const result = await sut.execute({
-      transactionId: eventTicket.id,
+      transactionId: eventPurchase.id,
       fileName: 'attachment.png',
       fileType: 'image/png',
       body: Buffer.from(''),
@@ -102,15 +103,15 @@ describe('Create manual order payment', () => {
     const userFactory = makeUser()
     const user = await inMemoryUsersRepository.create(userFactory)
 
-    const eventTicketFactory = makeEventTicket({
-      createdBy: user.id,
+    const eventPurchaseFactory = makeEventPurchase({
+      buyerId: 2,
       expiresAt: new Date(),
     })
-    const eventTicket =
-      await inMemoryEventTicketsRepository.create(eventTicketFactory)
+    const eventPurchase =
+      await inMemoryEventPurchasesRepository.create(eventPurchaseFactory)
 
     const result = await sut.execute({
-      transactionId: eventTicket.id,
+      transactionId: eventPurchase.id,
       fileName: 'attachment.png',
       fileType: 'image/png',
       body: Buffer.from(''),

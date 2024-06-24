@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common'
 
-import { ClearExpiredTicketsJob } from '@/domain/admsjp/jobs/event-ticket/clear-expired-tickets-job'
+import { ClearExpiredPurchasesJob } from '@/domain/admsjp/jobs/event-purchase/clear-expired-purchases-job'
 
 import { DatabaseModule } from '../database/database.module'
-import { ClearExpiredTicketsJobService } from './event-ticket/clear-expired-tickets-job-service'
+import { ClearExpiredPurchasesJobService } from './event-purchase/clear-expired-tickets-job-service'
 
 @Module({
   imports: [DatabaseModule],
-  providers: [ClearExpiredTicketsJobService, ClearExpiredTicketsJob],
+  providers: [ClearExpiredPurchasesJobService, ClearExpiredPurchasesJob],
 })
 export class JobsModule {}

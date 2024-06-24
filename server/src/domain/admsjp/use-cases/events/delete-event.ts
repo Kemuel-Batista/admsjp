@@ -47,8 +47,8 @@ export class DeleteEventUseCase {
     )
 
     for (const eventLot of eventLots) {
-      const eventTickets = await this.eventTicketsRepository.listByLot(
-        eventLot.lot,
+      const eventTickets = await this.eventTicketsRepository.listByEventLotId(
+        eventLot.id,
       )
 
       if (eventTickets.length > 0) {

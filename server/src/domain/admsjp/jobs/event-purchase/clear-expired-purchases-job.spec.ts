@@ -1,48 +1,50 @@
 import { faker } from '@faker-js/faker'
-import { makeEventTicket } from 'test/factories/make-event-ticket'
-import { InMemoryDepartmentsRepository } from 'test/repositories/in-memory-departments-repository'
+import { makeEventPurchase } from 'test/factories/make-event-purchase'
 import { InMemoryEventLotsRepository } from 'test/repositories/in-memory-event-lots-repository'
+import { InMemoryEventPurchasesRepository } from 'test/repositories/in-memory-event-purchases-repository'
 import { InMemoryEventTicketsRepository } from 'test/repositories/in-memory-event-tickets-repository'
 import { InMemoryEventsRepository } from 'test/repositories/in-memory-events-repository'
 import { InMemoryUsersRepository } from 'test/repositories/in-memory-users-repository'
 
-import { ClearExpiredTicketsJob } from './clear-expired-tickets-job'
+import { ClearExpiredPurchasesJob } from './clear-expired-purchases-job'
 
-let inMemoryDepartmentsRepository: InMemoryDepartmentsRepository
 let inMemoryUsersRepository: InMemoryUsersRepository
 let inMemoryEventsRepository: InMemoryEventsRepository
 let inMemoryEventLotsRepository: InMemoryEventLotsRepository
+let inMemoryEventPurchasesRepository: InMemoryEventPurchasesRepository
 let inMemoryEventTicketsRepository: InMemoryEventTicketsRepository
 
-let sut: ClearExpiredTicketsJob
+let sut: ClearExpiredPurchasesJob
 
 describe('Clear Expired Tickets Job', () => {
   beforeEach(() => {
-    inMemoryDepartmentsRepository = new InMemoryDepartmentsRepository()
     inMemoryUsersRepository = new InMemoryUsersRepository()
     inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
 
     inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
-      inMemoryUsersRepository,
-      inMemoryDepartmentsRepository,
-      inMemoryEventsRepository,
       inMemoryEventLotsRepository,
     )
 
-    sut = new ClearExpiredTicketsJob(inMemoryEventTicketsRepository)
+    inMemoryEventPurchasesRepository = new InMemoryEventPurchasesRepository(
+      inMemoryUsersRepository,
+      inMemoryEventsRepository,
+      inMemoryEventTicketsRepository,
+    )
+
+    sut = new ClearExpiredPurchasesJob(inMemoryEventPurchasesRepository)
   })
 
-  it('should be able to clear expired tickets', async () => {
-    const eventTicketFactory = makeEventTicket({
+  it('should be able to clear expired purchases', async () => {
+    const eventPurchaseFactory = makeEventPurchase({
       expiresAt: faker.date.past(),
     })
-    await inMemoryEventTicketsRepository.create(eventTicketFactory)
+    await inMemoryEventPurchasesRepository.create(eventPurchaseFactory)
 
     const result = await sut.execute()
 
     expect(result.isSuccess()).toBe(true)
 
-    expect(inMemoryEventTicketsRepository.items).toHaveLength(0)
+    expect(inMemoryEventPurchasesRepository.items).toHaveLength(0)
   })
 })

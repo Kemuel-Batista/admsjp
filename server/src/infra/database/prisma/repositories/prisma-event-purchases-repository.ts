@@ -5,6 +5,7 @@ import { IListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import { EventPurchasesRepository } from '@/domain/admsjp/repositories/event-purchases-repository'
 import {
+  EventPurchaseWithBuyer,
   EventPurchaseWithEvent,
   EventPurchaseWithEventTickets,
 } from '@/domain/admsjp/types/event-purchase'
@@ -16,6 +17,7 @@ export class PrismaEventPurchasesRepository
   implements EventPurchasesRepository
 {
   constructor(private prisma: PrismaService) {}
+
   async create({
     buyerId,
     eventId,
@@ -55,6 +57,16 @@ export class PrismaEventPurchasesRepository
         invoiceNumber: invoiceNumber ?? undefined,
         status: status ?? undefined,
         updatedAt: new Date(),
+      },
+    })
+
+    return eventPurchase
+  }
+
+  async findById(id: EventPurchase['id']): Promise<EventPurchase | null> {
+    const eventPurchase = await this.prisma.eventPurchase.findUnique({
+      where: {
+        id,
       },
     })
 
@@ -158,5 +170,43 @@ export class PrismaEventPurchasesRepository
     })
 
     return eventPurchases
+  }
+
+  async listBuyerDetailsByEventId(
+    eventId: EventPurchase['eventId'],
+  ): Promise<EventPurchaseWithBuyer[]> {
+    const eventPurchases = await this.prisma.eventPurchase.findMany({
+      where: {
+        eventId,
+      },
+      include: {
+        user: {
+          select: {
+            email: true,
+            name: true,
+          },
+        },
+      },
+    })
+
+    return eventPurchases
+  }
+
+  async listCloseToExpiry(): Promise<EventPurchase[]> {
+    const eventPurchases = await this.prisma.eventPurchase.findMany({
+      where: {
+        expiresAt: {
+          not: null,
+        },
+      },
+    })
+
+    return eventPurchases
+  }
+
+  async delete(id: EventPurchase['id']): Promise<void> {
+    await this.prisma.eventPurchase.delete({
+      where: { id },
+    })
   }
 }

@@ -1,5 +1,7 @@
 import { EventTicket, Prisma } from '@prisma/client'
 
+import { IListOptions } from '@/core/repositories/list-options'
+
 import { EventTicketWithEventLot } from '../types/event-ticket'
 
 export abstract class EventTicketsRepository {
@@ -12,6 +14,15 @@ export abstract class EventTicketsRepository {
   abstract findDetailsById(
     id: EventTicket['id'],
   ): Promise<EventTicketWithEventLot | null>
+
+  abstract listByEventPurchaseId(
+    eventPurchaseId: EventTicket['eventPurchaseId'],
+    options?: IListOptions,
+  ): Promise<EventTicket[]>
+
+  abstract listByEventLotId(
+    eventLotId: EventTicket['eventLotId'],
+  ): Promise<EventTicket[]>
 
   abstract delete(id: EventTicket['id']): Promise<void>
 }

@@ -72,6 +72,7 @@ describe('Update Event Lot (E2E)', () => {
       .put('/events/lot')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
+        id: eventLot.id,
         eventId: eventLot.eventId,
         lot: eventLot.lot,
         quantity: 100,
@@ -83,10 +84,7 @@ describe('Update Event Lot (E2E)', () => {
 
     const eventLotOnDatabase = await prisma.eventLot.findUnique({
       where: {
-        eventId_lot: {
-          eventId: event.id,
-          lot: eventLot.lot,
-        },
+        id: eventLot.id,
       },
     })
 

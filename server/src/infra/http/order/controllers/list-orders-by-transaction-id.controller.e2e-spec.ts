@@ -5,6 +5,7 @@ import request from 'supertest'
 import { DepartmentFactory } from 'test/factories/make-department'
 import { EventFactory } from 'test/factories/make-event'
 import { EventLotFactory } from 'test/factories/make-event-lot'
+import { EventPurchaseFactory } from 'test/factories/make-event-purchase'
 import { EventTicketFactory } from 'test/factories/make-event-ticket'
 import { OrderFactory } from 'test/factories/make-order'
 import { ProfileFactory } from 'test/factories/make-profile'
@@ -22,6 +23,7 @@ describe('List orders by transaction id (E2E)', () => {
   let eventFactory: EventFactory
   let eventLotFactory: EventLotFactory
   let eventTicketFactory: EventTicketFactory
+  let eventPurchaseFactory: EventPurchaseFactory
   let orderFactory: OrderFactory
 
   beforeAll(async () => {
@@ -34,6 +36,7 @@ describe('List orders by transaction id (E2E)', () => {
         EventFactory,
         EventLotFactory,
         EventTicketFactory,
+        EventPurchaseFactory,
         OrderFactory,
       ],
     }).compile()
@@ -46,6 +49,7 @@ describe('List orders by transaction id (E2E)', () => {
     eventFactory = moduleRef.get(EventFactory)
     eventLotFactory = moduleRef.get(EventLotFactory)
     eventTicketFactory = moduleRef.get(EventTicketFactory)
+    eventPurchaseFactory = moduleRef.get(EventPurchaseFactory)
     orderFactory = moduleRef.get(OrderFactory)
 
     await app.init()
@@ -71,12 +75,14 @@ describe('List orders by transaction id (E2E)', () => {
       eventId: event.id,
     })
 
-    const eventTicket = await eventTicketFactory.makePrismaEventTicket({
+    const eventPurchase = await eventPurchaseFactory.makePrismaEventPurchase({
       eventId: event.id,
-      lot: eventLot.lot,
-      createdBy: user.id,
     })
 
+    const eventTicket = await eventTicketFactory.makePrismaEventTicket({
+      eventLotId: eventLot.id,
+      eventPurchaseId: eventPurchase.id,
+    })
     const order = await orderFactory.makePrismaOrder({
       transactionId: eventTicket.id,
     })

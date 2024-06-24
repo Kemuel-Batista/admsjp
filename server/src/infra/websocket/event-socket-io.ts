@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Logger } from '@nestjs/common'
+import { Logger } from '@nestjs/common'
 import {
   ConnectedSocket,
   OnGatewayConnection,
@@ -8,10 +8,8 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets'
-import { EventTicket } from '@prisma/client'
 import { Server } from 'socket.io'
 
-import { ListEventTicketsUnexpiredByUserUseCase } from '@/domain/admsjp/use-cases/event-ticket/list-event-tickets-unexpired-by-user'
 import {
   EventSocket,
   EventSocketEmmiter,
@@ -45,11 +43,6 @@ export class EventSocketIO
 
   @WebSocketServer() server: Server
 
-  constructor(
-    @Inject(forwardRef(() => ListEventTicketsUnexpiredByUserUseCase))
-    private listEventTicketsUnexpiredByUser: ListEventTicketsUnexpiredByUserUseCase,
-  ) {}
-
   afterInit(): void {
     this.logger.log('Websocket gateway initialized.')
   }
@@ -74,19 +67,5 @@ export class EventSocketIO
   async handleEvent(@ConnectedSocket() socket: SocketWithAuth) {
     const userId = socket.sub.id
     socket.join(`purchase:${userId}`)
-
-    const result = await this.listEventTicketsUnexpiredByUser.execute({
-      userId,
-    })
-
-    let eventTickets: EventTicket[] = []
-
-    if (result.isSuccess()) {
-      eventTickets = result.value.eventTickets
-    }
-
-    this.server
-      .to(`purchase:${userId}`)
-      .emit('load-unexpired-tickets', eventTickets)
   }
 }

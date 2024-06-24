@@ -4,10 +4,12 @@ import { Either, failure, success } from '@/core/either'
 import { IncorrectAssociationError } from '@/core/errors/errors/incorrect-association-error'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 
+import { EventPurchasesRepository } from '../../repositories/event-purchases-repository'
 import { EventTicketsRepository } from '../../repositories/event-tickets-repository'
 
 interface CompleteEventTicketInfoUseCaseRequest {
   id: string
+  eventPurchaseId: string
   name: string
   email: string
   cpf: string
@@ -23,10 +25,14 @@ type CompleteEventTicketInfoUseCaseResponse = Either<
 
 @Injectable()
 export class CompleteEventTicketInfoUseCase {
-  constructor(private eventTicketsRepository: EventTicketsRepository) {}
+  constructor(
+    private eventTicketsRepository: EventTicketsRepository,
+    private eventPurchasesRepository: EventPurchasesRepository,
+  ) {}
 
   async execute({
     id,
+    eventPurchaseId,
     name,
     email,
     cpf,
@@ -45,7 +51,27 @@ export class CompleteEventTicketInfoUseCase {
       )
     }
 
-    if (eventTicket.createdBy !== requestedBy) {
+    const eventPurchase =
+      await this.eventPurchasesRepository.findById(eventPurchaseId)
+
+    if (!eventPurchase) {
+      return failure(
+        new ResourceNotFoundError({
+          errorKey: 'eventPurchase.find.notFound',
+          key: id.toString(),
+        }),
+      )
+    }
+
+    if (eventPurchase.buyerId !== requestedBy) {
+      return failure(
+        new IncorrectAssociationError({
+          errorKey: 'eventPurchase.find.incorrectAssociation',
+        }),
+      )
+    }
+
+    if (eventTicket.eventPurchaseId !== eventPurchaseId) {
       return failure(
         new IncorrectAssociationError({
           errorKey: 'eventTicket.find.incorrectAssociation',
@@ -59,7 +85,7 @@ export class CompleteEventTicketInfoUseCase {
     eventTicket.phone = phone
     eventTicket.birthday = birthday
 
-    await this.eventTicketsRepository.update(eventTicket)
+    await this.eventTicketsRepository.save(eventTicket)
 
     return success(null)
   }

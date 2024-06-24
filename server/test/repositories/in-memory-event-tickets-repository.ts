@@ -2,6 +2,8 @@ import { randomUUID } from 'node:crypto'
 
 import { EventTicket, Prisma } from '@prisma/client'
 
+import { IListOptions } from '@/core/repositories/list-options'
+import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import { EventTicketsRepository } from '@/domain/admsjp/repositories/event-tickets-repository'
 import { EventTicketWithEventLot } from '@/domain/admsjp/types/event-ticket'
 
@@ -86,6 +88,30 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
       ...eventTicket,
       eventLot,
     }
+  }
+
+  async listByEventPurchaseId(
+    eventPurchaseId: EventTicket['eventPurchaseId'],
+    options?: IListOptions,
+  ): Promise<EventTicket[]> {
+    const eventPurchases = this.items
+
+    const { skip, take } = calcPagination(options)
+    const eventTickets = eventPurchases
+      .filter((item) => item.eventPurchaseId === eventPurchaseId)
+      .slice(skip, skip + take)
+
+    return eventTickets
+  }
+
+  async listByEventLotId(
+    eventLotId: EventTicket['eventLotId'],
+  ): Promise<EventTicket[]> {
+    const eventTickets = this.items
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .filter((item) => item.eventLotId === eventLotId)
+
+    return eventTickets
   }
 
   async delete(id: string): Promise<void> {

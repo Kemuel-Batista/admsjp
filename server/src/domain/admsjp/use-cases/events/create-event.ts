@@ -39,6 +39,8 @@ interface CreateEventUseCaseRequest {
   createdBy: Event['createdBy']
   fileName: string
   fileType: string
+  pixKey: string
+  pixType: number
   body: Buffer
 }
 
@@ -73,6 +75,8 @@ export class CreateEventUseCase {
     lots,
     address,
     message,
+    pixKey,
+    pixType,
     createdBy,
   }: CreateEventUseCaseRequest): Promise<CreateEventUseCaseResponse> {
     if (
@@ -126,6 +130,8 @@ export class CreateEventUseCase {
       departmentId,
       imagePath: '', // Inicialmente vazia, após cadastro fazer upload
       message,
+      pixKey,
+      pixType,
       createdBy,
     })
 

@@ -84,6 +84,8 @@ const createEventSchema = z.object({
     })
     .transform((arg) => new Decimal(arg))
     .optional(),
+  pixKey: z.string(),
+  pixType: z.number().int().positive(),
 })
 
 type CreateEventSchema = z.infer<typeof createEventSchema>
@@ -133,6 +135,8 @@ export class CreateEventController {
       city,
       latitude,
       longitude,
+      pixKey,
+      pixType,
     } = body
 
     const result = await this.createEvent.execute({
@@ -161,6 +165,8 @@ export class CreateEventController {
       },
       imagePath: '',
       slug: '',
+      pixKey,
+      pixType,
       createdBy: user.sub.id,
     })
 

@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { EventTicket, Prisma } from '@prisma/client'
 
+import { IListOptions } from '@/core/repositories/list-options'
+import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import { EventTicketsRepository } from '@/domain/admsjp/repositories/event-tickets-repository'
 import { EventTicketWithEventLot } from '@/domain/admsjp/types/event-ticket'
 
@@ -82,6 +84,35 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
     })
 
     return eventTicket
+  }
+
+  async listByEventPurchaseId(
+    eventPurchaseId: EventTicket['eventPurchaseId'],
+    options?: IListOptions,
+  ): Promise<EventTicket[]> {
+    const { skip, take } = calcPagination(options)
+
+    const eventTickets = await this.prisma.eventTicket.findMany({
+      where: {
+        eventPurchaseId,
+      },
+      skip,
+      take,
+    })
+
+    return eventTickets
+  }
+
+  async listByEventLotId(
+    eventLotId: EventTicket['eventLotId'],
+  ): Promise<EventTicket[]> {
+    const eventTickets = await this.prisma.eventTicket.findMany({
+      where: {
+        eventLotId,
+      },
+    })
+
+    return eventTickets
   }
 
   async delete(id: EventTicket['id']): Promise<void> {

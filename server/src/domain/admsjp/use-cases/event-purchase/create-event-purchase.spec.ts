@@ -3,7 +3,6 @@ import { makeEventLot } from 'test/factories/make-event-lot'
 import { makeParameter } from 'test/factories/make-parameter'
 import { makeUser } from 'test/factories/make-user'
 import { FakeTicketGenerator } from 'test/generators/fake-ticket-generator'
-import { InMemoryDepartmentsRepository } from 'test/repositories/in-memory-departments-repository'
 import { InMemoryEventLotsRepository } from 'test/repositories/in-memory-event-lots-repository'
 import { InMemoryEventPurchasesRepository } from 'test/repositories/in-memory-event-purchases-repository'
 import { InMemoryEventTicketsRepository } from 'test/repositories/in-memory-event-tickets-repository'
@@ -18,7 +17,6 @@ import { TicketsSoldOutError } from '@/core/errors/errors/tickets-sold-out-error
 import { CreateEventPurchaseUseCase } from './create-event-purchase'
 
 let inMemoryUsersRepository: InMemoryUsersRepository
-let inMemoryDepartmentsRepository: InMemoryDepartmentsRepository
 let inMemoryEventsRepository: InMemoryEventsRepository
 let inMemoryEventLotsRepository: InMemoryEventLotsRepository
 let inMemoryEventTicketsRepository: InMemoryEventTicketsRepository
@@ -32,7 +30,6 @@ let sut: CreateEventPurchaseUseCase
 describe('Create Event Ticket', () => {
   beforeEach(async () => {
     inMemoryUsersRepository = new InMemoryUsersRepository()
-    inMemoryDepartmentsRepository = new InMemoryDepartmentsRepository()
     inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
     inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
@@ -41,7 +38,9 @@ describe('Create Event Ticket', () => {
     inMemoryOrdersRepository = new InMemoryOrdersRepository()
     inMemoryParametersRepository = new InMemoryParametersRepository()
     inMemoryEventPurchasesRepository = new InMemoryEventPurchasesRepository(
+      inMemoryUsersRepository,
       inMemoryEventsRepository,
+      inMemoryEventTicketsRepository,
     )
 
     fakeTicketGenerator = new FakeTicketGenerator()
@@ -115,21 +114,27 @@ describe('Create Event Ticket', () => {
 
     const events = [
       {
-        userId: user.id,
-        eventId: event.id,
-        lot: eventLot.lot,
+        eventLotId: eventLot.id,
         quantity: 1,
       },
     ]
 
-    await sut.execute(events)
+    await sut.execute({
+      buyerId: user.id,
+      eventId: event.id,
+      eventLotInfo: events,
+    })
 
     const now = new Date()
     const year = now.getFullYear()
     const month = (now.getMonth() + 1).toString().padStart(2, '0')
     const day = now.getDate().toString().padStart(2, '0')
 
-    const result = await sut.execute(events)
+    const result = await sut.execute({
+      buyerId: user.id,
+      eventId: event.id,
+      eventLotInfo: events,
+    })
 
     expect(result.isSuccess()).toBe(true)
 
@@ -167,14 +172,16 @@ describe('Create Event Ticket', () => {
 
     const events = [
       {
-        userId: user.id,
-        eventId: event.id,
-        lot: eventLot.lot,
+        eventLotId: eventLot.id,
         quantity: 1,
       },
     ]
 
-    const result = await sut.execute(events)
+    const result = await sut.execute({
+      buyerId: user.id,
+      eventId: event.id,
+      eventLotInfo: events,
+    })
 
     expect(result.isError()).toBe(true)
     expect(result.value).toBeInstanceOf(TicketsSoldOutError)
@@ -194,14 +201,16 @@ describe('Create Event Ticket', () => {
 
     const events = [
       {
-        userId: user.id,
-        eventId: event.id,
-        lot: eventLot.lot,
+        eventLotId: eventLot.id,
         quantity: 1,
       },
     ]
 
-    const result = await sut.execute(events)
+    const result = await sut.execute({
+      buyerId: user.id,
+      eventId: event.id,
+      eventLotInfo: events,
+    })
 
     expect(result.isError()).toBe(true)
     expect(result.value).toBeInstanceOf(ResourceNotFoundError)
@@ -221,14 +230,16 @@ describe('Create Event Ticket', () => {
 
     const events = [
       {
-        userId: user.id,
-        eventId: 1232131,
-        lot: eventLot.lot,
+        eventLotId: eventLot.id,
         quantity: 1,
       },
     ]
 
-    const result = await sut.execute(events)
+    const result = await sut.execute({
+      buyerId: user.id,
+      eventId: 31232131,
+      eventLotInfo: events,
+    })
 
     expect(result.isError()).toBe(true)
     expect(result.value).toBeInstanceOf(ResourceNotFoundError)
@@ -250,14 +261,16 @@ describe('Create Event Ticket', () => {
 
     const events = [
       {
-        userId: user.id,
-        eventId: event.id,
-        lot: eventLot.lot,
+        eventLotId: eventLot.id,
         quantity: 1,
       },
     ]
 
-    const result = await sut.execute(events)
+    const result = await sut.execute({
+      buyerId: user.id,
+      eventId: event.id,
+      eventLotInfo: events,
+    })
 
     expect(result.isSuccess()).toBe(true)
 

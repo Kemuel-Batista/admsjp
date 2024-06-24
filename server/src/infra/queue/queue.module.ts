@@ -1,7 +1,7 @@
 import { Module, OnModuleInit } from '@nestjs/common'
 
 import { EventQueue } from '@/domain/admsjp/queue/event-queue'
-import { CreateEventTicketUseCase } from '@/domain/admsjp/use-cases/event-ticket/create-event-ticket'
+import { CreateEventPurchaseUseCase } from '@/domain/admsjp/use-cases/event-purchase/create-event-purchase'
 
 import { DatabaseModule } from '../database/database.module'
 import { GeneratorsModule } from '../generators/generators.module'
@@ -13,7 +13,7 @@ import { EventQueueRabbitMQ } from './event-queue-rabbitmq'
   imports: [DatabaseModule, GeneratorsModule, WebsocketModule],
   providers: [
     { provide: EventQueue, useClass: EventQueueRabbitMQ },
-    CreateEventTicketUseCase,
+    CreateEventPurchaseUseCase,
     EventQueueConsumer,
   ],
   exports: [EventQueue],

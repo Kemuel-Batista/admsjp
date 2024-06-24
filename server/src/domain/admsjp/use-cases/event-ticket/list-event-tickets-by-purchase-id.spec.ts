@@ -1,39 +1,41 @@
 import { makeEvent } from 'test/factories/make-event'
 import { makeEventLot } from 'test/factories/make-event-lot'
+import { makeEventPurchase } from 'test/factories/make-event-purchase'
 import { makeEventTicket } from 'test/factories/make-event-ticket'
 import { makeUser } from 'test/factories/make-user'
-import { InMemoryDepartmentsRepository } from 'test/repositories/in-memory-departments-repository'
 import { InMemoryEventLotsRepository } from 'test/repositories/in-memory-event-lots-repository'
+import { InMemoryEventPurchasesRepository } from 'test/repositories/in-memory-event-purchases-repository'
 import { InMemoryEventTicketsRepository } from 'test/repositories/in-memory-event-tickets-repository'
 import { InMemoryEventsRepository } from 'test/repositories/in-memory-events-repository'
 import { InMemoryUsersRepository } from 'test/repositories/in-memory-users-repository'
 
-import { ListEventTicketsByEventIdUseCase } from './list-event-tickets-by-event-id'
+import { ListEventTicketsByPurchaseIdUseCase } from './list-event-tickets-by-purchase-id'
 
 let inMemoryUsersRepository: InMemoryUsersRepository
-let inMemoryDepartmentsRepository: InMemoryDepartmentsRepository
 let inMemoryEventsRepository: InMemoryEventsRepository
 let inMemoryEventLotsRepository: InMemoryEventLotsRepository
 let inMemoryEventTicketsRepository: InMemoryEventTicketsRepository
+let inMemoryEventPurchasesRepository: InMemoryEventPurchasesRepository
 
-let sut: ListEventTicketsByEventIdUseCase
+let sut: ListEventTicketsByPurchaseIdUseCase
 
 describe('List event tickets by event id', () => {
   beforeEach(() => {
     inMemoryUsersRepository = new InMemoryUsersRepository()
-    inMemoryDepartmentsRepository = new InMemoryDepartmentsRepository()
     inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
     inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
-      inMemoryUsersRepository,
-      inMemoryDepartmentsRepository,
-      inMemoryEventsRepository,
       inMemoryEventLotsRepository,
     )
-
-    sut = new ListEventTicketsByEventIdUseCase(
-      inMemoryEventTicketsRepository,
+    inMemoryEventPurchasesRepository = new InMemoryEventPurchasesRepository(
+      inMemoryUsersRepository,
       inMemoryEventsRepository,
+      inMemoryEventTicketsRepository,
+    )
+
+    sut = new ListEventTicketsByPurchaseIdUseCase(
+      inMemoryEventTicketsRepository,
+      inMemoryEventPurchasesRepository,
     )
   })
 
@@ -49,15 +51,20 @@ describe('List event tickets by event id', () => {
     })
     const eventLot = await inMemoryEventLotsRepository.create(eventLotFactory)
 
-    const eventTicketFactory = makeEventTicket({
-      createdBy: user.id,
+    const eventPurchaseFactory = makeEventPurchase({
       eventId: event.id,
-      lot: eventLot.lot,
+    })
+    const eventPurchase =
+      await inMemoryEventPurchasesRepository.create(eventPurchaseFactory)
+
+    const eventTicketFactory = makeEventTicket({
+      eventPurchaseId: eventPurchase.id,
+      eventLotId: eventLot.id,
     })
     await inMemoryEventTicketsRepository.create(eventTicketFactory)
 
     const result = await sut.execute({
-      eventId: event.id,
+      purchaseId: eventPurchase.id,
     })
 
     expect(result.isSuccess()).toBe(true)

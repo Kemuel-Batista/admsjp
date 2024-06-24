@@ -6,12 +6,14 @@ import { IListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import { EventPurchasesRepository } from '@/domain/admsjp/repositories/event-purchases-repository'
 import {
+  EventPurchaseWithBuyer,
   EventPurchaseWithEvent,
   EventPurchaseWithEventTickets,
 } from '@/domain/admsjp/types/event-purchase'
 
 import { InMemoryEventTicketsRepository } from './in-memory-event-tickets-repository'
 import { InMemoryEventsRepository } from './in-memory-events-repository'
+import { InMemoryUsersRepository } from './in-memory-users-repository'
 
 export class InMemoryEventPurchasesRepository
   implements EventPurchasesRepository
@@ -19,6 +21,7 @@ export class InMemoryEventPurchasesRepository
   public items: EventPurchase[] = []
 
   constructor(
+    private usersRepository: InMemoryUsersRepository,
     private eventsRepository: InMemoryEventsRepository,
     private eventTicketsRepository: InMemoryEventTicketsRepository,
   ) {}
@@ -62,6 +65,16 @@ export class InMemoryEventPurchasesRepository
     this.items[itemIndex] = eventUpdated
 
     return event
+  }
+
+  async findById(id: string): Promise<EventPurchase> {
+    const eventPurchase = this.items.find((item) => item.id === id)
+
+    if (!eventPurchase) {
+      return null
+    }
+
+    return eventPurchase
   }
 
   async lastInvoiceNumber(): Promise<string> {
@@ -165,5 +178,41 @@ export class InMemoryEventPurchasesRepository
       })
 
     return eventTicket
+  }
+
+  async listBuyerDetailsByEventId(
+    eventId: EventPurchase['eventId'],
+  ): Promise<EventPurchaseWithBuyer[]> {
+    const eventPurchases = this.items
+      .filter((item) => item.eventId === eventId)
+      .map((eventPurchase) => {
+        const user = this.usersRepository.items.find((item) => {
+          return item.id === eventPurchase.buyerId
+        })
+
+        return {
+          ...eventPurchase,
+          user: {
+            name: user.name,
+            email: user.email,
+          },
+        }
+      })
+
+    return eventPurchases
+  }
+
+  async listCloseToExpiry(): Promise<EventPurchase[]> {
+    const eventTickets = this.items
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .filter((item) => item.expiresAt !== null)
+
+    return eventTickets
+  }
+
+  async delete(id: string): Promise<void> {
+    const itemIndex = this.items.findIndex((item) => item.id === id)
+
+    this.items.splice(itemIndex, 1)
   }
 }

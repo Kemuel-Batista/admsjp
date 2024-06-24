@@ -5,8 +5,7 @@ const pt = {
     },
     find: {
       notFound: 'Não foi possível localizar o event ticket {{key}}',
-      incorrectAssociation:
-        'Usuário não tem permissão para completar o registro dos ingressos',
+      incorrectAssociation: 'Esse ingresso não pertence a essa compra',
     },
   },
 }

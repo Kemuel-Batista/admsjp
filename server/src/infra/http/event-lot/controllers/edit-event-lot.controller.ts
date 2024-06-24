@@ -15,6 +15,7 @@ import { Profiles } from '@/infra/auth/profiles'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 
 const editEventLotSchema = z.object({
+  id: z.string().uuid(),
   eventId: z.number().int().positive(),
   lot: z.number().int().positive(),
   quantity: z.number().int().positive(),
@@ -35,9 +36,10 @@ export class EditEventLotController {
   @Put()
   @HttpCode(HttpStatus.NO_CONTENT)
   async handle(@Body(bodyValidationPipe) body: EditEventLotSchema) {
-    const { eventId, lot, quantity, status, value } = body
+    const { id, eventId, lot, quantity, status, value } = body
 
     await this.editEventLot.execute({
+      id,
       eventId,
       lot,
       quantity,

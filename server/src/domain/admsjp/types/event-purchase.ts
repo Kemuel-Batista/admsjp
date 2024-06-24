@@ -14,6 +14,17 @@ export type EventPurchaseWithEvent = Prisma.EventPurchaseGetPayload<{
   }
 }>
 
+export type EventPurchaseWithBuyer = Prisma.EventPurchaseGetPayload<{
+  include: {
+    user: {
+      select: {
+        email: true
+        name: true
+      }
+    }
+  }
+}>
+
 export type EventPurchaseWithEventTickets = Prisma.EventPurchaseGetPayload<{
   include: {
     eventTickets: true

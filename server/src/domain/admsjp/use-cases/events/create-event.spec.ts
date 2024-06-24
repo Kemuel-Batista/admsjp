@@ -7,6 +7,7 @@ import { InMemoryUsersRepository } from 'test/repositories/in-memory-users-repos
 import { FakeUploader } from 'test/storage/fake-storage'
 
 import {
+  EventPixType,
   EventStatus,
   EventType,
   EventVisible,
@@ -86,6 +87,8 @@ describe('Create Event', () => {
         },
       ],
       address: null,
+      pixKey: '',
+      pixType: EventPixType.CHAVE,
       createdBy: user.id,
     })
 
@@ -163,6 +166,8 @@ describe('Create Event', () => {
         latitude: new Decimal(321321),
         longitude: new Decimal(321321),
       },
+      pixKey: '',
+      pixType: EventPixType.CHAVE,
       createdBy: user.id,
     })
 

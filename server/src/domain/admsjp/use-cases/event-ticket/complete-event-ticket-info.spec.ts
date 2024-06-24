@@ -1,10 +1,12 @@
 import { makeDepartment } from 'test/factories/make-department'
 import { makeEvent } from 'test/factories/make-event'
 import { makeEventLot } from 'test/factories/make-event-lot'
+import { makeEventPurchase } from 'test/factories/make-event-purchase'
 import { makeEventTicket } from 'test/factories/make-event-ticket'
 import { makeUser } from 'test/factories/make-user'
 import { InMemoryDepartmentsRepository } from 'test/repositories/in-memory-departments-repository'
 import { InMemoryEventLotsRepository } from 'test/repositories/in-memory-event-lots-repository'
+import { InMemoryEventPurchasesRepository } from 'test/repositories/in-memory-event-purchases-repository'
 import { InMemoryEventTicketsRepository } from 'test/repositories/in-memory-event-tickets-repository'
 import { InMemoryEventsRepository } from 'test/repositories/in-memory-events-repository'
 import { InMemoryUsersRepository } from 'test/repositories/in-memory-users-repository'
@@ -16,6 +18,7 @@ let inMemoryDepartmentsRepository: InMemoryDepartmentsRepository
 let inMemoryEventsRepository: InMemoryEventsRepository
 let inMemoryEventLotsRepository: InMemoryEventLotsRepository
 let inMemoryEventTicketsRepository: InMemoryEventTicketsRepository
+let inMemoryEventPurchasesRepository: InMemoryEventPurchasesRepository
 
 let sut: CompleteEventTicketInfoUseCase
 
@@ -26,13 +29,18 @@ describe('Complete event ticket info', () => {
     inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
     inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
-      inMemoryUsersRepository,
-      inMemoryDepartmentsRepository,
-      inMemoryEventsRepository,
       inMemoryEventLotsRepository,
     )
+    inMemoryEventPurchasesRepository = new InMemoryEventPurchasesRepository(
+      inMemoryUsersRepository,
+      inMemoryEventsRepository,
+      inMemoryEventTicketsRepository,
+    )
 
-    sut = new CompleteEventTicketInfoUseCase(inMemoryEventTicketsRepository)
+    sut = new CompleteEventTicketInfoUseCase(
+      inMemoryEventTicketsRepository,
+      inMemoryEventPurchasesRepository,
+    )
   })
 
   it('should be able to complete an event ticket information', async () => {
@@ -53,16 +61,22 @@ describe('Complete event ticket info', () => {
     })
     const eventLot = await inMemoryEventLotsRepository.create(eventLotFactory)
 
-    const eventTicketFactory = makeEventTicket({
+    const eventPurchaseFactory = makeEventPurchase({
       eventId: event.id,
-      createdBy: user.id,
-      lot: eventLot.lot,
+    })
+    const eventPurchase =
+      await inMemoryEventPurchasesRepository.create(eventPurchaseFactory)
+
+    const eventTicketFactory = makeEventTicket({
+      eventLotId: eventLot.id,
+      eventPurchaseId: eventPurchase.id,
     })
     const eventTicket =
       await inMemoryEventTicketsRepository.create(eventTicketFactory)
 
     const result = await sut.execute({
       id: eventTicket.id,
+      eventPurchaseId: eventPurchase.id,
       name: user.name,
       email: user.email,
       cpf: '123124234312',
