@@ -46,6 +46,7 @@ import { ParameterHttpModule } from './parameter/parameter-http.module'
     EventHttpModule,
     EventAddressHttpModule,
     EventLotHttpModule,
+    EventPurchaseHttpModule,
     EventTicketHttpModule,
     RouterModule.register([
       {

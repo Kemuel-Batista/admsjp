@@ -1,14 +1,25 @@
 import { z } from 'zod'
 
 export const completeEventTicketInfoSchema = z.object({
-  tickets: z.array(
+  data: z.array(
     z.object({
       id: z.string().uuid(),
-      name: z.string(),
-      email: z.string().email(),
-      cpf: z.string().min(11).max(11),
-      phone: z.string().max(11),
-      birthday: z.date(),
+      eventPurchaseId: z.string().uuid(),
+      name: z.string({ required_error: 'Nome não pode estar vazio' }),
+      email: z
+        .string({ required_error: 'E-mail não pode estar vazio' })
+        .email({ message: 'O formato do e-mail não é válido!' }),
+      cpf: z
+        .string({ required_error: 'CPF não pode estar vazio' })
+        .min(11, { message: 'CPF deve conter 11 caracteres' })
+        .max(11, { message: 'CPF deve conter 11 caracteres' }),
+      phone: z
+        .string({ required_error: 'Telefone não pode estar vazio' })
+        .min(11, { message: 'Telefone deve conter 11 caracteres' })
+        .max(11, { message: 'Telefone deve conter 11 caracteres' }),
+      birthday: z.date({
+        required_error: 'Data de nascimento não deve estar vazia',
+      }),
     }),
   ),
 })

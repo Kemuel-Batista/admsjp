@@ -1,11 +1,16 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Calendar, CircleUser, MapPin } from 'lucide-react'
+import { setCookie } from 'cookies-next'
+import { format } from 'date-fns'
+import { Calendar as CalendarIcon, CircleUser, MapPin } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   Collapsible,
@@ -22,8 +27,14 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { Separator } from '@/components/ui/separator'
 import { useAuth } from '@/contexts/auth-context'
+import { cn } from '@/lib/utils'
 import { GetEventBySlugService } from '@/modules/events/services/get-event-by-slug'
 import { maskEventDate } from '@/utils/masks'
 
@@ -31,8 +42,11 @@ import { GetEventAddressByEventIdService } from '../../event-address/services/ge
 import {
   CompleteEventTicketInfoFormData,
   completeEventTicketInfoSchema,
-} from '../schemas/complete-ticket-info-schema'
-import { ListEventTicketsUnexpired } from '../services/list-event-tickets-unexpired'
+} from '../../tickets/schemas/complete-ticket-info-schema'
+import { CompleteEventTicketInfoService } from '../../tickets/services/complete-event-ticket-info'
+import { EventTicket } from '../../tickets/types/event-ticket'
+import { ListEventPurchasesUnexpired } from '../services/list-event-tickets-unexpired'
+import { EventPurchaseInfo } from '../types/event-purchase-info'
 import { CheckoutSummaryView } from './checkout-summary-view'
 
 interface EventCheckoutViewProps {
@@ -41,10 +55,16 @@ interface EventCheckoutViewProps {
 
 export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
   const { user } = useAuth()
-  const { data: ticketsResult } = ListEventTicketsUnexpired({
+  const router = useRouter()
+  const { data: purchasesResult } = ListEventPurchasesUnexpired({
     allRecords: true,
   })
-  const tickets = ticketsResult?.eventTickets || []
+  const purchases = purchasesResult?.eventPurchases || []
+  let tickets: EventTicket[] = []
+
+  purchases.forEach((purchase) => {
+    tickets = purchase.eventTickets
+  })
 
   const { data } = GetEventBySlugService(slug)
   const event = data?.event
@@ -55,46 +75,75 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
   const form = useForm<CompleteEventTicketInfoFormData>({
     resolver: zodResolver(completeEventTicketInfoSchema),
     defaultValues: {
-      tickets: tickets.map((ticket) => ({
+      data: tickets.map((ticket) => ({
         id: ticket.id,
-        name: ticket.name,
+        eventPurchaseId: ticket.eventPurchaseId,
         email: ticket.email,
         cpf: ticket.cpf,
-        phone: ticket.phone,
-        birthday: ticket.birthday,
+        birthday: new Date(ticket.birthday),
       })),
     },
   })
 
   const { fields } = useFieldArray({
     control: form.control,
-    name: 'tickets',
+    name: 'data',
   })
 
   useEffect(() => {
     form.reset({
-      tickets: tickets.map((ticket) => ({
+      data: tickets.map((ticket) => ({
         id: ticket.id,
-        name: ticket.name,
+        eventPurchaseId: purchases[0].id,
         email: ticket.email,
         cpf: ticket.cpf,
-        phone: ticket.phone,
-        birthday: ticket.birthday,
+        birthday: new Date(ticket.birthday),
       })),
     })
   }, [tickets, form])
+
+  const { mutateAsync, isPending } = CompleteEventTicketInfoService()
+
+  async function onSubmit(data: CompleteEventTicketInfoFormData) {
+    await mutateAsync(data, {
+      onSuccess: () => {
+        const eventPurchaseInfo: EventPurchaseInfo = {
+          eventPurchaseId: purchases[0].id,
+          title: event?.title ?? '',
+          pixKey: event?.pixKey ?? '',
+          pixType: event?.pixType ?? 0,
+          slug: event?.slug ?? '',
+          eventId: purchases[0].eventId,
+          expiresAt: purchases[0].expiresAt,
+          eventTickets: purchases[0].eventTickets,
+        }
+
+        setCookie('admsjp.event-purchase', JSON.stringify(eventPurchaseInfo), {
+          expires: new Date(purchases[0].expiresAt),
+          sameSite: true,
+        })
+
+        router.push(`/events/${slug}/checkout/payment`)
+
+        form.reset()
+      },
+    })
+  }
 
   return (
     <Form {...form}>
       <div className="flex items-center justify-center h-12 bg-popover-foreground">
         <Label className="text-popover">ADMSJP</Label>
       </div>
-      <form className="grid grid-cols-[10fr_4fr] px-24 p-6">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="grid grid-cols-[10fr_4fr] px-24 p-6 mobile:px-12 mobile:grid-cols-1 mobile:gap-4"
+      >
         <main>
           <div className="flex flex-col gap-4 justify-center">
             <Label className="text-3xl font-bold">{event?.title}</Label>
             <div className="flex gap-2">
-              <Calendar size={24} />
+              <CalendarIcon size={24} />
               <Label className="text-base font-normal">
                 {maskEventDate(event?.initialDate)}
               </Label>
@@ -143,14 +192,14 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
             </Label>
             {fields.map((field, index) => (
               <Collapsible key={field.id} defaultOpen>
-                <CollapsibleTrigger className="w-full text-start border border-1 p-2 rounded-lg">
+                <CollapsibleTrigger className="w-full text-start border-b-4 p-2 rounded-b-lg">
                   Ingresso {index + 1}
                 </CollapsibleTrigger>
-                <CollapsibleContent className="mt-5 gap-2">
+                <CollapsibleContent className="grid mt-5 gap-4">
                   <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name={`tickets.${index}.name`}
+                      name={`data.${index}.name`}
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Nome</FormLabel>
@@ -164,7 +213,7 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
 
                     <FormField
                       control={form.control}
-                      name={`tickets.${index}.email`}
+                      name={`data.${index}.email`}
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>E-mail</FormLabel>
@@ -180,7 +229,7 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
                   <div className="grid grid-cols-3 gap-4">
                     <FormField
                       control={form.control}
-                      name={`tickets.${index}.cpf`}
+                      name={`data.${index}.cpf`}
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>CPF</FormLabel>
@@ -193,7 +242,7 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
                     />
                     <FormField
                       control={form.control}
-                      name={`tickets.${index}.phone`}
+                      name={`data.${index}.phone`}
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Telefone</FormLabel>
@@ -207,16 +256,45 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
 
                     <FormField
                       control={form.control}
-                      name={`tickets.${index}.phone`}
+                      name={`data.${index}.birthday`}
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Data de nascimento</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Data de nascimento"
-                              {...field}
-                            />
-                          </FormControl>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={'outline'}
+                                  className={cn(
+                                    'w-full pl-3 text-left font-normal',
+                                    !field.value && 'text-muted-foreground',
+                                  )}
+                                >
+                                  {field.value ? (
+                                    format(field.value, 'dd LLL, y')
+                                  ) : (
+                                    <span>Selecione uma data</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) =>
+                                  date > new Date() ||
+                                  date < new Date('1900-01-01')
+                                }
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -228,6 +306,9 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
           </div>
         </main>
         <CheckoutSummaryView tickets={tickets} eventId={event?.id} />
+        <Button type="submit" disabled={isPending}>
+          Continuar para pagamento
+        </Button>
       </form>
     </Form>
   )

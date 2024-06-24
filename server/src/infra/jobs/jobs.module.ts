@@ -7,6 +7,6 @@ import { ClearExpiredPurchasesJobService } from './event-purchase/clear-expired-
 
 @Module({
   imports: [DatabaseModule],
-  providers: [ClearExpiredPurchasesJobService, ClearExpiredPurchasesJob],
+  providers: [ClearExpiredPurchasesJob, ClearExpiredPurchasesJobService],
 })
 export class JobsModule {}

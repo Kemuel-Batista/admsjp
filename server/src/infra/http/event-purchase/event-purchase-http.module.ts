@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common'
 import { CreateEventPurchaseUseCase } from '@/domain/admsjp/use-cases/event-purchase/create-event-purchase'
 import { ListEventPurchasesByUserIdUseCase } from '@/domain/admsjp/use-cases/event-purchase/list-event-purchases-by-user-id'
 import { ListUnexpiredEventPurchasesWithDetailsByUserIdUseCase } from '@/domain/admsjp/use-cases/event-purchase/list-unexpired-event-purchases-with-details-by-user-id'
+import { RegisterEventQueue } from '@/domain/admsjp/use-cases/queues/register-event-queue'
 import { DatabaseModule } from '@/infra/database/database.module'
 import { GeneratorsModule } from '@/infra/generators/generators.module'
 import { QueueModule } from '@/infra/queue/queue.module'
@@ -19,6 +20,7 @@ import { ListUnexpiredEventPurchasesWithDetailsByUserIdController } from './cont
     ListEventPurchasesByUserIdController,
   ],
   providers: [
+    RegisterEventQueue,
     CreateEventPurchaseUseCase,
     ListUnexpiredEventPurchasesWithDetailsByUserIdUseCase,
     ListEventPurchasesByUserIdUseCase,

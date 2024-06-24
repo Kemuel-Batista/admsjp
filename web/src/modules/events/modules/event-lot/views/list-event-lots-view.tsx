@@ -8,8 +8,8 @@ import { Separator } from '@/components/ui/separator'
 import { useAuth } from '@/contexts/auth-context'
 import { maskCurrency } from '@/utils/masks'
 
-import { CreateEventTicketFormData } from '../../tickets/schemas/create-validation-schema'
-import { CreateEventTicketService } from '../../tickets/services/create-event-ticket'
+import { CreateEventPurchaseFormData } from '../../purchase/schemas/create-validation-schema'
+import { CreateEventPurchaseService } from '../../purchase/services/create-event-purchase'
 import { ListEventLotByEventId } from '../services/list-event-lot-by-event-id'
 import { EventLot } from '../types/event-lot'
 
@@ -69,14 +69,18 @@ export function ListEventLotsView({
     router.push('/login')
   }
 
-  const { mutateAsync } = CreateEventTicketService()
+  const { mutateAsync } = CreateEventPurchaseService()
 
   async function handleCreateEventTickets() {
-    const form: CreateEventTicketFormData = eventLots.map((item, index) => ({
-      eventId: Number(eventId),
-      lot: index + 1,
+    const eventLotInfo = eventLots.map((item, index) => ({
+      eventLotId: item.id,
       quantity: counts[index],
     }))
+
+    const form: CreateEventPurchaseFormData = {
+      eventId: Number(eventId),
+      eventLotInfo,
+    }
 
     await mutateAsync(form, {
       onSuccess: () => {

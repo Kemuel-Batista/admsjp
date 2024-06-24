@@ -7,7 +7,7 @@ import { maskCurrency } from '@/utils/masks'
 
 import { ListEventLotByEventId } from '../../event-lot/services/list-event-lot-by-event-id'
 import { EventLot } from '../../event-lot/types/event-lot'
-import { EventTicket } from '../types/event-ticket'
+import { EventTicket } from '../../tickets/types/event-ticket'
 
 interface CheckoutSummaryViewProps {
   eventId?: number
@@ -41,7 +41,7 @@ export function CheckoutSummaryView({
 
     const result = eventLots.map((eventLot) => {
       const filteredTickets = tickets.filter(
-        (ticket) => ticket.lot === eventLot.lot,
+        (ticket) => ticket.eventLotId === eventLot.id,
       )
       const totalQuantity = filteredTickets.length
       const totalValueForLot = totalQuantity * eventLot.value
