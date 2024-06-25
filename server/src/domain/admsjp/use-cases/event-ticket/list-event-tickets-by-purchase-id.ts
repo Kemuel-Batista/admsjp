@@ -6,6 +6,7 @@ import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-e
 
 import { EventPurchasesRepository } from '../../repositories/event-purchases-repository'
 import { EventTicketsRepository } from '../../repositories/event-tickets-repository'
+import { EventTicketWithEventLot } from '../../types/event-ticket'
 
 interface ListEventTicketsByPurchaseIdUseCaseRequest {
   purchaseId: EventTicket['eventPurchaseId']
@@ -14,7 +15,7 @@ interface ListEventTicketsByPurchaseIdUseCaseRequest {
 type ListEventTicketsByPurchaseIdUseCaseResponse = Either<
   ResourceNotFoundError,
   {
-    eventTickets: EventTicket[]
+    eventTickets: EventTicketWithEventLot[]
   }
 >
 

@@ -93,13 +93,33 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
   async listByEventPurchaseId(
     eventPurchaseId: EventTicket['eventPurchaseId'],
     options?: IListOptions,
-  ): Promise<EventTicket[]> {
+  ): Promise<EventTicketWithEventLot[]> {
     const eventPurchases = this.items
 
     const { skip, take } = calcPagination(options)
     const eventTickets = eventPurchases
       .filter((item) => item.eventPurchaseId === eventPurchaseId)
       .slice(skip, skip + take)
+      .map((item) => {
+        const eventLot = this.eventLotsRepository.items.find((eventLot) => {
+          return eventLot.id === item.eventLotId
+        })
+
+        if (!eventLot) {
+          throw new Error(
+            `Event Lot with lot "${item.eventLotId.toString()}" does not exist.`,
+          )
+        }
+
+        return {
+          ...item,
+          eventLot: {
+            name: eventLot.name,
+            lot: eventLot.lot,
+            value: eventLot.value,
+          },
+        }
+      })
 
     return eventTickets
   }

@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { deleteCookie, getCookie } from 'cookies-next'
+import { getCookie } from 'cookies-next'
 import { Copy } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
@@ -50,11 +50,7 @@ export function CheckoutPaymentView() {
   async function onSubmit(data: CreateManualPaymentFormData) {
     await mutateAsync(data, {
       onSuccess: () => {
-        router.push('/')
-
-        if (!isPending) {
-          deleteCookie('admsjp.event-purchase')
-        }
+        router.push('/purchases')
       },
     })
   }

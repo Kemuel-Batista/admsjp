@@ -18,7 +18,7 @@ export abstract class EventTicketsRepository {
   abstract listByEventPurchaseId(
     eventPurchaseId: EventTicket['eventPurchaseId'],
     options?: IListOptions,
-  ): Promise<EventTicket[]>
+  ): Promise<EventTicketWithEventLot[]>
 
   abstract listByEventLotId(
     eventLotId: EventTicket['eventLotId'],

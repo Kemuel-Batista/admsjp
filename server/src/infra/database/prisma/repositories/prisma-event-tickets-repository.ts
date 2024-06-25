@@ -76,6 +76,7 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
       include: {
         eventLot: {
           select: {
+            name: true,
             lot: true,
             value: true,
           },
@@ -89,7 +90,7 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
   async listByEventPurchaseId(
     eventPurchaseId: EventTicket['eventPurchaseId'],
     options?: IListOptions,
-  ): Promise<EventTicket[]> {
+  ): Promise<EventTicketWithEventLot[]> {
     const { skip, take } = calcPagination(options)
 
     const eventTickets = await this.prisma.eventTicket.findMany({
@@ -98,6 +99,15 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
       },
       skip,
       take,
+      include: {
+        eventLot: {
+          select: {
+            name: true,
+            lot: true,
+            value: true,
+          },
+        },
+      },
     })
 
     return eventTickets

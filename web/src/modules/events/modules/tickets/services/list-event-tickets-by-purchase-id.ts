@@ -1,9 +1,9 @@
 import { PaginateParams, usePaginateQuery } from '@/hooks/use-paginate-query'
 
-import { EventTicket } from '../types/event-ticket'
+import { EventTicketWithEventLot } from '../types/event-ticket-with-event-lot'
 
 export interface ListEventTicketsByPurchaseIdServiceResponse {
-  eventTickets: EventTicket[]
+  eventTickets: EventTicketWithEventLot[]
 }
 
 export const ListEventTicketsByPurchaseIdService = (
