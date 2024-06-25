@@ -129,10 +129,10 @@ export const DatagridTable = ({
 
   return (
     <div className="datagrid flex flex-col w-full border-gray-300 border-[1px] border-b-0 rounded-tr-lg rounded-tl-lg">
-      {/* <div className="flex items-center justify-between w-full px-6 py-4 !border-gray-300 border-b-[1px]">
+      <div className="hidden items-center justify-between w-full px-6 py-4 !border-gray-300 border-b-[1px]">
         <h2 className="text-lg font-medium">Listagem de {title}</h2>
         {actionsDatagrid}
-      </div> */}
+      </div>
 
       <div className="table table-fixed w-full">
         <div className="table-cell overflow-x-auto w-full">
