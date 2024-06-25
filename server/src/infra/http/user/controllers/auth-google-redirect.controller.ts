@@ -78,9 +78,7 @@ export class AuthGoogleRedirectController {
     response.cookie('nextauth_token', accessToken, {
       expires: new Date(Date.now() + 1 * 60 * 60 * 1000), // 1 hora em milissegundos
       httpOnly: true,
-      path: '/',
       secure: true, // HTTPS
-      sameSite: 'strict',
     })
 
     response.redirect(`${process.env.APP_BASE_URL}`)
