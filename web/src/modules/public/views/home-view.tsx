@@ -16,7 +16,6 @@ import { env } from '@/env'
 import { ListPublicEventsService } from '@/modules/events/services/list-public-events'
 import { dateFormat } from '@/utils/date-format'
 
-import Banner from '../../../../public/capa-site.png'
 import { Nav } from '../components/nav'
 
 export function HomeView() {
@@ -31,7 +30,14 @@ export function HomeView() {
       <Nav />
       <main>
         <div className="flex flex-col items-center justify-center flex-1 h-full">
-          <Image src={Banner} alt="Banner" unoptimized />
+          <Image
+            src={`${env.NEXT_PUBLIC_API_BUCKET_URL}/${env.NEXT_PUBLIC_API_BUCKET_NAME}/capa-site.png`}
+            className="w-full"
+            alt="Banner"
+            unoptimized
+            width={300}
+            height={24}
+          />
         </div>
         <div className="grid px-24 pt-10 gap-10 mobile:px-6 mobile:gap-4">
           <Label className="text-xl mobile:text-lg">
