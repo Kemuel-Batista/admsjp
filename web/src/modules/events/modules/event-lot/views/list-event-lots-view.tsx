@@ -101,7 +101,7 @@ export function ListEventLotsView({
   }
 
   return (
-    <Card className="flex flex-col mobile:max-w-xs">
+    <Card className="flex flex-col mobile:max-w-sm">
       <CardHeader className="bg-primary rounded-md p-3">
         <h2 className="text-lg font-bold text-primary-foreground mobile:text-sm">
           Ingressos

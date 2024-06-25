@@ -3,7 +3,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import {
   Carousel,
   CarouselContent,
@@ -72,6 +73,9 @@ export function HomeView() {
                           {item.title}
                         </Label>
                       </CardContent>
+                      <CardFooter>
+                        <Button className="w-full">Inscreve-se</Button>
+                      </CardFooter>
                     </Card>
                   </Link>
                 </CarouselItem>

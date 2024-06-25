@@ -64,7 +64,7 @@ export function EventDetailsBySlugMobileView({
         </div>
         <div className="flex flex-col px-6 w-full gap-4">
           <Label className="text-lg">Descrição do evento</Label>
-          <p className="text-sm">{event?.description}</p>
+          <p className="whitespace-pre-wrap">{event?.description}</p>
           <Separator />
           {address && (
             <>
