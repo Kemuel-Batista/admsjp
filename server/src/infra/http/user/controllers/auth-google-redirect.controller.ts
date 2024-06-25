@@ -79,6 +79,8 @@ export class AuthGoogleRedirectController {
       expires: new Date(Date.now() + 1 * 60 * 60 * 1000), // 1 hora em milissegundos
       httpOnly: true,
       secure: true, // HTTPS
+      sameSite: 'none',
+      domain: 'restaurantevip.cloud',
     })
 
     response.redirect(`${process.env.APP_BASE_URL}`)
