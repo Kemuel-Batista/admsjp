@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { EventPurchase } from '@prisma/client'
 
-import { Either, failure } from '@/core/either'
+import { Either, failure, success } from '@/core/either'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 import { TicketsSoldOutError } from '@/core/errors/errors/tickets-sold-out-error'
 
@@ -138,5 +138,9 @@ export class CreateEventPurchaseUseCase {
     })
 
     await Promise.all(eventTicketsPromise)
+
+    return success({
+      eventPurchase,
+    })
   }
 }

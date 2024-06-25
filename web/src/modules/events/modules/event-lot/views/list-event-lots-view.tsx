@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+import { Icons } from '@/components/ui/icons'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { useAuth } from '@/contexts/auth-context'
@@ -69,7 +70,7 @@ export function ListEventLotsView({
     router.push('/login')
   }
 
-  const { mutateAsync } = CreateEventPurchaseService()
+  const { mutateAsync, isPending } = CreateEventPurchaseService()
 
   async function handleCreateEventTickets() {
     const eventLotInfo: {
@@ -155,6 +156,7 @@ export function ListEventLotsView({
           <Button
             variant="outline"
             className="w-full"
+            disabled={isPending}
             onClick={handleNavigateToLogin}
           >
             Selecione uma inscrição
@@ -174,9 +176,10 @@ export function ListEventLotsView({
             <Button
               variant="outline"
               className="w-full"
+              disabled={isPending}
               onClick={handleCreateEventTickets}
             >
-              Realizar inscrição
+              {isPending ? <Icons.spinner /> : 'Realizar inscrição'}
             </Button>
           </div>
         )}
