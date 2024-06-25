@@ -83,6 +83,8 @@ export class AuthGoogleRedirectController {
       domain: 'app.restaurantevip.cloud',
     })
 
-    response.redirect(`${process.env.APP_BASE_URL}`)
+    response.redirect(
+      `${process.env.APP_BASE_URL}/google/redirect/${accessToken}`,
+    )
   }
 }
