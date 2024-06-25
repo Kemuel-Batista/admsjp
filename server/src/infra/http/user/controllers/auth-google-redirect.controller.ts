@@ -80,7 +80,7 @@ export class AuthGoogleRedirectController {
       httpOnly: false,
       secure: true, // HTTPS
       sameSite: 'none',
-      domain: 'umadsjp.vercel.app',
+      domain: 'app.restaurantevip.cloud',
     })
 
     response.redirect(`${process.env.APP_BASE_URL}`)

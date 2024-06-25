@@ -21,7 +21,7 @@ async function bootstrap() {
       'Content-Type',
       'Accept',
     ],
-    exposedHeaders: ['set-cookie'],
+    exposedHeaders: ['Set-Cookie'],
   }
 
   app.enableCors(corsOptions)
