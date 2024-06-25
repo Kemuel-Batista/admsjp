@@ -6,7 +6,6 @@ import { envSchema } from './env/env'
 import { EnvModule } from './env/env.module'
 import { HttpModule } from './http/http.module'
 import { JobsModule } from './jobs/jobs.module'
-import { QueueModule } from './queue/queue.module'
 import { WebsocketModule } from './websocket/websocket.module'
 
 @Module({
@@ -19,7 +18,6 @@ import { WebsocketModule } from './websocket/websocket.module'
     AuthModule,
     HttpModule,
     EnvModule,
-    QueueModule,
     JobsModule,
   ],
 })

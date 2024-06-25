@@ -23,7 +23,7 @@ interface CreateEventPurchaseUseCaseRequest {
 }
 
 type CreateEventPurchaseUseCaseResponse = Either<
-  ResourceNotFoundError,
+  ResourceNotFoundError | TicketsSoldOutError,
   {
     eventPurchase: EventPurchase
   }

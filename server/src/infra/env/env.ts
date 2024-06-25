@@ -19,7 +19,7 @@ export const envSchema = z.object({
   AWS_ACCESS_KEY_ID: z.string(),
   AWS_SECRET_ACCESS_KEY: z.string(),
   SOCKETIO_SERVER_PORT: z.coerce.number(),
-  SOCKETIO_SERVER_PATH: z.string(),
+  SOCKETIO_SERVER_PATH: z.string().optional(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
 })

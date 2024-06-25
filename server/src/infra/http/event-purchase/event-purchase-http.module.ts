@@ -4,10 +4,8 @@ import { CancelEventPurchaseByExpiredTimeUseCase } from '@/domain/admsjp/use-cas
 import { CreateEventPurchaseUseCase } from '@/domain/admsjp/use-cases/event-purchase/create-event-purchase'
 import { ListEventPurchasesByUserIdUseCase } from '@/domain/admsjp/use-cases/event-purchase/list-event-purchases-by-user-id'
 import { ListUnexpiredEventPurchasesWithDetailsByUserIdUseCase } from '@/domain/admsjp/use-cases/event-purchase/list-unexpired-event-purchases-with-details-by-user-id'
-import { RegisterEventQueue } from '@/domain/admsjp/use-cases/queues/register-event-queue'
 import { DatabaseModule } from '@/infra/database/database.module'
 import { GeneratorsModule } from '@/infra/generators/generators.module'
-import { QueueModule } from '@/infra/queue/queue.module'
 
 import { CancelEventPurchaseByExpiredTimeController } from './controllers/cancel-event-purchase-by-expired-time.controller'
 import { CreateEventPurchaseController } from './controllers/create-event-purchase.controller'
@@ -15,7 +13,7 @@ import { ListEventPurchasesByUserIdController } from './controllers/list-event-p
 import { ListUnexpiredEventPurchasesWithDetailsByUserIdController } from './controllers/list-unexpired-event-purchases-with-details-by-user-id.controller'
 
 @Module({
-  imports: [DatabaseModule, QueueModule, GeneratorsModule],
+  imports: [DatabaseModule, GeneratorsModule],
   controllers: [
     CreateEventPurchaseController,
     ListUnexpiredEventPurchasesWithDetailsByUserIdController,
@@ -23,7 +21,6 @@ import { ListUnexpiredEventPurchasesWithDetailsByUserIdController } from './cont
     CancelEventPurchaseByExpiredTimeController,
   ],
   providers: [
-    RegisterEventQueue,
     CreateEventPurchaseUseCase,
     ListUnexpiredEventPurchasesWithDetailsByUserIdUseCase,
     ListEventPurchasesByUserIdUseCase,

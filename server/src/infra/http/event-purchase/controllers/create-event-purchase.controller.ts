@@ -1,7 +1,18 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common'
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  NotFoundException,
+  Post,
+  PreconditionFailedException,
+} from '@nestjs/common'
 import { z } from 'zod'
 
-import { RegisterEventQueue } from '@/domain/admsjp/use-cases/queues/register-event-queue'
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
+import { TicketsSoldOutError } from '@/core/errors/errors/tickets-sold-out-error'
+import { CreateEventPurchaseUseCase } from '@/domain/admsjp/use-cases/event-purchase/create-event-purchase'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
 
@@ -23,7 +34,7 @@ const bodyValidationPipe = new ZodValidationPipe(createEventPurchaseSchema)
 
 @Controller('/')
 export class CreateEventPurchaseController {
-  constructor(private registerEventQueue: RegisterEventQueue) {}
+  constructor(private createEventPurchase: CreateEventPurchaseUseCase) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -33,10 +44,23 @@ export class CreateEventPurchaseController {
   ) {
     const { eventId, eventLotInfo } = body
 
-    await this.registerEventQueue.execute({
+    const result = await this.createEventPurchase.execute({
       eventId,
       buyerId: user.sub.id,
       eventLotInfo,
     })
+
+    if (result.isError()) {
+      const error = result.value
+
+      switch (error.constructor) {
+        case ResourceNotFoundError:
+          throw new NotFoundException(error.message)
+        case TicketsSoldOutError:
+          throw new PreconditionFailedException(error.message)
+        default:
+          throw new BadRequestException(error.message)
+      }
+    }
   }
 }
