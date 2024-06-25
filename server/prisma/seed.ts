@@ -361,7 +361,7 @@ async function execute(enviroment: string): Promise<void> {
         visible: EventVisible.VISIBLE,
         departmentId: 1,
         eventType: EventType.PRESENCIAL,
-        imagePath: '614e5ac8-7453-4d05-bf56-4fa733a0892b-ferraro.webp',
+        imagePath: 'banner-ebj-umadsjp.png',
         createdBy: admin.id,
       },
       update: {},
