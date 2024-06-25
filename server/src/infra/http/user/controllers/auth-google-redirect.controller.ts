@@ -77,7 +77,7 @@ export class AuthGoogleRedirectController {
 
     response.cookie('nextauth_token', accessToken, {
       expires: new Date(Date.now() + 1 * 60 * 60 * 1000), // 1 hora em milissegundos
-      httpOnly: true,
+      httpOnly: false,
       secure: true, // HTTPS
       sameSite: 'none',
       domain: 'umadsjp.vercel.app',
