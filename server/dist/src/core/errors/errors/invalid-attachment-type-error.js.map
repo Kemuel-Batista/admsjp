@@ -1,0 +1,1 @@
+{"version":3,"file":"invalid-attachment-type-error.js","sourceRoot":"","sources":["../../../../../src/core/errors/errors/invalid-attachment-type-error.ts"],"names":[],"mappings":";;;AACA,0CAAuC;AAEvC,MAAa,0BAA2B,SAAQ,KAAK;IACnD,YAAY,EAAE,QAAQ,EAAE,GAAG,EAAqB;QAC9C,KAAK,CAAC,GAAG,WAAI,CAAC,CAAC,CAAC,QAAQ,EAAE,EAAE,GAAG,EAAE,CAAC,GAAG,CAAC,CAAA;IACxC,CAAC;CACF;AAJD,gEAIC"}

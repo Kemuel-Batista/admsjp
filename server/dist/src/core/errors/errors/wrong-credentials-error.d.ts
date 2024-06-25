@@ -1,0 +1,4 @@
+import { UseCaseError } from '../use-case-error';
+export declare class WrongCredentialsError extends Error implements UseCaseError {
+    constructor();
+}
