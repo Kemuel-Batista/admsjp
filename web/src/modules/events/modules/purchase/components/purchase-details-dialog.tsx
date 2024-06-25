@@ -1,4 +1,5 @@
 import { LoaderCircle } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 import { Card } from '@/components/ui/card'
 import {
@@ -33,6 +34,7 @@ export function PurchaseDetailsDialog({
   purchase,
 }: PurchaseDetailsDialogProps) {
   const { user } = useAuth()
+  const [totalValue, setTotalValue] = useState(0)
 
   const { data, isLoading } = ListEventTicketsByPurchaseIdService(
     {},
@@ -40,17 +42,16 @@ export function PurchaseDetailsDialog({
   )
   const eventTickets = data?.eventTickets || []
 
-  const statusKey = Object.keys(EventPurchaseStatus).find(
-    (key) =>
-      EventPurchaseStatus[key as keyof typeof EventPurchaseStatus] ===
-      purchase.status,
-  )
+  const statusDescription =
+    EventPurchaseStatusDescription[purchase.status as EventPurchaseStatus]
 
-  const status =
-    EventPurchaseStatus[statusKey as keyof typeof EventPurchaseStatus]
-
-  const statusDescription: EventPurchaseStatusDescription[typeof status] =
-    'Novo'
+  useEffect(() => {
+    const newTotalValue = eventTickets.reduce(
+      (acc, item) => acc + item.eventLot.value,
+      0,
+    )
+    setTotalValue(newTotalValue)
+  }, [eventTickets])
 
   if (isLoading) {
     return (
@@ -78,10 +79,13 @@ export function PurchaseDetailsDialog({
         </div>
         <div className="flex flex-col items-center p-4 gap-4 border border-primary rounded-lg mobile:w-full">
           <Label className="text-muted-foreground">N° DO PEDIDO:</Label>
-          <Label className="text-base font-bold">
-            {purchase.invoiceNumber}
-          </Label>
-          <Label>{statusDescription}</Label>
+          <div className="flex flex-col gap-1 items-center">
+            <Label className="text-base font-bold">
+              {purchase.invoiceNumber}
+            </Label>
+            <Label className="font-normal">{statusDescription}</Label>
+          </div>
+          <Label>{maskCurrency(String(totalValue))}</Label>
         </div>
       </div>
 

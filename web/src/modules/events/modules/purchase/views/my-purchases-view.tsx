@@ -26,7 +26,9 @@ export function MyPurchasesView() {
     <main className="flex min-h-screen w-full flex-col gap-2">
       <Nav />
       <div className="flex flex-col p-6 px-36 gap-4 mobile:px-6">
-        <Label className="text-3xl font-semibold">Ingressos</Label>
+        <Label className="text-3xl font-semibold mobile:text-xl">
+          Ingressos
+        </Label>
 
         <Separator />
 

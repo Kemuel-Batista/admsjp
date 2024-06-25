@@ -153,21 +153,25 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
       >
         <main>
           <div className="flex flex-col gap-4 justify-center">
-            <Label className="text-3xl font-bold">{event?.title}</Label>
-            <div className="flex gap-2">
-              <CalendarIcon size={24} />
-              <Label className="text-base font-normal">
+            <Label className="text-3xl font-bold mobile:text-xl">
+              {event?.title}
+            </Label>
+            <div className="flex gap-2 mobile:flex-col">
+              <CalendarIcon size={24} className="mobile:hidden" />
+              <Label className="text-base font-normal mobile:text-sm">
                 {maskEventDate(event?.initialDate)}
               </Label>
-              <Label className="text-base font-normal">{'>'}</Label>
-              <Label className="text-base font-normal">
+              <Label className="text-base font-normal mobile:text-sm mobile:hidden">
+                {'>'}
+              </Label>
+              <Label className="text-base font-normal mobile:text-sm">
                 {maskEventDate(event?.finalDate)}
               </Label>
             </div>
             {address && (
               <div className="flex gap-2">
                 <MapPin size={24} />
-                <Label className="text-base font-normal">
+                <Label className="text-base font-normal mobile:text-xs">
                   Evento presencial em {address.street}, {address.number} -{' '}
                   {address.neighborhood}
                 </Label>
@@ -208,7 +212,7 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
                   Ingresso {index + 1}
                 </CollapsibleTrigger>
                 <CollapsibleContent className="grid mt-5 gap-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-4 mobile:grid-cols-1">
                     <FormField
                       control={form.control}
                       name={`data.${index}.name`}
@@ -238,7 +242,7 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
                     />
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-3 gap-4 mobile:grid-cols-1">
                     <FormField
                       control={form.control}
                       name={`data.${index}.cpf`}

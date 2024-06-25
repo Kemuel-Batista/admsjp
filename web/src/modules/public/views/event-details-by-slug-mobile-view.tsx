@@ -16,7 +16,9 @@ interface EventDetailsBySlugViewProps {
   slug: string
 }
 
-export function EventDetailsBySlugView({ slug }: EventDetailsBySlugViewProps) {
+export function EventDetailsBySlugMobileView({
+  slug,
+}: EventDetailsBySlugViewProps) {
   const { data } = GetEventBySlugService(slug)
   const event = data?.event
 
@@ -24,44 +26,34 @@ export function EventDetailsBySlugView({ slug }: EventDetailsBySlugViewProps) {
   const address = result.data?.eventAddress
 
   return (
-    <div className="flex min-h-screen w-full flex-col">
+    <div className="flex min-h-screen w-screen flex-col">
       <Nav />
       <main className="grid gap-10">
-        <div className="relative flex justify-center max-h-80">
-          <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url(${env.NEXT_PUBLIC_API_BUCKET_URL}/${env.NEXT_PUBLIC_API_BUCKET_NAME}/${event?.imagePath})`,
-              zIndex: -10,
-              filter: 'blur(5px)',
-            }}
-          ></div>
-          <Image
-            src={`${env.NEXT_PUBLIC_API_BUCKET_URL}/${env.NEXT_PUBLIC_API_BUCKET_NAME}/${event?.imagePath}`}
-            alt="Banner"
-            className="relative z-10 w-2/4 rounded-lg"
-            width={300}
-            height={500}
-            unoptimized
-          />
-        </div>
-        <div className="grid grid-cols-[10fr_5fr] px-24">
-          <div className="flex flex-col gap-10 justify-center">
-            <Label className="text-3xl font-bold">{event?.title}</Label>
+        <Image
+          src={`${env.NEXT_PUBLIC_API_BUCKET_URL}/${env.NEXT_PUBLIC_API_BUCKET_NAME}/${event?.imagePath}`}
+          alt="Banner"
+          className="w-full h-56 rounded-lg"
+          width={300}
+          height={500}
+          unoptimized
+        />
+        <div className="grid px-6 gap-4">
+          <div className="flex flex-col gap-4 justify-center">
+            <Label className="text-xl font-bold">{event?.title}</Label>
             <div className="flex gap-2">
               <Calendar size={24} />
-              <Label className="text-base font-normal">
+              <Label className="text-sm font-normal">
                 {maskEventDate(event?.initialDate)}
               </Label>
-              <Label className="text-base font-normal">{'>'}</Label>
-              <Label className="text-base font-normal">
+              <Label className="text-sm font-normal">{'>'}</Label>
+              <Label className="text-sm font-normal">
                 {maskEventDate(event?.finalDate)}
               </Label>
             </div>
             {address && (
               <div className="flex gap-2">
                 <MapPin size={24} />
-                <Label className="text-base font-normal">
+                <Label className="text-sm font-normal">
                   Evento presencial em {address.street}, {address.number} -{' '}
                   {address.neighborhood}
                 </Label>
@@ -70,14 +62,14 @@ export function EventDetailsBySlugView({ slug }: EventDetailsBySlugViewProps) {
           </div>
           <ListEventLotsView eventId={event?.id} eventSlug={event?.slug} />
         </div>
-        <div className="flex flex-col px-24 w-full gap-10">
-          <Label className="text-2xl">Descrição do evento</Label>
-          <p>{event?.description}</p>
+        <div className="flex flex-col px-6 w-full gap-4">
+          <Label className="text-lg">Descrição do evento</Label>
+          <p className="text-sm">{event?.description}</p>
           <Separator />
           {address && (
             <>
-              <Label className="text-xl">Local do evento</Label>
-              <Label className="text-base font-normal">
+              <Label className="text-lg">Local do evento</Label>
+              <Label className="text-sm font-normal">
                 Evento presencial em {address.street}, {address.number} -{' '}
                 {address.neighborhood}
               </Label>
@@ -88,10 +80,10 @@ export function EventDetailsBySlugView({ slug }: EventDetailsBySlugViewProps) {
               >
                 <Button
                   variant="default"
-                  size="lg"
-                  className="mt-2 mx-auto gap-2"
+                  size="sm"
+                  className="mt-2 mx-auto gap-2 text-xs"
                 >
-                  <MapPin size={24} />
+                  <MapPin size={16} />
                   Ver no mapa
                 </Button>
               </a>

@@ -43,7 +43,7 @@ export function Nav() {
         </Link>
         <Link
           href="/"
-          className="text-foreground transition-colors hover:text-foreground"
+          className="text-foreground transition-colors hover:text-foreground mobile:text-sm"
         >
           ADMSJP
         </Link>
@@ -51,7 +51,9 @@ export function Nav() {
       <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
         <form className="ml-auto flex-1 sm:flex-initial"></form>
         {!isAuthenticated ? (
-          <Button onClick={handleNavigateToLogin}>Entrar</Button>
+          <Button onClick={handleNavigateToLogin} className="mobile:text-xs">
+            Entrar
+          </Button>
         ) : (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

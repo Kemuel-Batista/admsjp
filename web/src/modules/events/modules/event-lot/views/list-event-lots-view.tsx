@@ -101,11 +101,13 @@ export function ListEventLotsView({
   }
 
   return (
-    <Card>
+    <Card className="flex flex-col mobile:max-w-xs">
       <CardHeader className="bg-primary rounded-md p-3">
-        <h2 className="text-lg font-bold text-primary-foreground">Ingressos</h2>
+        <h2 className="text-lg font-bold text-primary-foreground mobile:text-sm">
+          Ingressos
+        </h2>
       </CardHeader>
-      <CardContent className="p-6">
+      <CardContent className="p-6 mobile:p-4">
         {eventLots.map((item, index) => (
           <>
             <div
@@ -137,12 +139,15 @@ export function ListEventLotsView({
             {index !== eventLots.length - 1 && <Separator className="my-5" />}
           </>
         ))}
-        <div className="mt-5"></div>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="mobile:p-4">
         {!isAuthenticated && (
-          <Button variant="outline" onClick={handleNavigateToLogin}>
-            Faça login na plataforma para comprar um ingresso
+          <Button
+            variant="outline"
+            className="w-full text-xs"
+            onClick={handleNavigateToLogin}
+          >
+            Faça login para comprar um ingresso
           </Button>
         )}
 

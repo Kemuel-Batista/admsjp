@@ -31,10 +31,10 @@ export function HomeView() {
       <Nav />
       <main>
         <div className="flex flex-col items-center justify-center flex-1 h-full">
-          <Image src={Banner} alt="Banner" />
+          <Image src={Banner} alt="Banner" unoptimized />
         </div>
-        <div className="grid px-24 pt-10 gap-10">
-          <Label className="text-xl">
+        <div className="grid px-24 pt-10 gap-10 mobile:px-6 mobile:gap-4">
+          <Label className="text-xl mobile:text-lg">
             Eventos mais vistos nas últimas 24h 👀
           </Label>
 
@@ -54,6 +54,7 @@ export function HomeView() {
                         alt="Banner"
                         className="w-full rounded-t-lg"
                         width={300}
+                        unoptimized
                         height={24}
                       />
                       <CardContent className="flex flex-col gap-4 p-6">

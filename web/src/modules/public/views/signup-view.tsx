@@ -11,10 +11,10 @@ export function SignUpView() {
 
   return (
     <div className="grid min-h-screen grid-cols-2 antialiased mobile:grid-cols-1">
-      <div className="flex h-full flex-col justify-between border-r border-foreground/5 bg-muted/30 p-10 text-muted-foreground">
+      <div className="flex h-full flex-col justify-between border-r border-foreground/5 bg-muted/30 p-10 text-muted-foreground mobile:hidden">
         <div className="flex items-center mobile:justify-center"></div>
 
-        <footer className="text-sm mobile:hidden">
+        <footer className="text-sm">
           <blockquote className="space-y-2">
             <footer className="text-sm grid grid-cols-1">
               <strong>Sistema de Eventos</strong>
@@ -23,7 +23,7 @@ export function SignUpView() {
         </footer>
       </div>
 
-      <div className="relative flex flex-col items-center justify-center">
+      <div className="relative flex flex-col items-center justify-center  mobile:p-6">
         <div className="grid gap-6">
           <div className="flex flex-col space-y-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">Cadastro</h1>
