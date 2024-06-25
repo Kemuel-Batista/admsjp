@@ -1,0 +1,273 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Department {
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(uuid())
+
+  name        String @unique
+  description String
+  status      Int
+  visible     Int
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  createdBy Int       @map("created_by")
+  updatedAt DateTime? @map("updated_at")
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at")
+  deletedBy Int?      @map("deleted_by")
+
+  users  User[]
+  events Event[]
+
+  @@map("departments")
+}
+
+model User {
+  id        Int     @id @default(autoincrement())
+  uuid      String  @unique @default(uuid())
+  name      String
+  status    Int
+  photo     String  @default("")
+  profileId Int     @default(1) @map("profile_id")
+  profile   Profile @relation(fields: [profileId], references: [id])
+  email     String  @unique
+  provider  String  @default("system")
+  password  String
+
+  departmentId Int        @map("department_id")
+  department   Department @relation(fields: [departmentId], references: [id])
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  createdBy Int       @map("created_by")
+  updatedAt DateTime? @map("updated_at")
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at")
+  deletedBy Int?      @map("deleted_by")
+
+  logs           Log[]
+  eventPurchases EventPurchase[]
+
+  @@map("users")
+}
+
+model Profile {
+  id      Int    @id @default(autoincrement())
+  uuid    String @unique @default(uuid())
+  name    String @unique
+  status  Int
+  visible Int
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  createdBy Int       @map("created_by")
+  updatedAt DateTime? @map("updated_at")
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at")
+  deletedBy Int?      @map("deleted_by")
+
+  users              User[]
+  profilePermissions ProfilePermission[]
+
+  @@map("profiles")
+}
+
+model ProfilePermission {
+  id        Int     @id @default(autoincrement())
+  uuid      String  @unique @default(uuid())
+  profileId Int     @map("profile_id")
+  profile   Profile @relation(fields: [profileId], references: [id])
+  key       String
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  createdBy Int       @map("created_by")
+  updatedAt DateTime? @map("updated_at")
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at")
+  deletedBy Int?      @map("deleted_by")
+
+  @@unique(name: "KeyProfileId", [key, profileId])
+  @@map("profiles_permissions")
+}
+
+model Log {
+  id           Int      @id @default(autoincrement())
+  uuid         String   @unique @default(uuid())
+  process      String
+  value        String
+  oldValue     String?  @map("old_value")
+  timestamp    DateTime @default(now())
+  level        Int
+  userId       Int      @map("user_id")
+  user         User     @relation(fields: [userId], references: [id])
+  note         String?
+  jsonRequest  String?  @db.Text
+  jsonResponse String?  @db.Text
+
+  @@map("logs")
+}
+
+model Parameter {
+  id        Int       @id @default(autoincrement())
+  uuid      String    @unique @default(uuid())
+  key       String    @unique
+  keyInfo   String    @map("key_info")
+  value     String
+  status    Int       @default(1)
+  visible   Int       @default(1)
+  createdAt DateTime  @default(now()) @map("created_at")
+  createdBy Int       @map("created_by")
+  updatedAt DateTime? @map("updated_at")
+  updatedBy Int?      @map("updated_by")
+
+  @@map("parameters")
+}
+
+model Event {
+  id           Int        @id @default(autoincrement())
+  uuid         String     @unique @default(uuid())
+  title        String     @unique
+  slug         String     @unique
+  description  String     @db.Text
+  initialDate  DateTime   @map("initial_date")
+  finalDate    DateTime   @map("final_date")
+  status       Int
+  visible      Int
+  departmentId Int        @map("department_id")
+  department   Department @relation(fields: [departmentId], references: [id])
+  eventType    Int        @map("event_type")
+  imagePath    String     @map("image_path")
+  pixKey       String     @map("pix_key")
+  pixType      Int        @map("pix_type")
+  message      String?
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  createdBy Int       @map("created_by")
+  updatedAt DateTime? @map("updated_at")
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at")
+  deletedBy Int?      @map("deleted_by")
+
+  eventAddress   EventAddress?
+  eventLots      EventLot[]
+  eventPurchases EventPurchase[]
+
+  @@map("events")
+}
+
+model EventAddress {
+  id           Int     @id @default(autoincrement())
+  uuid         String  @unique @default(uuid())
+  eventId      Int     @unique @map("event_id")
+  event        Event   @relation(fields: [eventId], references: [id])
+  street       String
+  number       String
+  complement   String
+  neighborhood String
+  state        Int
+  city         Int
+  latitude     Decimal
+  longitude    Decimal
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  createdBy Int       @map("created_by")
+  updatedAt DateTime? @map("updated_at")
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at")
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("events_addresses")
+}
+
+model EventLot {
+  id                String @id @unique @default(uuid())
+  eventId           Int    @map("event_id")
+  name              String
+  description       String
+  event             Event  @relation(fields: [eventId], references: [id])
+  lot               Int
+  quantity          Int
+  fulfilledQuantity Int    @default(0) @map("fulfilled_quantity")
+  value             Int
+  status            Int
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  createdBy Int       @map("created_by")
+  updatedAt DateTime? @map("updated_at")
+  updatedBy Int?      @map("updated_by")
+  deletedAt DateTime? @map("deleted_at")
+  deletedBy Int?      @map("deleted_by")
+
+  eventTickets EventTicket[]
+
+  @@map("events_lots")
+}
+
+model EventPurchase {
+  id            String        @id @unique @default(uuid())
+  invoiceNumber String        @map("invoice_number")
+  eventId       Int           @map("event_id")
+  event         Event         @relation(fields: [eventId], references: [id])
+  buyerId       Int           @map("buyer_id")
+  user          User          @relation(fields: [buyerId], references: [id])
+  status        Int
+  expiresAt     DateTime?     @map("expires_at")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime?     @map("updated_at")
+  deletedAt     DateTime?     @map("deleted_at")
+  deletedBy     Int?          @map("deleted_by")
+  eventTickets  EventTicket[]
+
+  @@map("event_purchases")
+}
+
+model EventTicket {
+  id              String        @id @unique @default(uuid())
+  eventPurchaseId String        @map("event_purchase_id")
+  eventPurchase   EventPurchase @relation(fields: [eventPurchaseId], references: [id])
+  eventLotId      String        @map("event_lot_id")
+  eventLot        EventLot      @relation(fields: [eventLotId], references: [id])
+  ticket          String
+  qrCodeImage     String        @map("qr_code_image")
+  qrCodeText      String        @map("qr_code_text")
+  cpf             String        @default("")
+  name            String        @default("")
+  email           String        @default("")
+  phone           String        @default("")
+  birthday        DateTime      @default(now())
+  createdAt       DateTime      @default(now()) @map("created_at")
+
+  @@map("events_tickets")
+}
+
+enum TransactionType {
+  EVENTS
+}
+
+model Order {
+  id              Int             @id @default(autoincrement())
+  uuid            String          @unique @default(uuid())
+  transactionId   String          @map("transaction_id")
+  transactionType TransactionType @default(EVENTS) @map("transaction_type")
+  paymentMethod   Int             @map("payment_method")
+  status          Int
+  pixQrCode       String?         @map("pix_qr_code")
+  paidAt          DateTime?       @map("paid_at")
+  attachment      String?         @map("attachment")
+
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime? @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  deletedBy   Int?      @map("deleted_by")
+  confirmedBy Int?      @map("confirmed_by")
+
+  @@map("orders")
+}

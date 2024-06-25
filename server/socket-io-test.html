@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO Client</title>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const socket = io("http://localhost:3334", {
+          auth: {
+            token: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsiaWQiOjEsInV1aWQiOiIyMDRlNDJiNC1mNGUyLTQyZTgtYWNmOS1kMWUzNjk0ODdhNTQiLCJuYW1lIjoiS2VtdWVsIEJhdGlzdGEiLCJ1c2VybmFtZSI6ImtlbXVlbC1iYXRpc3RhIiwic3RhdHVzIjoxLCJwcm9maWxlSWQiOjEsImVtYWlsIjoia2VtdWVsbGltYTIwQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiJDJhJDA4JFlDUC8xLjlSVTd0Nmc5SVNTWXdBcE9VdlFRUkRubHdEdDhhQjZyeDU0MkREaGgxZzM3OEF1IiwiZGVwYXJ0bWVudElkIjoxLCJjcmVhdGVkQXQiOiIyMDI0LTA1LTIyVDE5OjA1OjAxLjY1M1oiLCJjcmVhdGVkQnkiOjAsInVwZGF0ZWRBdCI6bnVsbCwidXBkYXRlZEJ5IjowLCJkZWxldGVkQXQiOm51bGwsImRlbGV0ZWRCeSI6bnVsbH0sImlhdCI6MTcxNjQwNzYzNywiZXhwIjoxNzE2NDExMjM3fQ.pTrjZpOI6kR1rvBJ3cJcEhvR3kPLlSiUnJH9nOw8CNxDLqCPD-kE7pDYAiVnpAKGGIX2EQ60NQJP1-y2s1fTlQC6BvHQOlpVEiGYqYxMH2DsrSf4QgB9kB3sVBIPYc6SIWzpDkerVMCVn6_9lFnHbMXYTRYAo2eLa3934tyvSx65j9XyFYOm2o7Jn7NvKGm5MigUeaUpsZGuOCN1VS8gqGcR31xV_BlhgbY-vnHDGsYQmn_Kj7EJdaPb8lan1iiDHzeXdkQ0NI6nqp83Rbrs6_eTnmolJaBq-xWCGX2bL1BYOuQLlKZl6COnLZBUMfC4yvXfHZbATcl1UqG7nBd-aw",
+          },
+        });
+
+        socket.on("connect", () => {
+          console.log("Connected to WebSocket server.");
+        });
+
+        socket.on("purchase:1", (data) => {
+          console.log(data)
+        });
+
+        socket.on("order-queued", (message) => {
+          console.log("Received order-queued message:", message);
+        });
+
+        socket.on("disconnect", () => {
+          console.log("Disconnected from WebSocket server.");
+        });
+
+        socket.emit('event-entry', { userId: 1 })
+      });
+    </script>
+  </head>
+  <body>
+  </body>
+</html>

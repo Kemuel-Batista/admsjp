@@ -1,0 +1,95 @@
+import { randomUUID } from 'node:crypto'
+
+import { Prisma, User } from '@prisma/client'
+import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
+
+import { ListUserWithCountDTO, UpdateUserDTO } from '@/domain/admsjp/dtos/user'
+import { UsersRepository } from '@/domain/admsjp/repositories/users-repository'
+
+export class InMemoryUsersRepository implements UsersRepository {
+  public items: User[] = []
+
+  async create(data: Prisma.UserUncheckedCreateInput): Promise<User> {
+    const id = getLastInsertedId(this.items)
+
+    const user = {
+      id,
+      uuid: randomUUID(),
+      name: data.name,
+      status: data.status,
+      profileId: data.profileId,
+      email: data.email,
+      password: data.password,
+      photo: data.photo,
+      departmentId: data.departmentId,
+      provider: data.provider,
+      createdAt: new Date(),
+      createdBy: data.createdBy,
+      updatedAt: new Date(),
+      updatedBy: data.createdBy,
+      deletedBy: null,
+      deletedAt: null,
+    }
+
+    this.items.push(user)
+
+    return user
+  }
+
+  async update(data: UpdateUserDTO): Promise<User> {
+    const itemIndex = this.items.findIndex((item) => item.id === data.id)
+
+    const user = this.items[itemIndex]
+
+    const userUpdated = {
+      ...user,
+      name: data.name,
+      email: data.email,
+      password: data.password,
+      status: data.status,
+      departmentId: data.departmentId,
+      profileId: data.profileId,
+      updatedBy: data.updatedBy,
+    }
+
+    this.items[itemIndex] = userUpdated
+
+    return user
+  }
+
+  async list(): Promise<ListUserWithCountDTO> {
+    const users = this.items.sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+    )
+
+    const count = users.length
+
+    return { users, count }
+  }
+
+  async findById(id: number): Promise<User> {
+    const user = this.items.find((item) => item.id === id)
+
+    if (!user) {
+      return null
+    }
+
+    return user
+  }
+
+  async findByEmail(email: string): Promise<User> {
+    const user = this.items.find((item) => item.email === email)
+
+    if (!user) {
+      return null
+    }
+
+    return user
+  }
+
+  async delete(userId: number): Promise<void> {
+    const itemIndex = this.items.findIndex((item) => item.id === userId)
+
+    this.items.splice(itemIndex, 1)
+  }
+}

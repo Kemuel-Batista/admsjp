@@ -1,0 +1,31 @@
+version: '3.8'
+
+services: 
+  postgres: 
+    container_name: admsjp-pg
+    image: bitnami/postgresql
+    ports:
+      - 5432:5432 
+    environment:
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=docker
+      - POSTGRESQL_DATABASE=admsjp
+    networks:
+      - pg_network
+
+  rabbitmq:
+    image: rabbitmq:3.13.1-management
+    container_name: admsjp-rabbitmq
+    hostname: rabbit
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+    ports:
+      - "5672:5672" # Port to access the rabbitmq server
+      - "15672:15672" # Port to access the rabbitmq management console
+    networks:
+      - pg_network
+
+networks:
+  pg_network:
+    driver: bridge

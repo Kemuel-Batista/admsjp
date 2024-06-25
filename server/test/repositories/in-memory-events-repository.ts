@@ -1,0 +1,132 @@
+import { randomUUID } from 'node:crypto'
+
+import { Event } from '@prisma/client'
+import { EventProps } from 'test/factories/make-event'
+import { applyFilters } from 'test/utils/filtering'
+import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
+
+import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
+import { IListOptions } from '@/core/repositories/list-options'
+import { buildSearchFilter } from '@/core/util/filtering/build-search-filter'
+import { calcPagination } from '@/core/util/pagination/calc-pagination'
+import { ListEventDTO } from '@/domain/admsjp/dtos/event'
+import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
+
+export class InMemoryEventsRepository implements EventsRepository {
+  public items: Event[] = []
+
+  async create(data: EventProps): Promise<Event> {
+    const id = getLastInsertedId(this.items)
+
+    const event = {
+      id,
+      uuid: randomUUID(),
+      title: data.title,
+      slug: data.slug,
+      description: data.description,
+      initialDate: data.initialDate,
+      finalDate: data.finalDate,
+      status: data.status,
+      visible: data.visible,
+      departmentId: data.departmentId,
+      eventType: data.eventType,
+      imagePath: data.imagePath,
+      message: data.message,
+      pixKey: data.pixKey,
+      pixType: data.pixType,
+      createdAt: new Date(),
+      createdBy: data.createdBy,
+      updatedAt: null,
+      updatedBy: null,
+      deletedBy: null,
+      deletedAt: null,
+    }
+
+    this.items.push(event)
+
+    return event
+  }
+
+  async update(data: Event): Promise<Event> {
+    const itemIndex = this.items.findIndex((item) => item.id === data.id)
+
+    const event = this.items[itemIndex]
+
+    const eventUpdated = {
+      ...event,
+      title: data.title,
+      slug: data.slug,
+      description: data.description,
+      initialDate: data.initialDate,
+      finalDate: data.finalDate,
+      status: data.status,
+      visible: data.visible,
+      departmentId: data.departmentId,
+      eventType: data.eventType,
+      imagePath: data.imagePath,
+      message: data.message,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      updatedBy: data.updatedBy,
+    }
+
+    this.items[itemIndex] = eventUpdated
+
+    return event
+  }
+
+  async list(
+    options?: IListOptions,
+    searchParams?: ISearchParamDTO[],
+  ): Promise<ListEventDTO> {
+    let filteredEvents = this.items
+
+    if (searchParams && searchParams.length > 0) {
+      const searchFilter = buildSearchFilter<Event>(searchParams)
+      filteredEvents = applyFilters<Event>(this.items, [searchFilter])
+    }
+
+    const { skip, take } = calcPagination(options)
+    const paginatedEvents = filteredEvents.slice(skip, skip + take)
+
+    const count = filteredEvents.length
+
+    return { events: paginatedEvents, count }
+  }
+
+  async findById(id: number): Promise<Event> {
+    const event = this.items.find((item) => item.id === id)
+
+    if (!event) {
+      return null
+    }
+
+    return event
+  }
+
+  async findByTitle(title: string): Promise<Event> {
+    const event = this.items.find((item) => item.title === title)
+
+    if (!event) {
+      return null
+    }
+
+    return event
+  }
+
+  async findBySlug(slug: string): Promise<Event> {
+    const event = this.items.find((item) => item.slug === slug)
+
+    if (!event) {
+      return null
+    }
+
+    return event
+  }
+
+  async delete(id: number): Promise<void> {
+    const itemIndex = this.items.findIndex((item) => item.id === id)
+
+    this.items.splice(itemIndex, 1)
+  }
+}
