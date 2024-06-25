@@ -321,38 +321,31 @@ async function execute(enviroment: string): Promise<void> {
       create: {
         title: 'EBJ 2024',
         slug: 'umadsjp-ebj-2024',
-        description: `ENCOEBD/EBOJ 2024 - Encontro da Escola Bíblica Dominical e Escola Bíblica de Obreiros de Joinville\n
+        description: `Estamos animados para convidá-lo para a EBJ 2024, um evento dedicado aos jovens, que acontecerá nos dias 18, 19 e 20 de julho. Com o tema "Intimidade: Geração que Anseia pela Presença", nosso objetivo é promover um encontro profundo com Deus, através de palestras edificantes e momentos de adoração.
 
-        A IEADJO - Igreja Evangélica Assembleia de Deus de Joinville (SC) promove dois importantes eventos em uma mesma data, trata-se de uma parceria envolvendo o Departamento de Escola Bíblica Dominical e o Departamento do CCOM (Centro de Capacitação e Orientação Ministerial).\n
-        São eles: ENCOEBD (ENCONTRO DA ESCOLA BÍBLICA DOMINICAL ) e EBOJ (ESCOLA BÍBLICA DE OBREIROS EM JOINVILLE), e será realizado nos dias 20 a 22 de Junho de 2024 (Quinta, Sexta e Sábado) em reuniões presenciais no Centreventos IEADJO - Assembleia de Deus Joinville.\n
-        Estr. Arataca, 965 - São Marcos, Joinville - SC, 89214-363.\n\n
-        
-        O tema geral do evento é Conduzidos pelo Espírito Santo. As disciplinas do currículo permanente da ENCOEBD/EBOJ estarão baseadas no tema da IEAD JO e da CIADESCP para o ano de 2024.\n
-        
-        Disciplinas:\n
-        
-        - Teologia Pastoral;\n
-        - Homilética;\n
-        - Hermenêutica;\n
-        - Missiologia;\n
-        - Bibliologia;\n
-        - Teologia Sistemática.\n
-        
-        Informações gerais:\n
-        
-        Quinta-feira dia 20/06\n
-        Noite: 19h00 às 21h30\n
-        
-        Sexta-feira dia 21/06\n
-        Noite: 19h00 às 21h30\n
-        
-        Sábado dia 22/06\n
-        Manhã: 09h00 às 12h00\n
-        Tarde: 14h00 às 17h30\n
-        Noite: 17h00 às 21h30\n
-        
-        > MAIORES INFORMAÇÕES\n
-        Whatsapp: +55 47 99743-4047 (Pr. Eduardo Sônego)`,
+#### Palestrantes Convidados:
+- Pastor Rômulo Tavares
+- Pastor Anderson Predes
+- André Santana
+- Keila Guimarães
+
+#### Cronograma de Horários:
+
+Quinta-feira (18/07):
+- Início: 19h30
+- Término: 21h30
+
+Sexta-feira (19/07):
+- Início: 19h30
+- Término: 21h30
+
+Sábado (20/07):
+- Início das Palestras Individuais: 18h00
+- Lanche: 18h50 - 19h20
+- Início da Sessão Noturna: 19h30
+- Término: 21h30
+
+Junte-se a nós para três dias de ensinamentos transformadores e experiências espirituais que fortalecerão sua fé e sua conexão com Deus. Venha fazer parte de uma geração que busca intensamente a presença divina. Não perca essa oportunidade única de crescimento e comunhão. Esperamos por você!`,
         pixKey: '27905dca-cc48-4b9e-baef-946e19af0de4',
         pixType: EventPixType.CHAVE,
         initialDate: faker.date.soon(),
