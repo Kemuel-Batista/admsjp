@@ -32,7 +32,10 @@ describe('Clear Expired Tickets Job', () => {
       inMemoryEventTicketsRepository,
     )
 
-    sut = new ClearExpiredPurchasesJob(inMemoryEventPurchasesRepository)
+    sut = new ClearExpiredPurchasesJob(
+      inMemoryEventPurchasesRepository,
+      inMemoryEventTicketsRepository,
+    )
   })
 
   it('should be able to clear expired purchases', async () => {

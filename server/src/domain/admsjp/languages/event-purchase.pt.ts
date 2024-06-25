@@ -5,6 +5,9 @@ const pt = {
       incorrectAssociation:
         'Usuário não tem permissão para completar o registro dos ingressos',
     },
+    delete: {
+      timeNotExpired: 'O tempo limite ainda não expirou!',
+    },
   },
 }
 

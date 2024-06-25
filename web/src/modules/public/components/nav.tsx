@@ -35,7 +35,7 @@ export function Nav() {
     <header className="sticky flex h-16 items-center gap-4 border-b bg-background px-4">
       <nav className="flex flex-row text-lg font-medium items-center gap-5 md:text-sm lg:gap-6">
         <Link
-          href="#"
+          href="/"
           className="flex items-center gap-2 text-lg font-semibold md:text-base"
         >
           <ChurchIcon className="h-6 w-6" />

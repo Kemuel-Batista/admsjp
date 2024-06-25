@@ -1,17 +1,23 @@
 import { Clock } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
+import { Dialog } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 
+import { PurchaseLimitTimeDialog } from './purchase-limit-time-dialog'
+
 interface PurchaseCountdownProps {
+  purchaseId: string
   expiresAt?: string
 }
 
-export function PurchaseCountdown({ expiresAt }: PurchaseCountdownProps) {
-  const router = useRouter()
-
+export function PurchaseCountdown({
+  purchaseId,
+  expiresAt,
+}: PurchaseCountdownProps) {
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 })
+  const [showPurchaseLimitTimeDialog, setShowPurchaseLimitTimeDialog] =
+    useState(false)
 
   useEffect(() => {
     if (!expiresAt) return
@@ -33,11 +39,13 @@ export function PurchaseCountdown({ expiresAt }: PurchaseCountdownProps) {
         )
         const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000)
 
-        setTimeLeft({ hours, minutes, seconds })
-
         if (minutes === 0 && seconds === 0) {
-          router.push('/')
+          clearInterval(intervalId)
+          setShowPurchaseLimitTimeDialog(true)
+          setTimeLeft({ hours: 0, minutes: 0, seconds: 0 })
         }
+
+        setTimeLeft({ hours, minutes, seconds })
       }
     }, 1000)
 
@@ -55,6 +63,12 @@ export function PurchaseCountdown({ expiresAt }: PurchaseCountdownProps) {
       <Label className="font-normal text-xs">
         Após este tempo, os ingressos serão liberados para venda novamente.
       </Label>
+      <Dialog
+        open={showPurchaseLimitTimeDialog}
+        onOpenChange={setShowPurchaseLimitTimeDialog}
+      >
+        <PurchaseLimitTimeDialog purchaseId={purchaseId} />
+      </Dialog>
     </div>
   )
 }

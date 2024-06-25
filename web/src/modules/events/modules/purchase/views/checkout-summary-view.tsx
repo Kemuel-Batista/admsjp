@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
 import { maskCurrency } from '@/utils/masks'
 
 import { ListEventLotByEventId } from '../../event-lot/services/list-event-lot-by-event-id'
@@ -25,7 +26,7 @@ export function CheckoutSummaryView({
   eventId,
   tickets,
 }: CheckoutSummaryViewProps) {
-  const { data } = ListEventLotByEventId(
+  const { data, isLoading } = ListEventLotByEventId(
     {
       allRecords: true,
     },
@@ -37,6 +38,8 @@ export function CheckoutSummaryView({
   const [totalValue, setTotalValue] = useState(0)
 
   useEffect(() => {
+    if (isLoading) return
+
     let accumulatedValue = 0
 
     const result = eventLots.map((eventLot) => {
@@ -58,6 +61,14 @@ export function CheckoutSummaryView({
     setTotalValue(accumulatedValue)
     setEventLotTickets(result)
   }, [eventLots])
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-2">
+        <Skeleton className="w-full h-52" />
+      </div>
+    )
+  }
 
   return (
     <Card className="h-fit">

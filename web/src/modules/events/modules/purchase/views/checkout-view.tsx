@@ -45,6 +45,7 @@ import {
 } from '../../tickets/schemas/complete-ticket-info-schema'
 import { CompleteEventTicketInfoService } from '../../tickets/services/complete-event-ticket-info'
 import { EventTicket } from '../../tickets/types/event-ticket'
+import { CheckoutLoading } from '../components/checkout-loading'
 import { PurchaseCountdown } from '../components/purchase-countdown'
 import { ListEventPurchasesUnexpired } from '../services/list-event-purchases-unexpired'
 import { EventPurchaseInfo } from '../types/event-purchase-info'
@@ -57,22 +58,27 @@ interface EventCheckoutViewProps {
 export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
   const { user } = useAuth()
   const router = useRouter()
-  const { data: purchasesResult } = ListEventPurchasesUnexpired({
-    allRecords: true,
-  })
+
+  const { data, isLoading: isLoadingEvent } = GetEventBySlugService(slug)
+  const event = data?.event
+
+  const { data: addressResult, isLoading: isLoadingAddress } =
+    GetEventAddressByEventIdService(event?.id)
+  const address = addressResult?.eventAddress
+
+  const { data: purchasesResult, isLoading: isLoadingPurchases } =
+    ListEventPurchasesUnexpired({
+      allRecords: true,
+    })
   const purchases = purchasesResult?.eventPurchases || []
+
+  const isLoading = isLoadingEvent || isLoadingAddress || isLoadingPurchases
 
   let tickets: EventTicket[] = []
 
   purchases.forEach((purchase) => {
     tickets = purchase.eventTickets
   })
-
-  const { data } = GetEventBySlugService(slug)
-  const event = data?.event
-
-  const result = GetEventAddressByEventIdService(event?.id)
-  const address = result.data?.eventAddress
 
   const form = useForm<CompleteEventTicketInfoFormData>({
     resolver: zodResolver(completeEventTicketInfoSchema),
@@ -130,6 +136,10 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
         form.reset()
       },
     })
+  }
+
+  if (isLoading) {
+    return <CheckoutLoading />
   }
 
   return (
@@ -310,6 +320,7 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
         <div className="flex flex-col gap-2">
           <CheckoutSummaryView tickets={tickets} eventId={event?.id} />
           <PurchaseCountdown
+            purchaseId={purchases[0].id}
             expiresAt={purchases.length > 0 ? purchases[0].expiresAt : ''}
           />
         </div>

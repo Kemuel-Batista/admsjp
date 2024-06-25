@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/ui/icons'
 import { env } from '@/env'
 
-export function LoginView() {
+export function SignUpView() {
   function handleLoginWithGoogle() {
     window.location.href = `${env.NEXT_PUBLIC_API_URL}/auth/google`
   }
@@ -24,9 +24,9 @@ export function LoginView() {
       </div>
 
       <div className="relative flex flex-col items-center justify-center">
-        <form className="grid gap-6">
+        <div className="grid gap-6">
           <div className="flex flex-col space-y-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">Login</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Cadastro</h1>
             <p className="text-sm text-muted-foreground">
               Preencha suas informações para acessar a plataforma
             </p>
@@ -50,15 +50,15 @@ export function LoginView() {
             Google
           </Button>
           <p className="px-8 text-center text-sm text-muted-foreground">
-            Não possui uma conta?{' '}
+            Possui uma conta?{' '}
             <Link
-              href="/signup"
+              href="/login"
               className="underline underline-offset-4 hover:text-primary"
             >
-              Criar conta
+              Logue-se
             </Link>{' '}
           </p>
-        </form>
+        </div>
       </div>
     </div>
   )

@@ -61,7 +61,7 @@ export function PurchaseDetailsDialog({
   }
 
   return (
-    <DialogContent className="flex flex-col w-3/4 max-w-screen mobile:w-full mobile:overflow-y-auto">
+    <DialogContent className="w-3/4 max-w-screen mobile:w-full">
       <DialogHeader>
         <DialogTitle className="text-start">
           Pedido N° {purchase.invoiceNumber}
@@ -110,11 +110,9 @@ export function PurchaseDetailsDialog({
         ))}
       </div>
 
-      <Label className="text-lg font-bold mobile:hidden">
-        Resumo da compra
-      </Label>
+      <Label className="text-lg font-bold">Resumo da compra</Label>
 
-      <Table className="mobile:hidden">
+      <Table>
         <TableHeader>
           <TableRow>
             <TableHead>N° Ingresso</TableHead>

@@ -66,7 +66,10 @@ export function CheckoutPaymentView() {
       >
         <main className="grid grid-cols-2 mobile:grid-cols-1 gap-4">
           <div className="grid gap-4">
-            <PurchaseCountdown expiresAt={eventPurchase.expiresAt} />
+            <PurchaseCountdown
+              purchaseId={eventPurchase.eventPurchaseId}
+              expiresAt={eventPurchase.expiresAt}
+            />
             <CheckoutSummaryView
               tickets={eventPurchase.eventTickets}
               eventId={eventPurchase.eventId}
