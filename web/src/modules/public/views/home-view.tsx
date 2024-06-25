@@ -3,7 +3,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-import Banner from '@/assets/capa-site.png'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   Carousel,
@@ -17,6 +16,7 @@ import { env } from '@/env'
 import { ListPublicEventsService } from '@/modules/events/services/list-public-events'
 import { dateFormat } from '@/utils/date-format'
 
+import Banner from '../../../../public/capa-site.png'
 import { Nav } from '../components/nav'
 
 export function HomeView() {
