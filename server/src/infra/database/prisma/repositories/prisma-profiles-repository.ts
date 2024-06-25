@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Profile } from '@prisma/client'
 
-import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { IListOptions } from '@/core/repositories/list-options'
-import { buildSearchFilter } from '@/core/util/filtering/build-search-filter'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import {
   CreateProfileDTO,
@@ -56,22 +54,16 @@ export class PrismaProfilesRepository implements ProfilesRepository {
     return profile
   }
 
-  async list(
-    options?: IListOptions,
-    searchParams?: ISearchParamDTO[],
-  ): Promise<ListProfileDTO> {
+  async list(options?: IListOptions): Promise<ListProfileDTO> {
     const { skip, take } = calcPagination(options)
-
-    const search = buildSearchFilter<Profile>(searchParams)
 
     const [profiles, count] = await this.prisma.$transaction([
       this.prisma.profile.findMany({
-        where: search,
         skip,
         take,
         orderBy: { id: 'asc' },
       }),
-      this.prisma.profile.count({ where: search }),
+      this.prisma.profile.count(),
     ])
 
     return { profiles, count }

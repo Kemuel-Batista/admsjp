@@ -2,12 +2,9 @@ import { randomUUID } from 'node:crypto'
 
 import { Parameter } from '@prisma/client'
 import { ParameterProps } from 'test/factories/make-parameter'
-import { applyFilters } from 'test/utils/filtering'
 import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
-import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { IListOptions } from '@/core/repositories/list-options'
-import { buildSearchFilter } from '@/core/util/filtering/build-search-filter'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import { ListParameterDTO } from '@/domain/admsjp/dtos/parameter'
 import { ParametersRepository } from '@/domain/admsjp/repositories/parameters-repository'
@@ -58,23 +55,14 @@ export class InMemoryParametersRepository implements ParametersRepository {
     return parameter
   }
 
-  async list(
-    options?: IListOptions,
-    searchParams?: ISearchParamDTO[],
-  ): Promise<ListParameterDTO> {
-    let filteredParameters = this.items
-
-    if (searchParams && searchParams.length > 0) {
-      const searchFilter = buildSearchFilter<Parameter>(searchParams)
-      filteredParameters = applyFilters<Parameter>(this.items, [searchFilter])
-    }
-
+  async list(options?: IListOptions): Promise<ListParameterDTO> {
     const { skip, take } = calcPagination(options)
-    const paginatedParameters = filteredParameters.slice(skip, skip + take)
 
-    const count = filteredParameters.length
+    const parameters = this.items.slice(skip, skip + take)
 
-    return { parameters: paginatedParameters, count }
+    const count = parameters.length
+
+    return { parameters, count }
   }
 
   async findById(id: number): Promise<Parameter> {

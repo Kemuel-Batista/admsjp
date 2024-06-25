@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { EventLot, Prisma } from '@prisma/client'
 
-import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { IListOptions } from '@/core/repositories/list-options'
-import { buildSearchFilter } from '@/core/util/filtering/build-search-filter'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import { ListEventLotsDTO } from '@/domain/admsjp/dtos/event-lot'
 import { EventLotsRepository } from '@/domain/admsjp/repositories/event-lots-repository'
@@ -68,22 +66,16 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
     return event
   }
 
-  async list(
-    options?: IListOptions,
-    searchParams?: ISearchParamDTO[],
-  ): Promise<ListEventLotsDTO> {
+  async list(options?: IListOptions): Promise<ListEventLotsDTO> {
     const { skip, take } = calcPagination(options)
-
-    const search = buildSearchFilter<EventLot>(searchParams)
 
     const [eventLots, count] = await this.prisma.$transaction([
       this.prisma.eventLot.findMany({
-        where: search,
         skip,
         take,
         orderBy: { createdAt: 'asc' },
       }),
-      this.prisma.eventLot.count({ where: search }),
+      this.prisma.eventLot.count(),
     ])
 
     return { eventLots, count }
@@ -92,26 +84,23 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
   async listByEventId(
     eventId: EventLot['eventId'],
     options?: IListOptions,
-    searchParams?: ISearchParamDTO[],
   ): Promise<ListEventLotsDTO> {
     const { skip, take } = calcPagination(options)
 
-    searchParams.push({
-      condition: 'equals',
-      field: 'eventId',
-      value: eventId,
-    })
-
-    const search = buildSearchFilter<EventLot>(searchParams)
-
     let [eventLots, count] = await this.prisma.$transaction([
       this.prisma.eventLot.findMany({
-        where: search,
+        where: {
+          eventId,
+        },
         skip,
         take,
         orderBy: { createdAt: 'asc' },
       }),
-      this.prisma.eventLot.count({ where: search }),
+      this.prisma.eventLot.count({
+        where: {
+          eventId,
+        },
+      }),
     ])
 
     eventLots = eventLots.filter(

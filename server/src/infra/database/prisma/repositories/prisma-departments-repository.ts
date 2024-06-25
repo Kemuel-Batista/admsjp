@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Department } from '@prisma/client'
 
-import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { IListOptions } from '@/core/repositories/list-options'
-import { buildSearchFilter } from '@/core/util/filtering/build-search-filter'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import {
   CreateDepartmentDTO,
@@ -59,22 +57,16 @@ export class PrismaDepartmentRepository implements DepartmentsRepository {
     return department
   }
 
-  async list(
-    options?: IListOptions,
-    searchParams?: ISearchParamDTO[],
-  ): Promise<ListDepartmentDTO> {
+  async list(options?: IListOptions): Promise<ListDepartmentDTO> {
     const { skip, take } = calcPagination(options)
-
-    const search = buildSearchFilter<Department>(searchParams)
 
     const [departments, count] = await this.prisma.$transaction([
       this.prisma.department.findMany({
-        where: search,
         skip,
         take,
         orderBy: { id: 'asc' },
       }),
-      this.prisma.department.count({ where: search }),
+      this.prisma.department.count(),
     ])
 
     return { departments, count }

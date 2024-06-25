@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { Log, Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
-import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { IListOptions } from '@/core/repositories/list-options'
-import { buildSearchFilter } from '@/core/util/filtering/build-search-filter'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import {
   ListLogByDateWithCount,
@@ -36,39 +34,30 @@ export class PrismaLogsRepository implements LogsRepository {
     dateInitial: Date,
     dateFinal: Date,
     options?: IListOptions,
-    searchParams?: ISearchParamDTO[],
   ): Promise<ListLogByDateWithCount> {
     const { skip, take } = calcPagination(options)
 
-    searchParams.push({
-      field: 'level',
-      condition: 'equals',
-      value: level,
-    })
-
-    searchParams.push({
-      field: 'timestamp',
-      condition: 'lte',
-      value: dateFinal,
-    })
-
-    searchParams.push({
-      field: 'timestamp',
-      condition: 'gte',
-      value: dateInitial,
-    })
-
-    const search = buildSearchFilter<Log>(searchParams)
-
     const [logs, count] = await this.prisma.$transaction([
       this.prisma.log.findMany({
-        where: search,
+        where: {
+          level,
+          timestamp: {
+            lte: dateFinal,
+            gte: dateInitial,
+          },
+        },
         skip,
         take,
         orderBy: { id: 'desc' },
       }),
       this.prisma.log.count({
-        where: search,
+        where: {
+          level,
+          timestamp: {
+            lte: dateFinal,
+            gte: dateInitial,
+          },
+        },
       }),
     ])
 

@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Prisma, ProfilePermission } from '@prisma/client'
 
-import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { IListOptions } from '@/core/repositories/list-options'
-import { buildSearchFilter } from '@/core/util/filtering/build-search-filter'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import { ProfilePermissionsRepository } from '@/domain/admsjp/repositories/profile-permissions-repository'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
@@ -26,16 +24,10 @@ export class PrismaProfilePermissionsRepository
     return profilePermission
   }
 
-  async list(
-    options?: IListOptions,
-    searchParams?: ISearchParamDTO[],
-  ): Promise<ProfilePermission[]> {
+  async list(options?: IListOptions): Promise<ProfilePermission[]> {
     const { skip, take } = calcPagination(options)
 
-    const search = buildSearchFilter<ProfilePermission>(searchParams)
-
     const profilePermissions = await this.prisma.profilePermission.findMany({
-      where: search,
       skip,
       take,
       orderBy: { id: 'asc' },
@@ -47,20 +39,13 @@ export class PrismaProfilePermissionsRepository
   async listByProfileId(
     profileId: ProfilePermission['profileId'],
     options?: IListOptions,
-    searchParams: ISearchParamDTO[] = [],
   ): Promise<ProfilePermission[]> {
     const { skip, take } = calcPagination(options)
 
-    searchParams.push({
-      field: 'profileId',
-      condition: 'equals',
-      value: profileId,
-    })
-
-    const search = buildSearchFilter<ProfilePermission>(searchParams)
-
     const profilePermissions = await this.prisma.profilePermission.findMany({
-      where: search,
+      where: {
+        profileId,
+      },
       skip,
       take,
       orderBy: { id: 'asc' },

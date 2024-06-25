@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { EventAddress, Prisma } from '@prisma/client'
 
-import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { IListOptions } from '@/core/repositories/list-options'
-import { buildSearchFilter } from '@/core/util/filtering/build-search-filter'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import { ListEventAddressesDTO } from '@/domain/admsjp/dtos/event-address'
 import { EventAddressesRepository } from '@/domain/admsjp/repositories/event-addresses-repository'
@@ -78,22 +76,16 @@ export class PrismaEventAddressesRepository
     return event
   }
 
-  async list(
-    options?: IListOptions,
-    searchParams?: ISearchParamDTO[],
-  ): Promise<ListEventAddressesDTO> {
+  async list(options?: IListOptions): Promise<ListEventAddressesDTO> {
     const { skip, take } = calcPagination(options)
-
-    const search = buildSearchFilter<EventAddress>(searchParams)
 
     const [eventAddresses, count] = await this.prisma.$transaction([
       this.prisma.eventAddress.findMany({
-        where: search,
         skip,
         take,
         orderBy: { id: 'asc' },
       }),
-      this.prisma.eventAddress.count({ where: search }),
+      this.prisma.eventAddress.count(),
     ])
 
     return { eventAddresses, count }

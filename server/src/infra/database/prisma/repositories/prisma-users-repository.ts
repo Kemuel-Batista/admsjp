@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Prisma, User } from '@prisma/client'
 
-import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { IListOptions } from '@/core/repositories/list-options'
-import { buildSearchFilter } from '@/core/util/filtering/build-search-filter'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import { ListUserWithCountDTO, UpdateUserDTO } from '@/domain/admsjp/dtos/user'
 import { UsersRepository } from '@/domain/admsjp/repositories/users-repository'
@@ -69,17 +67,11 @@ export class PrismaUsersRepository implements UsersRepository {
     return user
   }
 
-  async list(
-    options?: IListOptions,
-    searchParams: ISearchParamDTO[] = [],
-  ): Promise<ListUserWithCountDTO> {
+  async list(options?: IListOptions): Promise<ListUserWithCountDTO> {
     const { skip, take } = calcPagination(options)
-
-    const search = buildSearchFilter<User>(searchParams)
 
     const [users, count] = await this.prisma.$transaction([
       this.prisma.user.findMany({
-        where: search,
         select: {
           id: true,
           uuid: true,
@@ -102,7 +94,7 @@ export class PrismaUsersRepository implements UsersRepository {
         take,
         orderBy: { id: 'asc' },
       }),
-      this.prisma.user.count({ where: search }),
+      this.prisma.user.count(),
     ])
 
     return { users, count }

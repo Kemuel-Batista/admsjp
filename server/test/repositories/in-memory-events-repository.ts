@@ -2,12 +2,9 @@ import { randomUUID } from 'node:crypto'
 
 import { Event } from '@prisma/client'
 import { EventProps } from 'test/factories/make-event'
-import { applyFilters } from 'test/utils/filtering'
 import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
-import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { IListOptions } from '@/core/repositories/list-options'
-import { buildSearchFilter } from '@/core/util/filtering/build-search-filter'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import { ListEventDTO } from '@/domain/admsjp/dtos/event'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
@@ -75,23 +72,14 @@ export class InMemoryEventsRepository implements EventsRepository {
     return event
   }
 
-  async list(
-    options?: IListOptions,
-    searchParams?: ISearchParamDTO[],
-  ): Promise<ListEventDTO> {
-    let filteredEvents = this.items
-
-    if (searchParams && searchParams.length > 0) {
-      const searchFilter = buildSearchFilter<Event>(searchParams)
-      filteredEvents = applyFilters<Event>(this.items, [searchFilter])
-    }
-
+  async list(options?: IListOptions): Promise<ListEventDTO> {
     const { skip, take } = calcPagination(options)
-    const paginatedEvents = filteredEvents.slice(skip, skip + take)
 
-    const count = filteredEvents.length
+    const events = this.items.slice(skip, skip + take)
 
-    return { events: paginatedEvents, count }
+    const count = events.length
+
+    return { events, count }
   }
 
   async findById(id: number): Promise<Event> {
