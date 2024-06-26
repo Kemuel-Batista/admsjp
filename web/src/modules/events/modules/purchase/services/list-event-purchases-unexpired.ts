@@ -1,9 +1,9 @@
 import { PaginateParams, usePaginateQuery } from '@/hooks/use-paginate-query'
 
-import { EventPurchaseWithTickets } from '../types/event-purchase-with-tickets'
+import { EventPurchaseWithTicketsAndLot } from '../types/event-purchase-with-tickets'
 
 export interface ListEventPurchasesUnexpiredResponse {
-  eventPurchases: EventPurchaseWithTickets[]
+  eventPurchases: EventPurchaseWithTicketsAndLot[]
 }
 
 export const ListEventPurchasesUnexpired = (params: PaginateParams) => {

@@ -28,6 +28,7 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
       name: data.name,
       email: data.email,
       phone: data.phone,
+      shirtSize: data.shirtSize,
       birthday: new Date(data.birthday),
       createdAt: new Date(),
     }

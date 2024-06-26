@@ -109,6 +109,9 @@ export function PurchaseDetailsDialog({
             <div className="flex flex-col gap-2">
               <Label>{item.name}</Label>
               <Label>{item.email}</Label>
+              {item.shirtSize !== '' && (
+                <Label>Tamanho da Camisa: {item.shirtSize}</Label>
+              )}
             </div>
           </Card>
         ))}

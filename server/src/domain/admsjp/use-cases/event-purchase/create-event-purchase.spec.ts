@@ -40,6 +40,7 @@ describe('Create Event Ticket', () => {
     inMemoryEventPurchasesRepository = new InMemoryEventPurchasesRepository(
       inMemoryUsersRepository,
       inMemoryEventsRepository,
+      inMemoryEventLotsRepository,
       inMemoryEventTicketsRepository,
     )
 

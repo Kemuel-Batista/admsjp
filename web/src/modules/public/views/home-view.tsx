@@ -74,7 +74,7 @@ export function HomeView() {
                         </Label>
                       </CardContent>
                       <CardFooter>
-                        <Button className="w-full">Inscreve-se</Button>
+                        <Button className="w-full">Inscreva-se</Button>
                       </CardFooter>
                     </Card>
                   </Link>

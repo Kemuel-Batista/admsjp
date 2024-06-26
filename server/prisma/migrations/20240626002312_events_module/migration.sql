@@ -101,6 +101,7 @@ CREATE TABLE "events_tickets" (
     "email" TEXT NOT NULL DEFAULT '',
     "phone" TEXT NOT NULL DEFAULT '',
     "birthday" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "shirt_size" TEXT NOT NULL DEFAULT '',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "events_tickets_pkey" PRIMARY KEY ("id")

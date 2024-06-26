@@ -37,6 +37,7 @@ describe('Edit Event', () => {
     inMemoryEventPurchasesRepository = new InMemoryEventPurchasesRepository(
       inMemoryUsersRepository,
       inMemoryEventsRepository,
+      inMemoryEventLotsRepository,
       inMemoryEventTicketsRepository,
     )
 

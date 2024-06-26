@@ -27,6 +27,7 @@ const completeEventTicketInfoSchema = z.object({
       email: z.string().email(),
       cpf: z.string().min(11).max(11),
       phone: z.string().max(11),
+      shirtSize: z.string().min(1).max(3).optional(),
       birthday: z.string().transform((arg) => new Date(arg)),
     }),
   ),
@@ -61,6 +62,7 @@ export class CompleteEventTicketInfoController {
         cpf: eventTicket.cpf,
         phone: eventTicket.phone,
         birthday: eventTicket.birthday,
+        shirtSize: eventTicket.shirtSize,
         requestedBy: user.sub.id,
       })
 

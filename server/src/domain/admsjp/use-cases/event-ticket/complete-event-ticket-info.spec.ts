@@ -34,6 +34,7 @@ describe('Complete event ticket info', () => {
     inMemoryEventPurchasesRepository = new InMemoryEventPurchasesRepository(
       inMemoryUsersRepository,
       inMemoryEventsRepository,
+      inMemoryEventLotsRepository,
       inMemoryEventTicketsRepository,
     )
 

@@ -6,7 +6,7 @@ import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-e
 
 import { EventPurchasesRepository } from '../../repositories/event-purchases-repository'
 import { UsersRepository } from '../../repositories/users-repository'
-import { EventPurchaseWithEventTickets } from '../../types/event-purchase'
+import { EventPurchaseWithEventTicketsAndLot } from '../../types/event-purchase'
 
 interface ListUnexpiredEventPurchasesWithDetailsByUserIdUseCaseRequest {
   buyerId: EventPurchase['buyerId']
@@ -15,7 +15,7 @@ interface ListUnexpiredEventPurchasesWithDetailsByUserIdUseCaseRequest {
 type ListUnexpiredEventPurchasesWithDetailsByUserIdUseCaseResponse = Either<
   ResourceNotFoundError,
   {
-    eventPurchases: EventPurchaseWithEventTickets[]
+    eventPurchases: EventPurchaseWithEventTicketsAndLot[]
   }
 >
 

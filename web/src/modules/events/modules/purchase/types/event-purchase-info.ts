@@ -18,6 +18,7 @@ export type EventPurchaseInfo = {
     email: string
     phone: string
     birthday: Date
+    shirtSize: string
     createdAt: Date
   }[]
 }

@@ -29,6 +29,7 @@ describe('List orders by transaction id', () => {
     inMemoryEventPurchasesRepository = new InMemoryEventPurchasesRepository(
       inMemoryUsersRepository,
       inMemoryEventsRepository,
+      inMemoryEventLotsRepository,
       inMemoryEventTicketsRepository,
     )
     inMemoryOrdersRepository = new InMemoryOrdersRepository()

@@ -8,9 +8,10 @@ import { EventPurchasesRepository } from '@/domain/admsjp/repositories/event-pur
 import {
   EventPurchaseWithBuyer,
   EventPurchaseWithEvent,
-  EventPurchaseWithEventTickets,
+  EventPurchaseWithEventTicketsAndLot,
 } from '@/domain/admsjp/types/event-purchase'
 
+import { InMemoryEventLotsRepository } from './in-memory-event-lots-repository'
 import { InMemoryEventTicketsRepository } from './in-memory-event-tickets-repository'
 import { InMemoryEventsRepository } from './in-memory-events-repository'
 import { InMemoryUsersRepository } from './in-memory-users-repository'
@@ -23,6 +24,7 @@ export class InMemoryEventPurchasesRepository
   constructor(
     private usersRepository: InMemoryUsersRepository,
     private eventsRepository: InMemoryEventsRepository,
+    private eventLotsRepository: InMemoryEventLotsRepository,
     private eventTicketsRepository: InMemoryEventTicketsRepository,
   ) {}
 
@@ -153,7 +155,7 @@ export class InMemoryEventPurchasesRepository
 
   async listUnexpiredByUserId(
     buyerId: EventPurchase['buyerId'],
-  ): Promise<EventPurchaseWithEventTickets[]> {
+  ): Promise<EventPurchaseWithEventTicketsAndLot[]> {
     const now = new Date()
     const fifteenMinutesAgo = new Date(now.getTime() - 15 * 60 * 1000)
 
@@ -165,11 +167,20 @@ export class InMemoryEventPurchasesRepository
           item.expiresAt <= now,
       )
       .map((item) => {
-        const eventTickets = this.eventTicketsRepository.items.filter(
-          (eventTicket) => {
+        const eventTickets = this.eventTicketsRepository.items
+          .filter((eventTicket) => {
             return eventTicket.eventPurchaseId === item.id
-          },
-        )
+          })
+          .map((eventTicket) => {
+            const eventLot = this.eventLotsRepository.items.find(
+              (item) => item.id === eventTicket.eventLotId,
+            )
+
+            return {
+              ...eventTicket,
+              eventLot,
+            }
+          })
 
         return {
           ...item,

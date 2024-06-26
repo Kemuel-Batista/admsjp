@@ -7,7 +7,7 @@ import { EventPurchasesRepository } from '@/domain/admsjp/repositories/event-pur
 import {
   EventPurchaseWithBuyer,
   EventPurchaseWithEvent,
-  EventPurchaseWithEventTickets,
+  EventPurchaseWithEventTicketsAndLot,
 } from '@/domain/admsjp/types/event-purchase'
 
 import { PrismaService } from '../prisma.service'
@@ -141,7 +141,7 @@ export class PrismaEventPurchasesRepository
 
   async listUnexpiredByUserId(
     buyerId: EventPurchase['buyerId'],
-  ): Promise<EventPurchaseWithEventTickets[]> {
+  ): Promise<EventPurchaseWithEventTicketsAndLot[]> {
     const now = new Date()
 
     const eventPurchases = await this.prisma.eventPurchase.findMany({
@@ -155,7 +155,24 @@ export class PrismaEventPurchasesRepository
         createdAt: 'desc',
       },
       include: {
-        eventTickets: true,
+        eventTickets: {
+          select: {
+            id: true,
+            eventLotId: true,
+            eventPurchaseId: true,
+            ticket: true,
+            email: true,
+            name: true,
+            cpf: true,
+            phone: true,
+            qrCodeImage: true,
+            qrCodeText: true,
+            shirtSize: true,
+            birthday: true,
+            createdAt: true,
+            eventLot: true,
+          },
+        },
       },
     })
 

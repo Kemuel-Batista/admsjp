@@ -1,4 +1,6 @@
-export type EventTicket = {
+import { EventLot } from '../../event-lot/types/event-lot'
+
+export type EventTicketWithLot = {
   id: string
   eventPurchaseId: string
   eventLotId: string
@@ -12,4 +14,5 @@ export type EventTicket = {
   birthday: Date
   shirtSize: string
   createdAt: Date
+  eventLot: EventLot
 }

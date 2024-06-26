@@ -39,6 +39,7 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
     cpf,
     email,
     phone,
+    shirtSize,
   }: EventTicket): Promise<EventTicket> {
     const event = await this.prisma.eventTicket.update({
       where: {
@@ -50,6 +51,7 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
         cpf,
         email,
         phone,
+        shirtSize: shirtSize ?? undefined,
       },
     })
 

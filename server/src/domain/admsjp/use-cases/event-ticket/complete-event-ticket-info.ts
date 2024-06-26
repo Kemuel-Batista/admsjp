@@ -15,6 +15,7 @@ interface CompleteEventTicketInfoUseCaseRequest {
   cpf: string
   phone: string
   birthday: Date
+  shirtSize?: string
   requestedBy: number
 }
 
@@ -38,6 +39,7 @@ export class CompleteEventTicketInfoUseCase {
     cpf,
     phone,
     birthday,
+    shirtSize,
     requestedBy,
   }: CompleteEventTicketInfoUseCaseRequest): Promise<CompleteEventTicketInfoUseCaseResponse> {
     const eventTicket = await this.eventTicketsRepository.findById(id)
@@ -84,6 +86,7 @@ export class CompleteEventTicketInfoUseCase {
     eventTicket.cpf = cpf
     eventTicket.phone = phone
     eventTicket.birthday = birthday
+    eventTicket.shirtSize = shirtSize
 
     await this.eventTicketsRepository.save(eventTicket)
 

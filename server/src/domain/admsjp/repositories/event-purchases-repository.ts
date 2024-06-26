@@ -5,7 +5,7 @@ import { IListOptions } from '@/core/repositories/list-options'
 import {
   EventPurchaseWithBuyer,
   EventPurchaseWithEvent,
-  EventPurchaseWithEventTickets,
+  EventPurchaseWithEventTicketsAndLot,
 } from '../types/event-purchase'
 
 export abstract class EventPurchasesRepository {
@@ -25,7 +25,7 @@ export abstract class EventPurchasesRepository {
 
   abstract listUnexpiredByUserId(
     buyerId: EventPurchase['buyerId'],
-  ): Promise<EventPurchaseWithEventTickets[]>
+  ): Promise<EventPurchaseWithEventTicketsAndLot[]>
 
   abstract listBuyerDetailsByEventId(
     eventId: EventPurchase['eventId'],

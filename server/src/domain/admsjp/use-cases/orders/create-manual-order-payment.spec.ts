@@ -34,6 +34,7 @@ describe('Create manual order payment', () => {
     inMemoryEventPurchasesRepository = new InMemoryEventPurchasesRepository(
       inMemoryUsersRepository,
       inMemoryEventsRepository,
+      inMemoryEventLotsRepository,
       inMemoryEventTicketsRepository,
     )
     inMemoryOrdersRepository = new InMemoryOrdersRepository()

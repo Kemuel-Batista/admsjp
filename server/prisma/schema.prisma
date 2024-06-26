@@ -243,6 +243,7 @@ model EventTicket {
   email           String        @default("")
   phone           String        @default("")
   birthday        DateTime      @default(now())
+  shirtSize       String        @default("") @map("shirt_size")
   createdAt       DateTime      @default(now()) @map("created_at")
 
   @@map("events_tickets")
