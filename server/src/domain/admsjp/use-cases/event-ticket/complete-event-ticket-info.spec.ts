@@ -75,16 +75,20 @@ describe('Complete event ticket info', () => {
     const eventTicket =
       await inMemoryEventTicketsRepository.create(eventTicketFactory)
 
-    const result = await sut.execute({
-      id: eventTicket.id,
-      eventPurchaseId: eventPurchase.id,
-      name: user.name,
-      email: user.email,
-      cpf: '123124234312',
-      phone: '81989943240',
-      birthday: new Date(),
-      requestedBy: user.id,
-    })
+    const result = await sut.execute(
+      [
+        {
+          id: eventTicket.id,
+          eventPurchaseId: eventPurchase.id,
+          name: user.name,
+          email: user.email,
+          cpf: '123124234312',
+          phone: '81989943240',
+          birthday: new Date(),
+        },
+      ],
+      user.id,
+    )
 
     expect(result.isSuccess()).toBe(true)
 

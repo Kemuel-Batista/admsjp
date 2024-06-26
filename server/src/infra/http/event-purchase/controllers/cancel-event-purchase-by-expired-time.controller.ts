@@ -10,8 +10,10 @@ import {
 import { LimitTimeNotExpiredError } from '@/core/errors/errors/limit-time-not-expired-error'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 import { CancelEventPurchaseByExpiredTimeUseCase } from '@/domain/admsjp/use-cases/event-purchase/cancel-event-purchase-by-expired-time'
+import { Public } from '@/infra/auth/public'
 
 @Controller('/expired-time/:purchaseId')
+@Public()
 export class CancelEventPurchaseByExpiredTimeController {
   constructor(
     private cancelEventPurchaseByExpiredTime: CancelEventPurchaseByExpiredTimeUseCase,

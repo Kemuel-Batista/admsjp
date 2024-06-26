@@ -5,7 +5,7 @@ import { setCookie } from 'cookies-next'
 import { format } from 'date-fns'
 import { Calendar as CalendarIcon, CircleUser, MapPin } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -66,6 +66,7 @@ interface EventCheckoutViewProps {
 export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
   const { user } = useAuth()
   const router = useRouter()
+  const [loading, setIsLoading] = useState(false)
 
   const { data, isLoading: isLoadingEvent } = GetEventBySlugService(slug)
   const event = data?.event
@@ -120,9 +121,11 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
     })
   }, [tickets, form])
 
-  const { mutateAsync, isPending } = CompleteEventTicketInfoService()
+  const { mutateAsync } = CompleteEventTicketInfoService()
 
   async function onSubmit(data: CompleteEventTicketInfoFormData) {
+    setIsLoading(true)
+
     await mutateAsync(data, {
       onSuccess: () => {
         const eventPurchaseInfo: EventPurchaseInfo = {
@@ -146,6 +149,8 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
         }, 3000)
       },
     })
+
+    setIsLoading(false)
   }
 
   if (isLoading) {
@@ -325,6 +330,9 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
                                   mode="single"
                                   selected={field.value}
                                   onSelect={field.onChange}
+                                  captionLayout="dropdown-buttons"
+                                  fromYear={1940}
+                                  toYear={2024}
                                   disabled={(date) =>
                                     date > new Date() ||
                                     date < new Date('1900-01-01')
@@ -385,8 +393,8 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
             expiresAt={purchases.length > 0 ? purchases[0].expiresAt : ''}
           />
         </div>
-        <Button type="submit" disabled={isPending}>
-          {isPending ? <Icons.spinner /> : 'Continuar para pagamento'}
+        <Button type="submit" disabled={loading}>
+          {loading ? <Icons.spinner /> : 'Continuar para pagamento'}
         </Button>
       </form>
     </Form>

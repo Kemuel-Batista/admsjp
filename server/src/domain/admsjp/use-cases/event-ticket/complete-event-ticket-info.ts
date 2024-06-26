@@ -8,15 +8,14 @@ import { EventPurchasesRepository } from '../../repositories/event-purchases-rep
 import { EventTicketsRepository } from '../../repositories/event-tickets-repository'
 
 interface CompleteEventTicketInfoUseCaseRequest {
-  id: string
-  eventPurchaseId: string
-  name: string
-  email: string
-  cpf: string
-  phone: string
-  birthday: Date
+  id?: string
+  eventPurchaseId?: string
+  name?: string
+  email?: string
+  cpf?: string
+  phone?: string
+  birthday?: Date
   shirtSize?: string
-  requestedBy: number
 }
 
 type CompleteEventTicketInfoUseCaseResponse = Either<
@@ -31,64 +30,66 @@ export class CompleteEventTicketInfoUseCase {
     private eventPurchasesRepository: EventPurchasesRepository,
   ) {}
 
-  async execute({
-    id,
-    eventPurchaseId,
-    name,
-    email,
-    cpf,
-    phone,
-    birthday,
-    shirtSize,
-    requestedBy,
-  }: CompleteEventTicketInfoUseCaseRequest): Promise<CompleteEventTicketInfoUseCaseResponse> {
-    const eventTicket = await this.eventTicketsRepository.findById(id)
+  async execute(
+    data: CompleteEventTicketInfoUseCaseRequest[],
+    requestedBy: number,
+  ): Promise<CompleteEventTicketInfoUseCaseResponse> {
+    const eventTicketsPromise = data.map(async (item) => {
+      const eventTicket = await this.eventTicketsRepository.findById(item.id)
 
-    if (!eventTicket) {
-      return failure(
-        new ResourceNotFoundError({
-          errorKey: 'eventTicket.find.notFound',
-          key: id.toString(),
-        }),
+      if (!eventTicket) {
+        return failure(
+          new ResourceNotFoundError({
+            errorKey: 'eventTicket.find.notFound',
+            key: String(item.id),
+          }),
+        )
+      }
+
+      const eventPurchase = await this.eventPurchasesRepository.findById(
+        item.eventPurchaseId,
       )
+
+      if (!eventPurchase) {
+        return failure(
+          new ResourceNotFoundError({
+            errorKey: 'eventPurchase.find.notFound',
+            key: String(item.id),
+          }),
+        )
+      }
+
+      if (eventPurchase.buyerId !== requestedBy) {
+        return failure(
+          new IncorrectAssociationError({
+            errorKey: 'eventPurchase.find.incorrectAssociation',
+          }),
+        )
+      }
+
+      if (eventTicket.eventPurchaseId !== item.eventPurchaseId) {
+        return failure(
+          new IncorrectAssociationError({
+            errorKey: 'eventTicket.find.incorrectAssociation',
+          }),
+        )
+      }
+    })
+
+    await Promise.all(eventTicketsPromise)
+
+    for (const item of data) {
+      const eventTicket = await this.eventTicketsRepository.findById(item.id)
+
+      eventTicket.name = item.name
+      eventTicket.email = item.email
+      eventTicket.cpf = item.cpf
+      eventTicket.phone = item.phone
+      eventTicket.birthday = item.birthday
+      eventTicket.shirtSize = item.shirtSize
+
+      await this.eventTicketsRepository.save(eventTicket)
     }
-
-    const eventPurchase =
-      await this.eventPurchasesRepository.findById(eventPurchaseId)
-
-    if (!eventPurchase) {
-      return failure(
-        new ResourceNotFoundError({
-          errorKey: 'eventPurchase.find.notFound',
-          key: id.toString(),
-        }),
-      )
-    }
-
-    if (eventPurchase.buyerId !== requestedBy) {
-      return failure(
-        new IncorrectAssociationError({
-          errorKey: 'eventPurchase.find.incorrectAssociation',
-        }),
-      )
-    }
-
-    if (eventTicket.eventPurchaseId !== eventPurchaseId) {
-      return failure(
-        new IncorrectAssociationError({
-          errorKey: 'eventTicket.find.incorrectAssociation',
-        }),
-      )
-    }
-
-    eventTicket.name = name
-    eventTicket.email = email
-    eventTicket.cpf = cpf
-    eventTicket.phone = phone
-    eventTicket.birthday = birthday
-    eventTicket.shirtSize = shirtSize
-
-    await this.eventTicketsRepository.save(eventTicket)
 
     return success(null)
   }

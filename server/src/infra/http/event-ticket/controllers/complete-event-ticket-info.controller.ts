@@ -53,30 +53,18 @@ export class CompleteEventTicketInfoController {
   ) {
     const { data } = body
 
-    for (const eventTicket of data) {
-      const result = await this.completeEventTicketInfo.execute({
-        id: eventTicket.id,
-        eventPurchaseId: eventTicket.eventPurchaseId,
-        name: eventTicket.name,
-        email: eventTicket.email,
-        cpf: eventTicket.cpf,
-        phone: eventTicket.phone,
-        birthday: eventTicket.birthday,
-        shirtSize: eventTicket.shirtSize,
-        requestedBy: user.sub.id,
-      })
+    const result = await this.completeEventTicketInfo.execute(data, user.sub.id)
 
-      if (result.isError()) {
-        const error = result.value
+    if (result.isError()) {
+      const error = result.value
 
-        switch (error.constructor) {
-          case ResourceNotFoundError:
-            throw new NotFoundException(error.message)
-          case IncorrectAssociationError:
-            throw new PreconditionFailedException(error.message)
-          default:
-            throw new BadRequestException(error.message)
-        }
+      switch (error.constructor) {
+        case ResourceNotFoundError:
+          throw new NotFoundException(error.message)
+        case IncorrectAssociationError:
+          throw new PreconditionFailedException(error.message)
+        default:
+          throw new BadRequestException(error.message)
       }
     }
   }

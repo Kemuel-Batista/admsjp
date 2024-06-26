@@ -1,6 +1,6 @@
 'use client'
 
-import { getCookie } from 'cookies-next'
+import { deleteCookie, getCookie } from 'cookies-next'
 import {
   createContext,
   useCallback,
@@ -51,6 +51,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const isAuthenticated = user.id !== null
 
   const signOut = async () => {
+    deleteCookie('nextauth_token')
+
     await api.post('/auth/sessions/logout')
     setUser({
       id: null,
