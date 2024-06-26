@@ -149,8 +149,6 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
         }, 3000)
       },
     })
-
-    setIsLoading(false)
   }
 
   if (isLoading) {

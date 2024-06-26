@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { getCookie } from 'cookies-next'
 import { Copy } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
@@ -28,10 +29,17 @@ import { CheckoutSummaryView } from './checkout-summary-view'
 
 export function CheckoutPaymentView() {
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
 
   const eventPurchase: EventPurchaseInfo = JSON.parse(
     getCookie('admsjp.event-purchase') ?? '',
   )
+
+  useEffect(() => {
+    if (!eventPurchase) {
+      router.push('/')
+    }
+  }, [eventPurchase])
 
   const form = useForm<CreateManualPaymentFormData>({
     resolver: zodResolver(createManualPaymentSchema),
@@ -46,9 +54,11 @@ export function CheckoutPaymentView() {
     navigator.clipboard.writeText(eventPurchase.pixKey)
   }
 
-  const { mutateAsync, isPending } = CreateManualPaymentService()
+  const { mutateAsync } = CreateManualPaymentService()
 
   async function onSubmit(data: CreateManualPaymentFormData) {
+    setIsLoading(true)
+
     await mutateAsync(data, {
       onSuccess: () => {
         router.push('/purchases')
@@ -124,8 +134,8 @@ export function CheckoutPaymentView() {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isPending}>
-          {isPending ? <Icons.spinner /> : 'Concluir pagamento'}
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? <Icons.spinner /> : 'Concluir pagamento'}
         </Button>
       </form>
     </Form>

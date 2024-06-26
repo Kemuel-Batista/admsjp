@@ -62,7 +62,7 @@ export function PurchaseDetailsDialog({
   }
 
   return (
-    <DialogContent className="w-3/4 max-w-screen mobile:w-full">
+    <DialogContent className="w-3/4 max-w-screen mobile:w-full my-5">
       <DialogHeader>
         <DialogTitle className="text-start">
           Pedido N° {purchase.invoiceNumber}
@@ -123,7 +123,7 @@ export function PurchaseDetailsDialog({
         <TableHeader>
           <TableRow>
             <TableHead>N° Ingresso</TableHead>
-            <TableHead>Parcipante</TableHead>
+            <TableHead>Participante</TableHead>
             <TableHead>E-mail</TableHead>
             <TableHead>Tipo</TableHead>
             <TableHead>Valor</TableHead>
