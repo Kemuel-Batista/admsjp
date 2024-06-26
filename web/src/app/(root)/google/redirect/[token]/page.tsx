@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 import { Label } from '@/components/ui/label'
+import { useAuth } from '@/contexts/auth-context'
+import { api } from '@/lib/axios'
 
 export default function EventCheckout({
   params,
@@ -13,6 +15,7 @@ export default function EventCheckout({
   params: { token: string }
 }) {
   const router = useRouter()
+  const { getMe } = useAuth()
 
   useEffect(() => {
     setCookie('nextauth_token', params.token, {
@@ -22,7 +25,11 @@ export default function EventCheckout({
       path: '/',
     })
 
+    api.defaults.headers.Authorization = `Bearer ${params.token}`
+
     const timer = setTimeout(() => {
+      getMe()
+
       router.push('/')
     }, 2500)
 
