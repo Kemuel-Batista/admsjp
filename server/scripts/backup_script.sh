@@ -6,7 +6,7 @@
 DATA=$(date +%Y-%m-%d_%H-%M)
 
 # Diretorio local de backup
-PBACKUP="/home/admsjpuser/projects/admsjp/backup"
+PBACKUP="/home/admsjpuser/projects/backup"
 
 HOST=$(hostname)
 
