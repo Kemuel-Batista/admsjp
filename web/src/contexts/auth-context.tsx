@@ -1,5 +1,6 @@
 'use client'
 
+import { getCookie } from 'cookies-next'
 import {
   createContext,
   useCallback,
@@ -36,6 +37,8 @@ type AuthContextData = {
 export const AuthContext = createContext({} as AuthContextData)
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const token = getCookie('nextauth_token')
+
   const [user, setUser] = useState<User>({
     id: null,
     email: '',
@@ -71,7 +74,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     getMe()
-  }, [])
+  }, [token])
 
   const signIn = useCallback(async ({ email, password }: SignInCredentials) => {
     await api.post(`/auth/session`, {
