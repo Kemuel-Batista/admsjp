@@ -1,12 +1,6 @@
 import { Log, Prisma } from '@prisma/client'
 
-import { ISearchParamDTO } from '../../../core/dtos/search-param-dto'
-import { IListOptions } from '../../../core/repositories/list-options'
-
-export interface ListLogByDateWithCount {
-  logs: Log[]
-  count: number
-}
+import { ListOptions } from '../../../core/repositories/list-options'
 
 export abstract class LogsRepository {
   abstract log(data: Prisma.LogUncheckedCreateInput): Promise<void>
@@ -14,7 +8,6 @@ export abstract class LogsRepository {
     level: Log['level'],
     dateInitial: Date,
     dateFinal: Date,
-    options?: IListOptions,
-    searchParams?: ISearchParamDTO[],
-  ): Promise<ListLogByDateWithCount>
+    options?: ListOptions,
+  ): Promise<Log[]>
 }

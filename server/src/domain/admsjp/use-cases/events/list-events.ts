@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { Event } from '@prisma/client'
 
-import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { Either, success } from '@/core/either'
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
+import { SearchParams } from '@/core/repositories/search-params'
 import { UserProfile } from '@/domain/admsjp/enums/user'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 import { UserWithPermission } from '@/domain/admsjp/types/user/user-with-permission'
@@ -11,15 +11,14 @@ import { UserWithPermission } from '@/domain/admsjp/types/user/user-with-permiss
 interface ListEventsUseCaseRequest {
   profileId: UserWithPermission['profileId']
   departmentId: UserWithPermission['departmentId']
-  options?: IListOptions
-  searchParams?: ISearchParamDTO[]
+  options?: ListOptions
+  searchParams?: SearchParams[]
 }
 
 type ListEventsUseCaseResponse = Either<
   null,
   {
     events: Event[]
-    count: number
   }
 >
 
@@ -48,14 +47,10 @@ export class ListEventsUseCase {
       })
     }
 
-    const { events, count } = await this.eventsRepository.list(
-      options,
-      searchParams,
-    )
+    const events = await this.eventsRepository.list(options, searchParams)
 
     return success({
       events,
-      count,
     })
   }
 }

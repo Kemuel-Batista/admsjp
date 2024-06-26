@@ -1,22 +1,17 @@
 import { Prisma, ProfilePermission } from '@prisma/client'
 
-import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
 
 export abstract class ProfilePermissionsRepository {
   abstract create(
     data: Prisma.ProfilePermissionUncheckedCreateInput,
   ): Promise<ProfilePermission>
 
-  abstract list(
-    options?: IListOptions,
-    searchParams?: ISearchParamDTO[],
-  ): Promise<ProfilePermission[]>
+  abstract list(options?: ListOptions): Promise<ProfilePermission[]>
 
   abstract listByProfileId(
     profileId: ProfilePermission['profileId'],
-    options?: IListOptions,
-    searchParams?: ISearchParamDTO[],
+    options?: ListOptions,
   ): Promise<ProfilePermission[]>
 
   abstract findById(

@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { Parameter, Prisma } from '@prisma/client'
 
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
-import { ListParameterDTO } from '@/domain/admsjp/dtos/parameter'
 import { ParametersRepository } from '@/domain/admsjp/repositories/parameters-repository'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 
@@ -58,19 +57,16 @@ export class PrismaParametersRepository implements ParametersRepository {
     return parameter
   }
 
-  async list(options?: IListOptions): Promise<ListParameterDTO> {
+  async list(options?: ListOptions): Promise<Parameter[]> {
     const { skip, take } = calcPagination(options)
 
-    const [parameters, count] = await this.prisma.$transaction([
-      this.prisma.parameter.findMany({
-        skip,
-        take,
-        orderBy: { id: 'asc' },
-      }),
-      this.prisma.parameter.count(),
-    ])
+    const parameters = await this.prisma.parameter.findMany({
+      skip,
+      take,
+      orderBy: { id: 'asc' },
+    })
 
-    return { parameters, count }
+    return parameters
   }
 
   async findById(id: Parameter['id']): Promise<Parameter | null> {

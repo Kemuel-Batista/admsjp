@@ -1,6 +1,6 @@
 import { EventPurchase, Prisma } from '@prisma/client'
 
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
 
 import {
   EventPurchaseWithBuyer,
@@ -17,10 +17,10 @@ export abstract class EventPurchasesRepository {
   abstract findById(id: EventPurchase['id']): Promise<EventPurchase | null>
 
   abstract lastInvoiceNumber(): Promise<string>
-  abstract list(options?: IListOptions): Promise<EventPurchase[]>
+  abstract list(options?: ListOptions): Promise<EventPurchase[]>
   abstract listByBuyerId(
     buyerId: EventPurchase['buyerId'],
-    options?: IListOptions,
+    options?: ListOptions,
   ): Promise<EventPurchaseWithEvent[]>
 
   abstract listUnexpiredByUserId(

@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto'
 
 import { EventPurchase, Prisma } from '@prisma/client'
 
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import { EventPurchasesRepository } from '@/domain/admsjp/repositories/event-purchases-repository'
 import {
@@ -108,7 +108,7 @@ export class InMemoryEventPurchasesRepository
     return `${year}${month.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}EV${maxTicket.toString().padStart(4, '0')}`
   }
 
-  async list(options?: IListOptions): Promise<EventPurchase[]> {
+  async list(options?: ListOptions): Promise<EventPurchase[]> {
     const eventPurchases = this.items
 
     const { skip, take } = calcPagination(options)
@@ -119,7 +119,7 @@ export class InMemoryEventPurchasesRepository
 
   async listByBuyerId(
     buyerId: EventPurchase['buyerId'],
-    options?: IListOptions,
+    options?: ListOptions,
   ): Promise<EventPurchaseWithEvent[]> {
     const eventPurchases = this.items
 

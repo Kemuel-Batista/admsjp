@@ -40,7 +40,6 @@ describe('List event lots by event id', () => {
     const result = await sut.execute({
       eventId: event.id,
       options: {},
-      searchParams: [],
     })
 
     expect(result.isSuccess()).toBe(true)

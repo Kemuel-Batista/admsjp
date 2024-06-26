@@ -19,11 +19,10 @@ export class ListParametersController {
       throw new BadRequestException()
     }
 
-    const { parameters, count } = result.value
+    const parameters = result.value
 
     return {
       parameters,
-      count,
     }
   }
 }

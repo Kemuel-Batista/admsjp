@@ -1,4 +1,4 @@
-interface ISearchParamDTO {
+export interface SearchParams {
   field: string
   condition:
     | 'equals'
@@ -16,5 +16,3 @@ interface ISearchParamDTO {
     | 'isNotNull'
   value: string | number | Date
 }
-
-export type { ISearchParamDTO }

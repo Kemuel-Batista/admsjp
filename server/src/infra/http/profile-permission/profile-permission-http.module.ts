@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common'
 
-import { FindProfileByIdUseCase } from '@/domain/admsjp/use-cases/profile/find/by-id/find-profile-by-id'
 import { CreateProfilePermissionUseCase } from '@/domain/admsjp/use-cases/profile-permission/create-profile-permission'
 import { DeleteProfilePermissionByIdUseCase } from '@/domain/admsjp/use-cases/profile-permission/delete-profile-permission-by-id'
 import { GetProfilePermissionByIdUseCase } from '@/domain/admsjp/use-cases/profile-permission/get-profile-permission-by-id'
@@ -29,7 +28,6 @@ import { ListProfilePermissionByProfileIdController } from './controllers/list-p
     GetProfilePermissionByIdUseCase,
     CreateProfilePermissionUseCase,
     DeleteProfilePermissionByIdUseCase,
-    FindProfileByIdUseCase,
   ],
   exports: [ListProfilePermissionByProfileIdUseCase],
 })

@@ -9,7 +9,7 @@ import {
 import { z } from 'zod'
 
 import { UserProfile } from '@/domain/admsjp/enums/user'
-import { CreateProfileUseCase } from '@/domain/admsjp/use-cases/profile/create/create-profile'
+import { CreateProfileUseCase } from '@/domain/admsjp/use-cases/profile/create-profile'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
 import { ProfileGuard } from '@/infra/auth/profile.guard'

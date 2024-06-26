@@ -1,13 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import { Profile } from '@prisma/client'
+import { Prisma, Profile } from '@prisma/client'
 
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
-import {
-  CreateProfileDTO,
-  ListProfileDTO,
-  UpdateProfileDTO,
-} from '@/domain/admsjp/dtos/profile'
 import { ProfilesRepository } from '@/domain/admsjp/repositories/profiles-repository'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 
@@ -19,7 +14,7 @@ export class PrismaProfilesRepository implements ProfilesRepository {
     status,
     visible,
     createdBy,
-  }: CreateProfileDTO): Promise<Profile> {
+  }: Prisma.ProfileUncheckedCreateInput): Promise<Profile> {
     const profile = await this.prisma.profile.create({
       data: {
         name,
@@ -38,7 +33,7 @@ export class PrismaProfilesRepository implements ProfilesRepository {
     status,
     visible,
     updatedBy,
-  }: UpdateProfileDTO): Promise<Profile> {
+  }: Profile): Promise<Profile> {
     const profile = await this.prisma.profile.update({
       where: {
         id,
@@ -54,19 +49,16 @@ export class PrismaProfilesRepository implements ProfilesRepository {
     return profile
   }
 
-  async list(options?: IListOptions): Promise<ListProfileDTO> {
+  async list(options?: ListOptions): Promise<Profile[]> {
     const { skip, take } = calcPagination(options)
 
-    const [profiles, count] = await this.prisma.$transaction([
-      this.prisma.profile.findMany({
-        skip,
-        take,
-        orderBy: { id: 'asc' },
-      }),
-      this.prisma.profile.count(),
-    ])
+    const profiles = await this.prisma.profile.findMany({
+      skip,
+      take,
+      orderBy: { id: 'asc' },
+    })
 
-    return { profiles, count }
+    return profiles
   }
 
   async findById(id: Profile['id']): Promise<Profile | null> {

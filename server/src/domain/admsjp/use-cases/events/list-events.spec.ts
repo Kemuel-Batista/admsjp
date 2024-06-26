@@ -38,7 +38,6 @@ describe('List Events', () => {
       departmentId: user.departmentId,
       profileId: user.profileId,
       options: {},
-      searchParams: [],
     })
 
     expect(result.isSuccess()).toBe(true)
@@ -81,7 +80,6 @@ describe('List Events', () => {
       departmentId: user.departmentId,
       profileId: user.profileId,
       options: {},
-      searchParams: [],
     })
 
     expect(result.isSuccess()).toBe(true)
@@ -114,7 +112,6 @@ describe('List Events', () => {
         page: 1,
         pageSize: 2,
       },
-      searchParams: [],
     })
 
     expect(result.isSuccess()).toBe(true)

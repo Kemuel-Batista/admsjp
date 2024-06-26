@@ -23,7 +23,6 @@ describe('List Events', () => {
 
     const result = await sut.execute({
       options: {},
-      searchParams: [],
     })
 
     expect(result.isSuccess()).toBe(true)
@@ -54,7 +53,6 @@ describe('List Events', () => {
         page: 1,
         pageSize: 2,
       },
-      searchParams: [],
     })
 
     expect(result.isSuccess()).toBe(true)
@@ -72,7 +70,6 @@ describe('List Events', () => {
 
     const result = await sut.execute({
       options: {},
-      searchParams: [],
     })
 
     expect(result.isSuccess()).toBe(true)
@@ -93,7 +90,6 @@ describe('List Events', () => {
 
     const result = await sut.execute({
       options: {},
-      searchParams: [],
     })
 
     expect(result.isSuccess()).toBe(true)

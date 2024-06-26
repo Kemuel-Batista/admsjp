@@ -3,10 +3,7 @@ import { randomUUID } from 'node:crypto'
 import { Log, Prisma } from '@prisma/client'
 import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
-import {
-  ListLogByDateWithCount,
-  LogsRepository,
-} from '@/domain/admsjp/repositories/logs-repository'
+import { LogsRepository } from '@/domain/admsjp/repositories/logs-repository'
 
 export class InMemoryLogsRepository implements LogsRepository {
   public items: Log[] = []
@@ -35,7 +32,7 @@ export class InMemoryLogsRepository implements LogsRepository {
     level: number,
     dateInitial: Date,
     dateFinal: Date,
-  ): Promise<ListLogByDateWithCount> {
+  ): Promise<Log[]> {
     const logs = this.items.filter(
       (item) =>
         item.level === level &&
@@ -43,8 +40,6 @@ export class InMemoryLogsRepository implements LogsRepository {
         dateFinal.getTime() <= item.timestamp.getTime(),
     )
 
-    const count = logs.length
-
-    return { logs, count }
+    return logs
   }
 }

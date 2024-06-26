@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Prisma, ProfilePermission } from '@prisma/client'
 
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import { ProfilePermissionsRepository } from '@/domain/admsjp/repositories/profile-permissions-repository'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
@@ -24,7 +24,7 @@ export class PrismaProfilePermissionsRepository
     return profilePermission
   }
 
-  async list(options?: IListOptions): Promise<ProfilePermission[]> {
+  async list(options?: ListOptions): Promise<ProfilePermission[]> {
     const { skip, take } = calcPagination(options)
 
     const profilePermissions = await this.prisma.profilePermission.findMany({
@@ -38,7 +38,7 @@ export class PrismaProfilePermissionsRepository
 
   async listByProfileId(
     profileId: ProfilePermission['profileId'],
-    options?: IListOptions,
+    options?: ListOptions,
   ): Promise<ProfilePermission[]> {
     const { skip, take } = calcPagination(options)
 

@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { ProfilePermission } from '@prisma/client'
 
-import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { Either, success } from '@/core/either'
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
 import { ProfilePermissionsRepository } from '@/domain/admsjp/repositories/profile-permissions-repository'
 
 interface ListProfilePermissionUseCaseRequest {
-  options: IListOptions
-  searchParams: ISearchParamDTO[]
+  options: ListOptions
 }
 
 type ListProfilePermissionUseCaseResponse = Either<
@@ -26,12 +24,9 @@ export class ListProfilePermissionUseCase {
 
   async execute({
     options = {},
-    searchParams = [],
   }: ListProfilePermissionUseCaseRequest): Promise<ListProfilePermissionUseCaseResponse> {
-    const profilePermissions = await this.profilePermissionRepository.list(
-      options,
-      searchParams,
-    )
+    const profilePermissions =
+      await this.profilePermissionRepository.list(options)
 
     return success({
       profilePermissions,

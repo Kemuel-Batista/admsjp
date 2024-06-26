@@ -30,7 +30,6 @@ describe('List profile permissions', () => {
 
     const result = await sut.execute({
       options: {},
-      searchParams: [],
     })
 
     expect(result.isSuccess()).toBe(true)

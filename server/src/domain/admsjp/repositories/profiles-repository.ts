@@ -1,22 +1,11 @@
-import { Profile } from '@prisma/client'
+import { Prisma, Profile } from '@prisma/client'
 
-import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
-import { IListOptions } from '@/core/repositories/list-options'
-
-import {
-  CreateProfileDTO,
-  ListProfileDTO,
-  UpdateProfileDTO,
-} from '../dtos/profile'
+import { ListOptions } from '@/core/repositories/list-options'
 
 export abstract class ProfilesRepository {
-  abstract create(data: CreateProfileDTO): Promise<Profile>
-  abstract update(data: UpdateProfileDTO): Promise<Profile>
-  abstract list(
-    options?: IListOptions,
-    searchParams?: ISearchParamDTO[],
-  ): Promise<ListProfileDTO>
-
+  abstract create(data: Prisma.ProfileUncheckedCreateInput): Promise<Profile>
+  abstract update(data: Profile): Promise<Profile>
+  abstract list(options?: ListOptions): Promise<Profile[]>
   abstract findById(id: Profile['id']): Promise<Profile | null>
   abstract findByName(name: Profile['name']): Promise<Profile | null>
 }

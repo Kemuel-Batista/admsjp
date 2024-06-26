@@ -3,10 +3,8 @@ import {
   Controller,
   Get,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common'
-import { Request } from 'express'
 
 import {
   PageQueryParamSchema,
@@ -24,14 +22,9 @@ export class ListProfilePermissionController {
   @Profiles(UserProfile.ADMINISTRADOR)
   @UseGuards(ProfileGuard)
   @Get()
-  async handle(
-    @Query(queryValidationPipe) query: PageQueryParamSchema,
-    @Req() request: Request,
-  ) {
+  async handle(@Query(queryValidationPipe) query: PageQueryParamSchema) {
     const { page, pageSize, allRecords } = query
-    const { search } = request.cookies
 
-    const parsedSearch = search ? JSON.parse(search) : []
     const parsedAllRecords = allRecords === 'true'
 
     const options = {
@@ -42,7 +35,6 @@ export class ListProfilePermissionController {
 
     const result = await this.listProfilePermission.execute({
       options,
-      searchParams: parsedSearch,
     })
 
     if (result.isError()) {

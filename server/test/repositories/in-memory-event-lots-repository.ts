@@ -2,9 +2,8 @@ import { randomUUID } from 'node:crypto'
 
 import { EventLot, Prisma } from '@prisma/client'
 
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
-import { ListEventLotsDTO } from '@/domain/admsjp/dtos/event-lot'
 import { EventLotsRepository } from '@/domain/admsjp/repositories/event-lots-repository'
 
 export class InMemoryEventLotsRepository implements EventLotsRepository {
@@ -54,29 +53,28 @@ export class InMemoryEventLotsRepository implements EventLotsRepository {
     return event
   }
 
-  async list(): Promise<ListEventLotsDTO> {
+  async list(): Promise<EventLot[]> {
     const eventLots = this.items.sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     )
 
-    const count = eventLots.length
-
-    return { eventLots, count }
+    return eventLots
   }
 
   async listByEventId(
     eventId: number,
-    options?: IListOptions,
-  ): Promise<ListEventLotsDTO> {
+    options?: ListOptions,
+  ): Promise<EventLot[]> {
     const { skip, take } = calcPagination(options)
 
     const eventLots = this.items
-      .filter((item) => item.eventId === eventId)
+      .filter(
+        (item) =>
+          item.eventId === eventId && item.fulfilledQuantity <= item.quantity,
+      )
       .slice(skip, skip + take)
 
-    const count = eventLots.length
-
-    return { eventLots, count }
+    return eventLots
   }
 
   async findById(id: string): Promise<EventLot> {

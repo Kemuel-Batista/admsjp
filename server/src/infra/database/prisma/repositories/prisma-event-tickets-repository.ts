@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { EventTicket, Prisma } from '@prisma/client'
 
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import { EventTicketsRepository } from '@/domain/admsjp/repositories/event-tickets-repository'
 import { EventTicketWithEventLot } from '@/domain/admsjp/types/event-ticket'
@@ -91,7 +91,7 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
 
   async listByEventPurchaseId(
     eventPurchaseId: EventTicket['eventPurchaseId'],
-    options?: IListOptions,
+    options?: ListOptions,
   ): Promise<EventTicketWithEventLot[]> {
     const { skip, take } = calcPagination(options)
 

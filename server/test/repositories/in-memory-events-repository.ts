@@ -4,9 +4,8 @@ import { Event } from '@prisma/client'
 import { EventProps } from 'test/factories/make-event'
 import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
-import { ListEventDTO } from '@/domain/admsjp/dtos/event'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 
 export class InMemoryEventsRepository implements EventsRepository {
@@ -72,14 +71,12 @@ export class InMemoryEventsRepository implements EventsRepository {
     return event
   }
 
-  async list(options?: IListOptions): Promise<ListEventDTO> {
+  async list(options?: ListOptions): Promise<Event[]> {
     const { skip, take } = calcPagination(options)
 
     const events = this.items.slice(skip, skip + take)
 
-    const count = events.length
-
-    return { events, count }
+    return events
   }
 
   async findById(id: number): Promise<Event> {

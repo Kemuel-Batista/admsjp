@@ -40,11 +40,7 @@ export class DeleteEventUseCase {
       )
     }
 
-    const { eventLots } = await this.eventLotsRepository.listByEventId(
-      event.id,
-      {},
-      [],
-    )
+    const eventLots = await this.eventLotsRepository.listByEventId(event.id, {})
 
     for (const eventLot of eventLots) {
       const eventTickets = await this.eventTicketsRepository.listByEventLotId(

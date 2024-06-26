@@ -24,11 +24,10 @@ export class ListEventsController {
       throw new BadRequestException('Error fetching list of events')
     }
 
-    const { events, count } = result.value
+    const events = result.value.events
 
     return {
       events,
-      'x-total-count': count,
     }
   }
 }

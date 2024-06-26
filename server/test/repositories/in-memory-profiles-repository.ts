@@ -1,19 +1,14 @@
 import { randomUUID } from 'node:crypto'
 
-import { Profile } from '@prisma/client'
+import { Prisma, Profile } from '@prisma/client'
 import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
-import {
-  CreateProfileDTO,
-  ListProfileDTO,
-  UpdateProfileDTO,
-} from '@/domain/admsjp/dtos/profile'
 import { ProfilesRepository } from '@/domain/admsjp/repositories/profiles-repository'
 
 export class InMemoryProfilesRepository implements ProfilesRepository {
   public items: Profile[] = []
 
-  async create(data: CreateProfileDTO): Promise<Profile> {
+  async create(data: Prisma.ProfileUncheckedCreateInput): Promise<Profile> {
     const id = getLastInsertedId(this.items)
 
     const profile = {
@@ -35,7 +30,7 @@ export class InMemoryProfilesRepository implements ProfilesRepository {
     return profile
   }
 
-  async update(data: UpdateProfileDTO): Promise<Profile> {
+  async update(data: Profile): Promise<Profile> {
     const itemIndex = this.items.findIndex((item) => item.id === data.id)
 
     const profile = this.items[itemIndex]
@@ -53,14 +48,12 @@ export class InMemoryProfilesRepository implements ProfilesRepository {
     return profile
   }
 
-  async list(): Promise<ListProfileDTO> {
+  async list(): Promise<Profile[]> {
     const profiles = this.items.sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     )
 
-    const count = profiles.length
-
-    return { profiles, count }
+    return profiles
   }
 
   async findById(id: number): Promise<Profile> {
