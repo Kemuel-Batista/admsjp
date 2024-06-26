@@ -1,6 +1,6 @@
 'use client'
 
-import { EventCheckoutView } from '@/modules/events/modules/purchase/views/checkout-view'
+import { EventCheckoutView } from '@/modules/purchase/views/checkout-view'
 
 export default function EventCheckout({
   params,
