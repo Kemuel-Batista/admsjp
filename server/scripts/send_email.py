@@ -48,7 +48,7 @@ if __name__ == "__main__":
     recipient_email = "kemuellima20@gmail.com"  # Insira aqui o email de destino
 
     # Pasta de destino do backup gerado pelo script em bash
-    backup_folder = "/home/admsjpuser/projects/admsjp/backup"
+    backup_folder = "/projects/backup"
 
     # Criar o nome da pasta de backup do dia atual
     backup_folder_today = f"admsjp-{current_date}_00-00"
