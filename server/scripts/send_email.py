@@ -3,7 +3,7 @@ import os
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Configurações do servidor SMTP do Gmail
 smtp_server = "smtp.gmail.com"
@@ -41,7 +41,7 @@ def send_email(subject, body, sender_email, recipient_email, attachment_folder):
 
 if __name__ == "__main__":
     # Configurações do email
-    current_datetime = datetime.now()
+    current_datetime = datetime.now() - timedelta(minutes=5)
     current_date = current_datetime.strftime("%Y-%m-%d")
     current_hour = current_datetime.strftime("%H-%M")
     subject = f"Arquivos de Backup - ADMSJP - {current_date} - {current_hour}"
