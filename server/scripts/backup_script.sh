@@ -22,7 +22,7 @@ if [ ! -d ${PBACKUP} ]; then
 	echo ""
 else
 	echo ""
-	echo " Rotacionando backups mais antigos que $NDIAS dias"
+	echo " Rotacionando backups mais antigos que $NDIAS"
 	echo ""
 
 	find ${PBACKUP} -type d -mtime +$NDIAS -exec rm -rf {} \;
@@ -31,42 +31,47 @@ fi
 
 ### Postgres
 
-BACKUP_DIR=$PBACKUP/admsjp-$DATA
-if [ ! -d $BACKUP_DIR ]; then
-  mkdir -p $BACKUP_DIR
+if [ ! -d $PBACKUP/admsjp-$DATA ]; then
+  mkdir -p $PBACKUP/admsjp-$DATA/
 fi
 
-# Ajusta as permissões da pasta de backup
-chown -R postgres:postgres $BACKUP_DIR
+chown -R postgres:postgres $PBACKUP/admsjp-$DATA/
+
 
 su - postgres -c "vacuumdb -a -f -z"
 
 for basepostgres in $(su - postgres -c "psql -l" | grep -v template0 | grep -v template1 | grep -v restaurantsystem | grep -v postgres | grep "|" |grep -v Owner |awk '{if ($1 != "|" && $1 != "Nome") print $1}'); do
-  su - postgres -c "pg_dump $basepostgres > $BACKUP_DIR/$basepostgres.txt"
+  su - postgres -c "pg_dump $basepostgres > $PBACKUP/admsjp-$DATA/$basepostgres.txt"
 
-  cd $BACKUP_DIR
+  cd $PBACKUP/admsjp-$DATA/
 
   tar -czvf $basepostgres.tar.gz $basepostgres.txt
 		
   sha1sum $basepostgres.tar.gz > $basepostgres.sha1
 
   rm -rf $basepostgres.txt
+
+	cd /
+
 done
 
 DAYOFWEEK=$(date +"%u")
 if [ "${DAYOFWEEK}" -eq 7  ];  then
+
   # Otimizacao das tabelas
   su - postgres -c "vacuumdb -a -f -z"
   # Backup de todo o banco
-  su - postgres -c "pg_dumpall > $BACKUP_DIR/postgres_tudo.txt"
+  su - postgres -c "pg_dumpall > $PBACKUP/admsjp-$DATA/postgres_tudo.txt"
 
-  cd $BACKUP_DIR
+  cd ${PBACKUP}/${DATA}/postgres/
 
   tar -czvf postgres_tudo.tar.gz postgres_tudo.txt
    
   sha1sum postgres_tudo.tar.gz > postgres_tudo.sha1
 
   rm -f postgres_tudo.txt  
+
 fi
+
 
 exit 0
