@@ -346,8 +346,8 @@ Sábado (20/07):
 - Término: 21h30
 
 Junte-se a nós para três dias de ensinamentos transformadores e experiências espirituais que fortalecerão sua fé e sua conexão com Deus. Venha fazer parte de uma geração que busca intensamente a presença divina. Não perca essa oportunidade única de crescimento e comunhão. Esperamos por você!`,
-        pixKey: '27905dca-cc48-4b9e-baef-946e19af0de4',
-        pixType: EventPixType.CHAVE,
+        pixKey: '07.877.646/0001-09',
+        pixType: EventPixType.CNPJ,
         initialDate: new Date('2024-07-18T19:30:00'),
         finalDate: new Date('2024-07-20T18:00:00'),
         status: EventStatus.ACTIVE,
@@ -376,8 +376,8 @@ Junte-se a nós para três dias de ensinamentos transformadores e experiências 
 
     await prisma.eventLot.create({
       data: {
-        name: 'Inscrição EBJ + Camisa UMADSJP',
-        description: 'Lote de inscrição da EBJ + Compra da camisa UMADSJP',
+        name: 'Inscrição EBJ + Camiseta UMADSJP',
+        description: 'Lote de inscrição da EBJ + Compra da camiseta UMADSJP',
         lot: 2,
         quantity: 50,
         status: EventLotStatus.ACTIVE,

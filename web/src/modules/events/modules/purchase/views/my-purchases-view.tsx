@@ -1,9 +1,17 @@
 import { Clock, Eye } from 'lucide-react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
@@ -15,12 +23,18 @@ import { PurchaseDetailsDialog } from '../components/purchase-details-dialog'
 import { ListMyEventPurchases } from '../services/list-my-event-purchases'
 
 export function MyPurchasesView() {
+  const router = useRouter()
+
   const [showPurchaseDetails, setShowPurchaseDetails] = useState(false)
 
   const { data } = ListMyEventPurchases({
     allRecords: true,
   })
   const purchases = data?.eventPurchases
+
+  function handleNavigateToHome() {
+    router.push('/')
+  }
 
   return (
     <main className="flex min-h-screen w-full flex-col gap-2">
@@ -31,6 +45,29 @@ export function MyPurchasesView() {
         </Label>
 
         <Separator />
+
+        {purchases?.length === 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="mobile:text-lg">
+                Ainda não existem compras registradas
+              </CardTitle>
+              <CardDescription className="mobile:text-xs">
+                Que tal fazer sua primeira compra hoje? Clique no botão abaixo e
+                confira os eventos disponíveis
+              </CardDescription>
+            </CardHeader>
+            <CardFooter>
+              <Button
+                className="w-full mobile:text-xs"
+                size="sm"
+                onClick={handleNavigateToHome}
+              >
+                Procurar eventos
+              </Button>
+            </CardFooter>
+          </Card>
+        )}
 
         <div className="grid grid-cols-3 gap-10 mobile:grid-cols-1">
           {purchases?.map((purchase) => {

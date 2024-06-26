@@ -89,12 +89,13 @@ export function CheckoutPaymentView() {
           <div className="grid gap-4">
             <Label className="text-xl">Informações de pagamento</Label>
             <div className="grid">
-              <Label className="text-muted-foreground">ANDRÉ SANTANA</Label>
+              <Label className="text-muted-foreground">IEADMSJP</Label>
               <Label className="text-muted-foreground text-xs">
-                Secretário da UMADSJP
+                Igreja Evangélica Assembléia de Deus - Ministerio São José dos
+                Pinhais
               </Label>
             </div>
-            <Label className="text-muted-foreground">Banco Inter</Label>
+            <Label className="text-muted-foreground">Banco Santander</Label>
 
             <div className="flex flex-col gap-1">
               <Label className="text-muted-foreground">Chave PIX</Label>

@@ -16,7 +16,8 @@ export enum EventVisible {
 
 export enum EventPixType {
   CPF = 1,
-  EMAIL = 2,
-  PHONE = 3,
-  CHAVE = 4,
+  CNPJ = 2,
+  EMAIL = 3,
+  PHONE = 4,
+  CHAVE = 5,
 }

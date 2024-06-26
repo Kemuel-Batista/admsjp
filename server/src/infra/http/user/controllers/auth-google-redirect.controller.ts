@@ -80,7 +80,6 @@ export class AuthGoogleRedirectController {
       httpOnly: false,
       secure: true, // HTTPS
       sameSite: 'none',
-      domain: 'app.restaurantevip.cloud',
     })
 
     response.redirect(
