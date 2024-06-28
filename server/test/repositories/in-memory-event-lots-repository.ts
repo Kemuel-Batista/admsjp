@@ -18,6 +18,7 @@ export class InMemoryEventLotsRepository implements EventLotsRepository {
       lot: data.lot,
       quantity: data.quantity,
       fulfilledQuantity: data.fulfilledQuantity,
+      type: data.type,
       value: data.value,
       status: data.status,
       createdAt: new Date(),
