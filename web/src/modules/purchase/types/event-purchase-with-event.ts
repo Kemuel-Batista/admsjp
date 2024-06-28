@@ -1,8 +1,8 @@
 export type EventPurchaseWithEvent = {
   id: string
   invoiceNumber: string
-  eventId: number
-  buyerId: number
+  eventId: string
+  buyerId: string
   status: number
   expiresAt: string
   createdAt: string

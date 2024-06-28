@@ -133,6 +133,7 @@ CREATE TABLE "events_lots" (
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "lot" INTEGER NOT NULL,
+    "type" TEXT NOT NULL DEFAULT 'Ingresso',
     "quantity" INTEGER NOT NULL,
     "fulfilled_quantity" INTEGER NOT NULL DEFAULT 0,
     "value" INTEGER NOT NULL,

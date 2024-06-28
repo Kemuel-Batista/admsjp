@@ -25,7 +25,6 @@ describe('List departments', () => {
 
     expect(result.isSuccess()).toBe(true)
     expect(result.value).toEqual({
-      count: 1,
       departments: expect.arrayContaining([
         expect.objectContaining({
           id: department.id,

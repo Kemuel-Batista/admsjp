@@ -15,7 +15,7 @@ import { ListEventLotByEventId } from '../services/list-event-lot-by-event-id'
 import { EventLot } from '../types/event-lot'
 
 interface ListEventLotsViewProps {
-  eventId?: number
+  eventId?: string
   eventSlug?: string
 }
 
@@ -89,8 +89,10 @@ export function ListEventLotsView({
       }
     })
 
+    console.log(eventId)
+
     const form: CreateEventPurchaseFormData = {
-      eventId: Number(eventId),
+      eventId,
       eventLotInfo,
     }
 
@@ -110,11 +112,8 @@ export function ListEventLotsView({
       </CardHeader>
       <CardContent className="p-6 mobile:p-4">
         {eventLots.map((item, index) => (
-          <>
-            <div
-              key={index}
-              className="flex flex-row justify-between items-center"
-            >
+          <div key={index}>
+            <div className="flex flex-row justify-between items-center">
               <div className="flex flex-col gap-5">
                 <Label className="font-bold">{item.name}</Label>
                 <Label>{maskCurrency(String(item.value))}</Label>
@@ -138,7 +137,7 @@ export function ListEventLotsView({
               )}
             </div>
             {index !== eventLots.length - 1 && <Separator className="my-5" />}
-          </>
+          </div>
         ))}
       </CardContent>
       <CardFooter className="mobile:p-4">

@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const createEventPurchaseSchema = z.object({
-  eventId: z.number().int().positive(),
+  eventId: z.string().optional(),
   eventLotInfo: z.array(
     z.object({
       eventLotId: z.string().uuid(),

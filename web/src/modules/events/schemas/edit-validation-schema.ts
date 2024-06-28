@@ -10,7 +10,7 @@ const editEventLotSchema = z
   .array()
 
 const editEventSchema = z.object({
-  id: z.number().int().positive(),
+  id: z.string().uuid(),
   title: z.string(),
   description: z.string(),
   initialDate: z.string().transform((arg) => new Date(arg)),

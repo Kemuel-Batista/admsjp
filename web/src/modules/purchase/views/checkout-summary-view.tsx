@@ -11,7 +11,7 @@ import { EventLot } from '../../event-lot/types/event-lot'
 import { EventTicket } from '../../tickets/types/event-ticket'
 
 interface CheckoutSummaryViewProps {
-  eventId?: number
+  eventId?: string
   tickets: EventTicket[]
 }
 

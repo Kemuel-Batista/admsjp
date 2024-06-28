@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common'
 
+import { FindDepartmentByNameUseCase } from '@/domain/admsjp/use-cases/departments/find-department-by-name'
+import { FindProfileByNameUseCase } from '@/domain/admsjp/use-cases/profile/find-profile-by-name'
 import { AuthenticateUserUseCase } from '@/domain/admsjp/use-cases/user/authenticate-user'
 import { GetUserByEmailUseCase } from '@/domain/admsjp/use-cases/user/get-user-by-email'
 import { RegisterUserUseCase } from '@/domain/admsjp/use-cases/user/register-user'
@@ -24,6 +26,8 @@ import { LogoutUserController } from './controllers/logout-user.controller'
     AuthenticateUserUseCase,
     GetUserByEmailUseCase,
     RegisterUserUseCase,
+    FindProfileByNameUseCase,
+    FindDepartmentByNameUseCase,
   ],
 })
 export class AuthHttpModule {}

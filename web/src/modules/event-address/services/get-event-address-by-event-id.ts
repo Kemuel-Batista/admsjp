@@ -8,7 +8,7 @@ export interface GetEventAddressByEventIdServiceResponse {
   eventAddress: EventAddress
 }
 
-export const GetEventAddressByEventIdService = (id?: number) => {
+export const GetEventAddressByEventIdService = (id?: string) => {
   return useQuery({
     queryKey: ['event-details', id],
     queryFn: async () => {

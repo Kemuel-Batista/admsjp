@@ -1,7 +1,6 @@
 export type EventAddress = {
-  id: number
-  uuid: string
-  eventId: number
+  id: string
+  eventId: string
   street: string
   number: string
   complement: string

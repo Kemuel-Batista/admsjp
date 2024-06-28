@@ -3,8 +3,8 @@ import { EventLot } from '../../event-lot/types/event-lot'
 export type EventPurchaseWithTicketsAndLot = {
   id: string
   invoiceNumber: string
-  eventId: number
-  buyerId: number
+  eventId: string
+  buyerId: string
   status: number
   expiresAt: string
   createdAt: string

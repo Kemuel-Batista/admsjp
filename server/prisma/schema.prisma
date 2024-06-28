@@ -156,6 +156,7 @@ model EventLot {
   description       String
   event             Event  @relation(fields: [eventId], references: [id])
   lot               Int
+  type              String @default("Ingresso")
   quantity          Int
   fulfilledQuantity Int    @default(0) @map("fulfilled_quantity")
   value             Int

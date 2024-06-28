@@ -43,6 +43,7 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { useAuth } from '@/contexts/auth-context'
 import { cn } from '@/lib/utils'
+import { EventLotType } from '@/modules/event-lot/enums'
 import { GetEventBySlugService } from '@/modules/events/services/get-event-by-slug'
 import { maskEventDate } from '@/utils/masks'
 
@@ -98,7 +99,7 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
         email: ticket.email,
         cpf: ticket.cpf,
         birthday: new Date(ticket.birthday),
-        eventLotName: ticket.eventLot.name,
+        eventLotType: ticket.eventLot.type,
       })),
     },
   })
@@ -116,7 +117,7 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
         email: ticket.email,
         cpf: ticket.cpf,
         birthday: new Date(ticket.birthday),
-        eventLotName: ticket.eventLot.name,
+        eventLotType: ticket.eventLot.type,
       })),
     })
   }, [tickets, form])
@@ -221,7 +222,7 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
             </Label>
             {fields.map((field, index) => {
               const showShirtSizeSelect =
-                field.eventLotName === 'Inscrição EBJ + Camisa UMADSJP'
+                field.eventLotType === EventLotType.SHIRT
 
               return (
                 <Collapsible key={field.id} defaultOpen>

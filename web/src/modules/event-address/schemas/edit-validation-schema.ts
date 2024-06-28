@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const editEventAddressSchema = z.object({
-  id: z.number().int().positive(),
+  id: z.string(),
   street: z.string().optional(),
   neighborhood: z.string().optional(),
   number: z.string().optional(),

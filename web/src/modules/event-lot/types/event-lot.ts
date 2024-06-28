@@ -1,8 +1,9 @@
 export type EventLot = {
   id: string
-  eventId: number
+  eventId: string
   name: string
   description: string
+  type: string
   lot: number
   quantity: number
   fulfilledQuantity: number

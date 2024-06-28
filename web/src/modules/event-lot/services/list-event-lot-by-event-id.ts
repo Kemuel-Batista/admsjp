@@ -8,7 +8,7 @@ export interface ListEventLotByEventIdResponse {
 
 export const ListEventLotByEventId = (
   params: PaginateParams,
-  eventId?: number,
+  eventId?: string,
 ) => {
   return usePaginateQuery<ListEventLotByEventIdResponse>(
     'event-lots',

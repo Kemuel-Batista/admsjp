@@ -10,7 +10,7 @@ import {
   EventType,
   EventVisible,
 } from '@/domain/admsjp/enums/event'
-import { EventLotStatus } from '@/domain/admsjp/enums/event-lot'
+import { EventLotStatus, EventLotType } from '@/domain/admsjp/enums/event-lot'
 import {
   ParameterStatus,
   ParameterVisible,
@@ -321,6 +321,7 @@ Junte-se a nós para três dias de ensinamentos transformadores e experiências 
         description: 'Lote de inscrição da EBJ + Compra da camiseta UMADSJP',
         lot: 2,
         quantity: 50,
+        type: EventLotType.SHIRT,
         status: EventLotStatus.ACTIVE,
         value: 6499,
         eventId: event.id,

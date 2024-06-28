@@ -21,7 +21,7 @@ export const completeEventTicketInfoSchema = z.object({
         required_error: 'Data de nascimento não deve estar vazia',
       }),
       shirtSize: z.string().min(1).max(3).optional(),
-      eventLotName: z.string(),
+      eventLotType: z.string(),
     }),
   ),
 })

@@ -1,6 +1,5 @@
 export type Profile = {
-  id: number
-  uuid: string
+  id: string
   name: string
   status: number
   visible: number
