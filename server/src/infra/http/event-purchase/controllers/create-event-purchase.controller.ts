@@ -19,7 +19,7 @@ import { UserPayload } from '@/infra/auth/jwt.strategy'
 import { ZodValidationPipe } from '../../pipes/zod-validation-pipe'
 
 const createEventPurchaseSchema = z.object({
-  eventId: z.number().int().positive(),
+  eventId: z.string().uuid(),
   eventLotInfo: z.array(
     z.object({
       eventLotId: z.string().uuid(),

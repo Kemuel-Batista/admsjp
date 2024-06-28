@@ -1,7 +1,5 @@
-interface IListOptions {
+export interface ListOptions {
   page?: number
   pageSize?: number
   allRecords?: boolean
 }
-
-export type { IListOptions }

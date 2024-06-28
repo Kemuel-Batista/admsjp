@@ -1,6 +1,5 @@
 export type Event = {
-  id: number
-  uuid: string
+  id: string
   title: string
   slug: string
   description: string

@@ -1,13 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import { Department } from '@prisma/client'
+import { Department, Prisma } from '@prisma/client'
 
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
-import {
-  CreateDepartmentDTO,
-  ListDepartmentDTO,
-  UpdateDepartmentDTO,
-} from '@/domain/admsjp/dtos/department'
 import { DepartmentsRepository } from '@/domain/admsjp/repositories/departments-repository'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 
@@ -20,7 +15,7 @@ export class PrismaDepartmentRepository implements DepartmentsRepository {
     status,
     visible,
     createdBy,
-  }: CreateDepartmentDTO): Promise<Department> {
+  }: Prisma.DepartmentUncheckedCreateInput): Promise<Department> {
     const department = await this.prisma.department.create({
       data: {
         name,
@@ -40,7 +35,7 @@ export class PrismaDepartmentRepository implements DepartmentsRepository {
     status,
     visible,
     updatedBy,
-  }: UpdateDepartmentDTO): Promise<Department> {
+  }: Department): Promise<Department> {
     const department = await this.prisma.department.update({
       where: {
         id,
@@ -57,19 +52,16 @@ export class PrismaDepartmentRepository implements DepartmentsRepository {
     return department
   }
 
-  async list(options?: IListOptions): Promise<ListDepartmentDTO> {
+  async list(options?: ListOptions): Promise<Department[]> {
     const { skip, take } = calcPagination(options)
 
-    const [departments, count] = await this.prisma.$transaction([
-      this.prisma.department.findMany({
-        skip,
-        take,
-        orderBy: { id: 'asc' },
-      }),
-      this.prisma.department.count(),
-    ])
+    const departments = await this.prisma.department.findMany({
+      skip,
+      take,
+      orderBy: { id: 'asc' },
+    })
 
-    return { departments, count }
+    return departments
   }
 
   async findById(id: Department['id']): Promise<Department | null> {

@@ -2,9 +2,7 @@ import { randomUUID } from 'node:crypto'
 
 import { EventAddress, Prisma } from '@prisma/client'
 import { Decimal } from '@prisma/client/runtime/library'
-import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
-import { ListEventAddressesDTO } from '@/domain/admsjp/dtos/event-address'
 import { EventAddressesRepository } from '@/domain/admsjp/repositories/event-addresses-repository'
 
 export class InMemoryEventAddressesRepository
@@ -15,11 +13,8 @@ export class InMemoryEventAddressesRepository
   async create(
     data: Prisma.EventAddressUncheckedCreateInput,
   ): Promise<EventAddress> {
-    const id = getLastInsertedId(this.items)
-
     const eventLot = {
-      id,
-      uuid: randomUUID(),
+      id: randomUUID(),
       eventId: data.eventId,
       street: data.street,
       number: data.number,
@@ -68,17 +63,15 @@ export class InMemoryEventAddressesRepository
     return event
   }
 
-  async list(): Promise<ListEventAddressesDTO> {
+  async list(): Promise<EventAddress[]> {
     const eventAddresses = this.items.sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     )
 
-    const count = eventAddresses.length
-
-    return { eventAddresses, count }
+    return eventAddresses
   }
 
-  async findById(id: number): Promise<EventAddress> {
+  async findById(id: EventAddress['id']): Promise<EventAddress> {
     const eventAddress = this.items.find((item) => item.id === id)
 
     if (!eventAddress) {
@@ -88,7 +81,7 @@ export class InMemoryEventAddressesRepository
     return eventAddress
   }
 
-  async findByEventId(eventId: number): Promise<EventAddress> {
+  async findByEventId(eventId: EventAddress['eventId']): Promise<EventAddress> {
     const eventAddress = this.items.find((item) => item.eventId === eventId)
 
     if (!eventAddress) {

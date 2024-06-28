@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { EventLot, Prisma } from '@prisma/client'
 
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
-import { ListEventLotsDTO } from '@/domain/admsjp/dtos/event-lot'
 import { EventLotsRepository } from '@/domain/admsjp/repositories/event-lots-repository'
 
 import { PrismaService } from '../prisma.service'
@@ -66,48 +65,38 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
     return event
   }
 
-  async list(options?: IListOptions): Promise<ListEventLotsDTO> {
+  async list(options?: ListOptions): Promise<EventLot[]> {
     const { skip, take } = calcPagination(options)
 
-    const [eventLots, count] = await this.prisma.$transaction([
-      this.prisma.eventLot.findMany({
-        skip,
-        take,
-        orderBy: { createdAt: 'asc' },
-      }),
-      this.prisma.eventLot.count(),
-    ])
+    const eventLots = await this.prisma.eventLot.findMany({
+      skip,
+      take,
+      orderBy: { createdAt: 'asc' },
+    })
 
-    return { eventLots, count }
+    return eventLots
   }
 
   async listByEventId(
     eventId: EventLot['eventId'],
-    options?: IListOptions,
-  ): Promise<ListEventLotsDTO> {
+    options?: ListOptions,
+  ): Promise<EventLot[]> {
     const { skip, take } = calcPagination(options)
 
-    let [eventLots, count] = await this.prisma.$transaction([
-      this.prisma.eventLot.findMany({
-        where: {
-          eventId,
-        },
-        skip,
-        take,
-        orderBy: { createdAt: 'asc' },
-      }),
-      this.prisma.eventLot.count({
-        where: {
-          eventId,
-        },
-      }),
-    ])
+    let eventLots = await this.prisma.eventLot.findMany({
+      where: {
+        eventId,
+      },
+      skip,
+      take,
+      orderBy: { createdAt: 'asc' },
+    })
 
     eventLots = eventLots.filter(
       (item) => item.fulfilledQuantity <= item.quantity,
     )
 
-    return { eventLots, count }
+    return eventLots
   }
 
   async findById(id: EventLot['id']): Promise<EventLot | null> {
@@ -120,7 +109,7 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
     return eventLot
   }
 
-  async findMaxLotByEventId(eventId: number): Promise<number> {
+  async findMaxLotByEventId(eventId: EventLot['eventId']): Promise<number> {
     const eventLots = await this.prisma.eventLot.findMany({
       where: {
         eventId,

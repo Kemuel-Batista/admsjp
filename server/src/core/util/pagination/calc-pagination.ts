@@ -1,4 +1,4 @@
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
 
 interface ICalcPaginationReturn {
   skip: number | undefined
@@ -6,7 +6,7 @@ interface ICalcPaginationReturn {
 }
 
 export function calcPagination(
-  options: IListOptions = {},
+  options: ListOptions = {},
 ): ICalcPaginationReturn {
   let { page = 1, pageSize = 30, allRecords = false } = options
 

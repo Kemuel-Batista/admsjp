@@ -23,7 +23,7 @@ export type User = {
   name: string
   photo: string
   status: number | null
-  profileId: number
+  roles: string[]
 }
 
 type AuthContextData = {
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     name: '',
     photo: '',
     status: null,
-    profileId: 0,
+    roles: [],
   })
 
   const isAuthenticated = user.id !== null
@@ -60,15 +60,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       name: '',
       photo: '',
       status: null,
-      profileId: 0,
+      roles: [],
     })
   }
 
   const getMe = async () => {
     try {
       const me = await api.get('/me')
-      const { id, email, name, photo, status, profileId } = me.data.user
-      setUser({ id, email, name, photo, status, profileId })
+      const { id, email, name, photo, status, roles } = me.data.user
+      setUser({ id, email, name, photo, status, roles })
     } catch (error) {
       console.log(error)
     }

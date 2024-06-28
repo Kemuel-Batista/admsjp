@@ -39,8 +39,8 @@ interface CreateEventUseCaseRequest {
   createdBy: Event['createdBy']
   fileName: string
   fileType: string
-  pixKey: string
-  pixType: number
+  pixKey: Event['pixKey']
+  pixType: Event['pixType']
   body: Buffer
 }
 

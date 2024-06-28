@@ -1,10 +1,17 @@
 import { Injectable } from '@nestjs/common'
-import { Department } from '@prisma/client'
+import { Department, User } from '@prisma/client'
 
 import { Either, failure, success } from '@/core/either'
 import { ResourceAlreadyExistsError } from '@/core/errors/errors/resource-already-exists-error'
-import { CreateDepartmentDTO } from '@/domain/admsjp/dtos/department'
 import { DepartmentsRepository } from '@/domain/admsjp/repositories/departments-repository'
+
+interface CreateDepartmentUseCaseRequest {
+  name: Department['name']
+  description: Department['name']
+  status: Department['status']
+  visible: Department['visible']
+  createdBy: User['id']
+}
 
 type CreateDepartmentUseCaseResponse = Either<
   ResourceAlreadyExistsError,
@@ -23,7 +30,7 @@ export class CreateDepartmentUseCase {
     status = 1,
     visible = 1,
     createdBy,
-  }: CreateDepartmentDTO): Promise<CreateDepartmentUseCaseResponse> {
+  }: CreateDepartmentUseCaseRequest): Promise<CreateDepartmentUseCaseResponse> {
     const departmentAlreadyExists =
       await this.departmentsRepository.findByName(name)
 

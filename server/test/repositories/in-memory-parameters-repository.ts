@@ -2,22 +2,17 @@ import { randomUUID } from 'node:crypto'
 
 import { Parameter } from '@prisma/client'
 import { ParameterProps } from 'test/factories/make-parameter'
-import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
-import { ListParameterDTO } from '@/domain/admsjp/dtos/parameter'
 import { ParametersRepository } from '@/domain/admsjp/repositories/parameters-repository'
 
 export class InMemoryParametersRepository implements ParametersRepository {
   public items: Parameter[] = []
 
   async create(data: ParameterProps): Promise<Parameter> {
-    const id = getLastInsertedId(this.items)
-
     const parameter = {
-      id,
-      uuid: randomUUID(),
+      id: randomUUID(),
       key: data.key,
       keyInfo: data.keyInfo,
       status: data.status,
@@ -55,17 +50,15 @@ export class InMemoryParametersRepository implements ParametersRepository {
     return parameter
   }
 
-  async list(options?: IListOptions): Promise<ListParameterDTO> {
+  async list(options?: ListOptions): Promise<Parameter[]> {
     const { skip, take } = calcPagination(options)
 
     const parameters = this.items.slice(skip, skip + take)
 
-    const count = parameters.length
-
-    return { parameters, count }
+    return parameters
   }
 
-  async findById(id: number): Promise<Parameter> {
+  async findById(id: Parameter['id']): Promise<Parameter> {
     const parameter = this.items.find((item) => item.id === id)
 
     if (!parameter) {

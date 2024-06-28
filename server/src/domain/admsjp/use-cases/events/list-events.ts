@@ -1,25 +1,22 @@
 import { Injectable } from '@nestjs/common'
-import { Event } from '@prisma/client'
+import { Event, Profile, User } from '@prisma/client'
 
-import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { Either, success } from '@/core/either'
-import { IListOptions } from '@/core/repositories/list-options'
-import { UserProfile } from '@/domain/admsjp/enums/user'
+import { ListOptions } from '@/core/repositories/list-options'
+import { SearchParams } from '@/core/repositories/search-params'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
-import { UserWithPermission } from '@/domain/admsjp/types/user/user-with-permission'
 
 interface ListEventsUseCaseRequest {
-  profileId: UserWithPermission['profileId']
-  departmentId: UserWithPermission['departmentId']
-  options?: IListOptions
-  searchParams?: ISearchParamDTO[]
+  roles: Array<Profile['name']>
+  departmentId: User['departmentId']
+  options?: ListOptions
+  searchParams?: SearchParams[]
 }
 
 type ListEventsUseCaseResponse = Either<
   null,
   {
     events: Event[]
-    count: number
   }
 >
 
@@ -28,13 +25,13 @@ export class ListEventsUseCase {
   constructor(private eventsRepository: EventsRepository) {}
 
   async execute({
-    profileId,
+    roles,
     departmentId,
     options = {},
     searchParams = [],
   }: ListEventsUseCaseRequest): Promise<ListEventsUseCaseResponse> {
     // Se o usuário não é administrador, só pode visualizar eventos do departamento que ele faz parte
-    if (profileId !== UserProfile.ADMINISTRADOR) {
+    if (!roles.includes('ADMIN')) {
       searchParams.push({
         condition: 'equals',
         field: 'visible',
@@ -48,14 +45,10 @@ export class ListEventsUseCase {
       })
     }
 
-    const { events, count } = await this.eventsRepository.list(
-      options,
-      searchParams,
-    )
+    const events = await this.eventsRepository.list(options, searchParams)
 
     return success({
       events,
-      count,
     })
   }
 }

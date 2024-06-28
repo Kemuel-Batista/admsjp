@@ -1,19 +1,9 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-  UseGuards,
-} from '@nestjs/common'
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common'
 import { z } from 'zod'
 
-import { UserProfile } from '@/domain/admsjp/enums/user'
 import { CreateParameterUseCase } from '@/domain/admsjp/use-cases/parameters/create-parameter'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
-import { ProfileGuard } from '@/infra/auth/profile.guard'
-import { Profiles } from '@/infra/auth/profiles'
 
 import { ZodValidationPipe } from '../../pipes/zod-validation-pipe'
 
@@ -33,8 +23,6 @@ const bodyValidationPipe = new ZodValidationPipe(createParameterSchema)
 export class CreateParameterController {
   constructor(private createParameter: CreateParameterUseCase) {}
 
-  @Profiles(UserProfile.ADMINISTRADOR)
-  @UseGuards(ProfileGuard)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async handle(

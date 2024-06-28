@@ -4,9 +4,7 @@ import {
   Get,
   Param,
   Query,
-  Req,
 } from '@nestjs/common'
-import { type Request } from 'express'
 
 import {
   ParamsSchema,
@@ -30,12 +28,9 @@ export class ListEventLotByEventIdController {
   async handle(
     @Param('id', paramsValidationPipe) id: ParamsSchema,
     @Query(queryValidationPipe) query: PageQueryParamSchema,
-    @Req() request: Request,
   ) {
     const { page, pageSize, allRecords } = query
-    const { search } = request.cookies
 
-    const parsedSearch = search ? JSON.parse(search) : []
     const parsedAllRecords = allRecords === 'true'
 
     const options = {
@@ -47,18 +42,16 @@ export class ListEventLotByEventIdController {
     const result = await this.listEventLotByEventIdUseCase.execute({
       eventId: id,
       options,
-      searchParams: parsedSearch,
     })
 
     if (result.isError()) {
       throw new BadRequestException('Error fetching list of events')
     }
 
-    const { eventLots, count } = result.value
+    const { eventLots } = result.value
 
     return {
       eventLots,
-      'x-total-count': count,
     }
   }
 }

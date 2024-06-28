@@ -1,23 +1,17 @@
 import { randomUUID } from 'node:crypto'
 
 import { Prisma, User } from '@prisma/client'
-import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
-import { ListUserWithCountDTO, UpdateUserDTO } from '@/domain/admsjp/dtos/user'
 import { UsersRepository } from '@/domain/admsjp/repositories/users-repository'
 
 export class InMemoryUsersRepository implements UsersRepository {
   public items: User[] = []
 
   async create(data: Prisma.UserUncheckedCreateInput): Promise<User> {
-    const id = getLastInsertedId(this.items)
-
     const user = {
-      id,
-      uuid: randomUUID(),
+      id: randomUUID(),
       name: data.name,
       status: data.status,
-      profileId: data.profileId,
       email: data.email,
       password: data.password,
       photo: data.photo,
@@ -36,7 +30,7 @@ export class InMemoryUsersRepository implements UsersRepository {
     return user
   }
 
-  async update(data: UpdateUserDTO): Promise<User> {
+  async update(data: User): Promise<User> {
     const itemIndex = this.items.findIndex((item) => item.id === data.id)
 
     const user = this.items[itemIndex]
@@ -48,7 +42,6 @@ export class InMemoryUsersRepository implements UsersRepository {
       password: data.password,
       status: data.status,
       departmentId: data.departmentId,
-      profileId: data.profileId,
       updatedBy: data.updatedBy,
     }
 
@@ -57,17 +50,15 @@ export class InMemoryUsersRepository implements UsersRepository {
     return user
   }
 
-  async list(): Promise<ListUserWithCountDTO> {
+  async list(): Promise<User[]> {
     const users = this.items.sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     )
 
-    const count = users.length
-
-    return { users, count }
+    return users
   }
 
-  async findById(id: number): Promise<User> {
+  async findById(id: User['id']): Promise<User> {
     const user = this.items.find((item) => item.id === id)
 
     if (!user) {
@@ -87,7 +78,7 @@ export class InMemoryUsersRepository implements UsersRepository {
     return user
   }
 
-  async delete(userId: number): Promise<void> {
+  async delete(userId: User['id']): Promise<void> {
     const itemIndex = this.items.findIndex((item) => item.id === userId)
 
     this.items.splice(itemIndex, 1)

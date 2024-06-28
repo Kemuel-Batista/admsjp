@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto'
+
 import { faker } from '@faker-js/faker'
 import { Injectable } from '@nestjs/common'
 import { Event, Prisma } from '@prisma/client'
@@ -25,12 +27,12 @@ export function makeEvent(override: Partial<EventProps> = {}): EventProps {
     finalDate: faker.date.future(),
     status: EventStatus.ACTIVE,
     visible: EventVisible.VISIBLE,
-    departmentId: 1,
+    departmentId: randomUUID(),
     pixKey: faker.internet.email(),
     pixType: EventPixType.EMAIL,
     eventType: EventType.REMOTO,
     imagePath: faker.image.url(),
-    createdBy: 1,
+    createdBy: randomUUID(),
     ...override,
   }
 }

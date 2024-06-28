@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { Prisma, User } from '@prisma/client'
 
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
-import { ListUserWithCountDTO, UpdateUserDTO } from '@/domain/admsjp/dtos/user'
 import { UsersRepository } from '@/domain/admsjp/repositories/users-repository'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 
@@ -17,7 +16,6 @@ export class PrismaUsersRepository implements UsersRepository {
     photo,
     status,
     departmentId,
-    profileId,
     provider,
     createdBy,
   }: Prisma.UserUncheckedCreateInput): Promise<User> {
@@ -29,7 +27,6 @@ export class PrismaUsersRepository implements UsersRepository {
         photo,
         status,
         departmentId,
-        profileId,
         provider,
         createdBy,
         updatedBy: createdBy,
@@ -46,9 +43,8 @@ export class PrismaUsersRepository implements UsersRepository {
     password,
     status,
     departmentId,
-    profileId,
     updatedBy,
-  }: UpdateUserDTO): Promise<User> {
+  }: User): Promise<User> {
     const user = await this.prisma.user.update({
       where: {
         id,
@@ -59,7 +55,6 @@ export class PrismaUsersRepository implements UsersRepository {
         password: password ?? undefined,
         status: status ?? undefined,
         departmentId: departmentId ?? undefined,
-        profileId: profileId ?? undefined,
         updatedBy,
       },
     })
@@ -67,37 +62,16 @@ export class PrismaUsersRepository implements UsersRepository {
     return user
   }
 
-  async list(options?: IListOptions): Promise<ListUserWithCountDTO> {
+  async list(options?: ListOptions): Promise<User[]> {
     const { skip, take } = calcPagination(options)
 
-    const [users, count] = await this.prisma.$transaction([
-      this.prisma.user.findMany({
-        select: {
-          id: true,
-          uuid: true,
-          name: true,
-          email: true,
-          password: false,
-          status: true,
-          photo: true,
-          provider: true,
-          departmentId: true,
-          profileId: true,
-          createdAt: true,
-          updatedAt: true,
-          createdBy: true,
-          updatedBy: true,
-          deletedAt: true,
-          deletedBy: true,
-        },
-        skip,
-        take,
-        orderBy: { id: 'asc' },
-      }),
-      this.prisma.user.count(),
-    ])
+    const users = await this.prisma.user.findMany({
+      skip,
+      take,
+      orderBy: { id: 'asc' },
+    })
 
-    return { users, count }
+    return users
   }
 
   async findById(id: User['id']): Promise<User | null> {

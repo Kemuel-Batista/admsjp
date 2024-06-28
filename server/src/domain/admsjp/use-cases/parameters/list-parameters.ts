@@ -1,22 +1,19 @@
 import { Injectable } from '@nestjs/common'
 import { Parameter } from '@prisma/client'
 
-import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { Either, success } from '@/core/either'
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
 
 import { ParametersRepository } from '../../repositories/parameters-repository'
 
 interface ListParametersUseCaseRequest {
-  options?: IListOptions
-  searchParams?: ISearchParamDTO[]
+  options?: ListOptions
 }
 
 type ListParametersUseCaseResponse = Either<
   null,
   {
     parameters: Parameter[]
-    count: number
   }
 >
 
@@ -26,16 +23,11 @@ export class ListParametersUseCase {
 
   async execute({
     options = {},
-    searchParams = [],
   }: ListParametersUseCaseRequest): Promise<ListParametersUseCaseResponse> {
-    const { parameters, count } = await this.parametersRepository.list(
-      options,
-      searchParams,
-    )
+    const parameters = await this.parametersRepository.list(options)
 
     return success({
       parameters,
-      count,
     })
   }
 }

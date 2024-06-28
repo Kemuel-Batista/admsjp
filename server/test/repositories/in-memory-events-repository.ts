@@ -2,22 +2,20 @@ import { randomUUID } from 'node:crypto'
 
 import { Event } from '@prisma/client'
 import { EventProps } from 'test/factories/make-event'
-import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
+import { applyFilters } from 'test/utils/filtering'
 
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
+import { SearchParams } from '@/core/repositories/search-params'
+import { buildSearchFilter } from '@/core/util/filtering/build-search-filter'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
-import { ListEventDTO } from '@/domain/admsjp/dtos/event'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 
 export class InMemoryEventsRepository implements EventsRepository {
   public items: Event[] = []
 
   async create(data: EventProps): Promise<Event> {
-    const id = getLastInsertedId(this.items)
-
     const event = {
-      id,
-      uuid: randomUUID(),
+      id: randomUUID(),
       title: data.title,
       slug: data.slug,
       description: data.description,
@@ -72,17 +70,24 @@ export class InMemoryEventsRepository implements EventsRepository {
     return event
   }
 
-  async list(options?: IListOptions): Promise<ListEventDTO> {
+  async list(
+    options?: ListOptions,
+    searchParams?: SearchParams[],
+  ): Promise<Event[]> {
+    let filteredEvents = this.items
+
+    if (searchParams && searchParams.length > 0) {
+      const searchFilter = buildSearchFilter<'Event'>(searchParams)
+      filteredEvents = applyFilters<Event>(this.items, [searchFilter])
+    }
+
     const { skip, take } = calcPagination(options)
+    const paginatedEvents = filteredEvents.slice(skip, skip + take)
 
-    const events = this.items.slice(skip, skip + take)
-
-    const count = events.length
-
-    return { events, count }
+    return paginatedEvents
   }
 
-  async findById(id: number): Promise<Event> {
+  async findById(id: Event['id']): Promise<Event> {
     const event = this.items.find((item) => item.id === id)
 
     if (!event) {
@@ -112,7 +117,7 @@ export class InMemoryEventsRepository implements EventsRepository {
     return event
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: Event['id']): Promise<void> {
     const itemIndex = this.items.findIndex((item) => item.id === id)
 
     this.items.splice(itemIndex, 1)

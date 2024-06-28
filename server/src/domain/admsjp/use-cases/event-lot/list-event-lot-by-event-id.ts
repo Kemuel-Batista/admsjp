@@ -1,24 +1,21 @@
 import { Injectable } from '@nestjs/common'
 import { EventLot } from '@prisma/client'
 
-import { ISearchParamDTO } from '@/core/dtos/search-param-dto'
 import { Either, failure, success } from '@/core/either'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
 import { EventLotsRepository } from '@/domain/admsjp/repositories/event-lots-repository'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 
 interface ListEventLotByEventIdUseCaseRequest {
   eventId: EventLot['eventId']
-  options: IListOptions
-  searchParams: ISearchParamDTO[]
+  options: ListOptions
 }
 
 type ListEventLotByEventIdUseCaseResponse = Either<
   ResourceNotFoundError,
   {
     eventLots: EventLot[]
-    count: number
   }
 >
 
@@ -32,7 +29,6 @@ export class ListEventLotByEventIdUseCase {
   async execute({
     eventId,
     options = {},
-    searchParams = [],
   }: ListEventLotByEventIdUseCaseRequest): Promise<ListEventLotByEventIdUseCaseResponse> {
     const event = await this.eventsRepository.findById(eventId)
 
@@ -45,15 +41,13 @@ export class ListEventLotByEventIdUseCase {
       )
     }
 
-    const { eventLots, count } = await this.eventLotsRepository.listByEventId(
+    const eventLots = await this.eventLotsRepository.listByEventId(
       eventId,
       options,
-      searchParams,
     )
 
     return success({
       eventLots,
-      count,
     })
   }
 }

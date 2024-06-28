@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { EventPurchase, Prisma } from '@prisma/client'
 
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import { EventPurchasesRepository } from '@/domain/admsjp/repositories/event-purchases-repository'
 import {
@@ -96,7 +96,7 @@ export class PrismaEventPurchasesRepository
     return `${year}${month.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}EV${maxInvoiceNumber.toString().padStart(4, '0')}`
   }
 
-  async list(options?: IListOptions): Promise<EventPurchase[]> {
+  async list(options?: ListOptions): Promise<EventPurchase[]> {
     const { skip, take } = calcPagination(options)
 
     const eventPurchases = await this.prisma.eventPurchase.findMany({
@@ -110,9 +110,27 @@ export class PrismaEventPurchasesRepository
     return eventPurchases
   }
 
+  async listByEventId(
+    eventId: EventPurchase['eventId'],
+    options?: ListOptions,
+  ): Promise<EventPurchase[]> {
+    const { skip, take } = calcPagination(options)
+
+    const eventPurchases = await this.prisma.eventPurchase.findMany({
+      where: {
+        deletedAt: null,
+        eventId,
+      },
+      skip,
+      take,
+    })
+
+    return eventPurchases
+  }
+
   async listByBuyerId(
     buyerId: EventPurchase['buyerId'],
-    options?: IListOptions,
+    options?: ListOptions,
   ): Promise<EventPurchaseWithEvent[]> {
     const { skip, take } = calcPagination(options)
 

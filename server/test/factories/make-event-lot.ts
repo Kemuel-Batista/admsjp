@@ -16,13 +16,13 @@ export function makeEventLot(
     id: randomUUID(),
     name: faker.lorem.word(),
     description: faker.lorem.sentence(),
-    eventId: faker.number.int({ max: 10 }),
+    eventId: randomUUID(),
     quantity: faker.number.int({ max: 10 }),
     fulfilledQuantity: faker.number.int({ max: 10 }),
     lot: faker.number.int({ max: 10 }),
     value: faker.number.int({ max: 1000 }),
     status: EventLotStatus.ACTIVE,
-    createdBy: 1,
+    createdBy: randomUUID(),
     ...override,
   }
 }

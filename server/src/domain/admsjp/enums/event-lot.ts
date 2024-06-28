@@ -7,3 +7,8 @@ export enum EventLotVisible {
   INVISIBLE = 0,
   VISIBLE = 1,
 }
+
+export enum EventLotType {
+  TICKET = 'Ingresso',
+  SHIRT = 'Camiseta',
+}

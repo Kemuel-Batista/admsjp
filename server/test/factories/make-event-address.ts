@@ -12,17 +12,17 @@ export function makeEventAddress(
   override: Partial<EventAddressProps> = {},
 ): EventAddressProps {
   return {
-    uuid: randomUUID(),
+    id: randomUUID(),
     street: faker.location.street(),
     number: String(faker.number.int({ max: 100 })),
     complement: faker.location.streetAddress(),
     neighborhood: faker.location.zipCode(),
     state: faker.number.int({ max: 100 }),
     city: faker.number.int({ max: 100 }),
-    eventId: faker.number.int({ max: 10 }),
+    eventId: randomUUID(),
     latitude: faker.location.latitude(),
     longitude: faker.location.longitude(),
-    createdBy: 1,
+    createdBy: randomUUID(),
     ...override,
   }
 }
@@ -38,7 +38,7 @@ export class EventAddressFactory {
 
     const createdEventAddress = await this.prisma.eventAddress.upsert({
       where: {
-        uuid: eventAddress.uuid,
+        id: eventAddress.id,
       },
       create: eventAddress,
       update: {},

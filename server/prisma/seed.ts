@@ -10,7 +10,7 @@ import {
   EventType,
   EventVisible,
 } from '@/domain/admsjp/enums/event'
-import { EventLotStatus } from '@/domain/admsjp/enums/event-lot'
+import { EventLotStatus, EventLotType } from '@/domain/admsjp/enums/event-lot'
 import {
   ParameterStatus,
   ParameterVisible,
@@ -18,52 +18,6 @@ import {
 import { UserStatus } from '@/domain/admsjp/enums/user'
 import { BcryptHasher } from '@/infra/cryptography/brcrypt-hasher'
 import { envSchema } from '@/infra/env/env'
-
-const permissions = [
-  'system.profile.list',
-  'system.profile.create',
-  'system.profile.update',
-  'system.profile.delete.by-id',
-  'system.profile.permission.list',
-  'system.profile.permission.find.by-id',
-  'system.profile.permission.list.by-profile-id',
-  'system.profile.permission.create',
-  'system.profile.permission.update',
-  'system.profile.permission.delete.by-id',
-  'system.user.list',
-  'system.user.create',
-  'system.user.update',
-  'system.user.update.password',
-  'system.user.update.self-password',
-  'system.user.patch.status',
-  'system.user.delete.by-id',
-  'system.user.permission.list.by-user-name',
-  'admsjp.churchs.list',
-  'admsjp.churchs.find.by-id',
-  'admsjp.churchs.create',
-  'admsjp.churchs.update',
-  'admsjp.churchs.delete.by-id',
-  'admsjp.departments.list',
-  'admsjp.departments.find.by-id',
-  'admsjp.departments.create',
-  'admsjp.departments.update',
-  'admsjp.departments.delete.by-id',
-  'umadsjp.meeting.list',
-  'umadsjp.meeting.find.by-id',
-  'umadsjp.meeting.create',
-  'umadsjp.meeting.update',
-  'umadsjp.meeting.delete.by-id',
-  'umadsjp.leaders.list',
-  'umadsjp.leaders.find.by-id',
-  'umadsjp.leaders.create',
-  'umadsjp.leaders.update',
-  'umadsjp.leaders.delete.by-id',
-  'umadsjp.young-people.list.by-church-id',
-  'umadsjp.young-people.find.by-id',
-  'umadsjp.young-people.create.by-church-id',
-  'umadsjp.young-people.update',
-  'umadsjp.young-people.delete.by-id',
-]
 
 const prisma = new PrismaClient()
 const bcryptHasher = new BcryptHasher()
@@ -108,14 +62,14 @@ async function execute(enviroment: string): Promise<void> {
 
     await prisma.profile.upsert({
       where: {
-        name: 'General',
+        name: 'GENERAL',
       },
       create: {
-        name: 'General',
+        name: 'GENERAL',
         status: 1,
         visible: 1,
-        createdBy: 0,
-        updatedBy: 0,
+        createdBy: randomUUID(),
+        updatedBy: randomUUID(),
       },
       update: {},
     })
@@ -157,6 +111,8 @@ async function execute(enviroment: string): Promise<void> {
   async function createDepartment(): Promise<Department> {
     console.time('createDepartment')
 
+    const randomUser = randomUUID()
+
     const department = await prisma.department.upsert({
       where: {
         name: 'UMADJSP',
@@ -167,8 +123,7 @@ async function execute(enviroment: string): Promise<void> {
           'Departamento de Jovens da Assembléia de Deus São José dos Pinhais',
         status: 1,
         visible: 1,
-        createdBy: 0,
-        updatedBy: 0,
+        createdBy: randomUser,
       },
       update: {},
     })
@@ -182,8 +137,7 @@ async function execute(enviroment: string): Promise<void> {
         description: 'Todos os usuários públicos',
         status: 1,
         visible: 1,
-        createdBy: 0,
-        updatedBy: 0,
+        createdBy: randomUser,
       },
       update: {},
     })
@@ -196,36 +150,22 @@ async function execute(enviroment: string): Promise<void> {
   async function createAdmin(): Promise<User> {
     console.time('createAdmin')
 
+    const randomUser = randomUUID()
+
     const hashedPassword = await bcryptHasher.hash(env.ADMIN_PASSWORD)
 
     const profileAdmin = await prisma.profile.upsert({
       where: {
-        name: 'Administrador',
+        name: 'ADMIN',
       },
       create: {
-        name: 'Administrador',
+        name: 'ADMIN',
         status: 0,
         visible: 0,
-        createdBy: 0,
-        updatedBy: 0,
+        createdBy: randomUser,
       },
       update: {},
     })
-
-    for (const permission of permissions) {
-      await prisma.profilePermission.upsert({
-        where: {
-          KeyProfileId: { key: permission, profileId: profileAdmin.id },
-        },
-        create: {
-          key: permission,
-          profileId: profileAdmin.id,
-          createdBy: 0,
-          updatedBy: 0,
-        },
-        update: {},
-      })
-    }
 
     const adminDepartment = await prisma.department.upsert({
       where: {
@@ -236,8 +176,7 @@ async function execute(enviroment: string): Promise<void> {
         description: 'Administração',
         status: 1,
         visible: 0,
-        createdBy: 0,
-        updatedBy: 0,
+        createdBy: randomUser,
       },
       update: {},
     })
@@ -252,9 +191,12 @@ async function execute(enviroment: string): Promise<void> {
         password: hashedPassword,
         departmentId: adminDepartment.id,
         status: UserStatus.ACTIVE,
-        profileId: profileAdmin.id,
-        createdBy: 0,
-        updatedBy: 0,
+        createdBy: randomUser,
+        UsersOnProfiles: {
+          create: {
+            profileId: profileAdmin.id,
+          },
+        },
       },
       update: {},
     })
@@ -292,7 +234,6 @@ async function execute(enviroment: string): Promise<void> {
           departmentId: department.id,
           status: UserStatus.ACTIVE,
           createdBy: admin.id,
-          updatedBy: admin.id,
         },
         update: {},
       })
@@ -352,7 +293,7 @@ Junte-se a nós para três dias de ensinamentos transformadores e experiências 
         finalDate: new Date('2024-07-20T18:00:00'),
         status: EventStatus.ACTIVE,
         visible: EventVisible.VISIBLE,
-        departmentId: 1,
+        departmentId: admin.departmentId,
         eventType: EventType.PRESENCIAL,
         imagePath: 'banner-ebj-umadsjp.png',
         createdBy: admin.id,
@@ -380,6 +321,7 @@ Junte-se a nós para três dias de ensinamentos transformadores e experiências 
         description: 'Lote de inscrição da EBJ + Compra da camiseta UMADSJP',
         lot: 2,
         quantity: 50,
+        type: EventLotType.SHIRT,
         status: EventLotStatus.ACTIVE,
         value: 6499,
         eventId: event.id,
@@ -390,7 +332,7 @@ Junte-se a nós para três dias de ensinamentos transformadores e experiências 
 
     await prisma.eventAddress.upsert({
       where: {
-        uuid: randomUUID(),
+        id: randomUUID(),
       },
       create: {
         street: 'Rua joinville',

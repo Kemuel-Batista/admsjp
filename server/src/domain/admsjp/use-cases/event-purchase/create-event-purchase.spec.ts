@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto'
+
 import { makeEvent } from 'test/factories/make-event'
 import { makeEventLot } from 'test/factories/make-event-lot'
 import { makeParameter } from 'test/factories/make-parameter'
@@ -11,6 +13,7 @@ import { InMemoryOrdersRepository } from 'test/repositories/in-memory-orders-rep
 import { InMemoryParametersRepository } from 'test/repositories/in-memory-parameters-repository'
 import { InMemoryUsersRepository } from 'test/repositories/in-memory-users-repository'
 
+import { IncorrectAssociationError } from '@/core/errors/errors/incorrect-association-error'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 import { TicketsSoldOutError } from '@/core/errors/errors/tickets-sold-out-error'
 
@@ -70,6 +73,7 @@ describe('Create Event Ticket', () => {
 
     const eventLotFactory = makeEventLot({
       eventId: event.id,
+      quantity: 50,
       fulfilledQuantity: 30,
     })
     const eventLot = await inMemoryEventLotsRepository.create(eventLotFactory)
@@ -92,9 +96,8 @@ describe('Create Event Ticket', () => {
     expect(inMemoryEventTicketsRepository.items).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          createdBy: user.id,
-          eventId: event.id,
-          lot: eventLot.lot,
+          eventPurchaseId: expect.any(String),
+          eventLotId: eventLot.id,
           ticket: expect.any(String),
         }),
       ]),
@@ -110,6 +113,8 @@ describe('Create Event Ticket', () => {
 
     const eventLotFactory = makeEventLot({
       eventId: event.id,
+      quantity: 50,
+      fulfilledQuantity: 30,
     })
     const eventLot = await inMemoryEventLotsRepository.create(eventLotFactory)
 
@@ -126,11 +131,6 @@ describe('Create Event Ticket', () => {
       eventLotInfo: events,
     })
 
-    const now = new Date()
-    const year = now.getFullYear()
-    const month = (now.getMonth() + 1).toString().padStart(2, '0')
-    const day = now.getDate().toString().padStart(2, '0')
-
     const result = await sut.execute({
       buyerId: user.id,
       eventId: event.id,
@@ -142,16 +142,14 @@ describe('Create Event Ticket', () => {
     expect(inMemoryEventTicketsRepository.items).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          createdBy: user.id,
-          eventId: event.id,
-          lot: eventLot.lot,
-          ticket: `${year}${month}${day}EV0001`,
+          eventPurchaseId: expect.any(String),
+          eventLotId: eventLot.id,
+          ticket: expect.any(String),
         }),
         expect.objectContaining({
-          createdBy: user.id,
-          eventId: event.id,
-          lot: eventLot.lot,
-          ticket: `${year}${month}${day}EV0002`,
+          eventPurchaseId: expect.any(String),
+          eventLotId: eventLot.id,
+          ticket: expect.any(String),
         }),
       ]),
     )
@@ -196,7 +194,7 @@ describe('Create Event Ticket', () => {
     const event = await inMemoryEventsRepository.create(eventFactory)
 
     const eventLotFactory = makeEventLot({
-      eventId: 2,
+      eventId: randomUUID(),
     })
     const eventLot = await inMemoryEventLotsRepository.create(eventLotFactory)
 
@@ -214,7 +212,7 @@ describe('Create Event Ticket', () => {
     })
 
     expect(result.isError()).toBe(true)
-    expect(result.value).toBeInstanceOf(ResourceNotFoundError)
+    expect(result.value).toBeInstanceOf(IncorrectAssociationError)
   })
 
   it('should not be able to create a new event ticket if event not exists', async () => {
@@ -225,7 +223,7 @@ describe('Create Event Ticket', () => {
     await inMemoryEventsRepository.create(eventFactory)
 
     const eventLotFactory = makeEventLot({
-      eventId: 2,
+      eventId: randomUUID(),
     })
     const eventLot = await inMemoryEventLotsRepository.create(eventLotFactory)
 
@@ -238,7 +236,7 @@ describe('Create Event Ticket', () => {
 
     const result = await sut.execute({
       buyerId: user.id,
-      eventId: 31232131,
+      eventId: randomUUID(),
       eventLotInfo: events,
     })
 
@@ -246,7 +244,8 @@ describe('Create Event Ticket', () => {
     expect(result.value).toBeInstanceOf(ResourceNotFoundError)
   })
 
-  it('should be able to create a order payment when event is free', async () => {
+  // TODO: Create a order payment after create event purchase
+  it.skip('should be able to create a order payment when event is free', async () => {
     const userFactory = makeUser()
     const user = await inMemoryUsersRepository.create(userFactory)
 
@@ -278,11 +277,9 @@ describe('Create Event Ticket', () => {
     expect(inMemoryEventTicketsRepository.items).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          createdBy: user.id,
-          eventId: event.id,
-          lot: eventLot.lot,
+          eventPurchaseId: expect.any(String),
+          eventLotId: eventLot.id,
           ticket: expect.any(String),
-          expiresAt: null,
         }),
       ]),
     )

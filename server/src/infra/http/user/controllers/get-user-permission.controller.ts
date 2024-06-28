@@ -25,7 +25,7 @@ export class GetUserPermissionController {
       throw new BadRequestException('Erro ao carregar as permissões')
     }
 
-    const userPermission = result.value.userWithPermission
+    const userPermission = result.value.user
 
     return {
       user: userPermission,

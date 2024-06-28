@@ -6,7 +6,7 @@ import { Public } from '@/infra/auth/public'
 
 import { ZodValidationPipe } from '../../pipes/zod-validation-pipe'
 
-const paramsSchema = z.coerce.number().int().positive()
+const paramsSchema = z.string().uuid()
 const paramValidationPipe = new ZodValidationPipe(paramsSchema)
 type ParamSchema = z.infer<typeof paramsSchema>
 

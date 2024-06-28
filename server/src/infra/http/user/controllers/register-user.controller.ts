@@ -21,8 +21,8 @@ const RegisterUserSchema = z.object({
   name: z.string().min(3).max(50),
   password: z.string().min(6).max(20),
   photo: z.string().optional(),
-  departmentId: z.number().int().positive(),
-  profileId: z.number().int().positive(),
+  departmentId: z.string().uuid(),
+  profileId: z.string().uuid(),
   status: z.nativeEnum(UserStatus),
 })
 

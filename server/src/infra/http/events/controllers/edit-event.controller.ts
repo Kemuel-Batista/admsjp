@@ -9,18 +9,14 @@ import {
   ParseFilePipe,
   Put,
   UploadedFile,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { z } from 'zod'
 
-import { UserProfile } from '@/domain/admsjp/enums/user'
 import { EditEventUseCase } from '@/domain/admsjp/use-cases/events/edit-event'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
-import { ProfileGuard } from '@/infra/auth/profile.guard'
-import { Profiles } from '@/infra/auth/profiles'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 
 const editEventSchema = z.object({
@@ -44,7 +40,7 @@ type EditEventSchema = z.infer<typeof editEventSchema>
 
 const bodyValidationPipe = new ZodValidationPipe(editEventSchema)
 
-const EditEventParamsSchema = z.coerce.number().int().positive()
+const EditEventParamsSchema = z.string().uuid()
 
 const paramValidationPipe = new ZodValidationPipe(EditEventParamsSchema)
 
@@ -54,8 +50,6 @@ type ParamSchema = z.infer<typeof EditEventParamsSchema>
 export class EditEventController {
   constructor(private editEvent: EditEventUseCase) {}
 
-  @Profiles(UserProfile.ADMINISTRADOR, UserProfile.EVENTS)
-  @UseGuards(ProfileGuard)
   @Put()
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseInterceptors(FileInterceptor('file'))

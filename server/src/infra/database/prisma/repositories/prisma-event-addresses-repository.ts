@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { EventAddress, Prisma } from '@prisma/client'
 
-import { IListOptions } from '@/core/repositories/list-options'
+import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
-import { ListEventAddressesDTO } from '@/domain/admsjp/dtos/event-address'
 import { EventAddressesRepository } from '@/domain/admsjp/repositories/event-addresses-repository'
 
 import { PrismaService } from '../prisma.service'
@@ -76,22 +75,19 @@ export class PrismaEventAddressesRepository
     return event
   }
 
-  async list(options?: IListOptions): Promise<ListEventAddressesDTO> {
+  async list(options?: ListOptions): Promise<EventAddress[]> {
     const { skip, take } = calcPagination(options)
 
-    const [eventAddresses, count] = await this.prisma.$transaction([
-      this.prisma.eventAddress.findMany({
-        skip,
-        take,
-        orderBy: { id: 'asc' },
-      }),
-      this.prisma.eventAddress.count(),
-    ])
+    const eventAddresses = await this.prisma.eventAddress.findMany({
+      skip,
+      take,
+      orderBy: { id: 'asc' },
+    })
 
-    return { eventAddresses, count }
+    return eventAddresses
   }
 
-  async findById(id: number): Promise<EventAddress> {
+  async findById(id: EventAddress['id']): Promise<EventAddress> {
     const eventAddress = await this.prisma.eventAddress.findUnique({
       where: {
         id,
@@ -101,7 +97,7 @@ export class PrismaEventAddressesRepository
     return eventAddress
   }
 
-  async findByEventId(eventId: number): Promise<EventAddress> {
+  async findByEventId(eventId: EventAddress['eventId']): Promise<EventAddress> {
     const eventAddress = await this.prisma.eventAddress.findUnique({
       where: {
         eventId,

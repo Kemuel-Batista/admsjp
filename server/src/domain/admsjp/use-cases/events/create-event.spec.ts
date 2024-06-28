@@ -59,7 +59,6 @@ describe('Create Event', () => {
     const user = makeUser()
     inMemoryUsersRepository.create({
       ...user,
-      profileId: user.profileId,
     })
 
     const result = await sut.execute({
@@ -106,7 +105,7 @@ describe('Create Event', () => {
     expect(inMemoryEventLotsRepository.items).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          eventId: 1,
+          eventId: expect.any(String),
           lot: 1,
           value: 100,
         }),
@@ -129,7 +128,6 @@ describe('Create Event', () => {
     const user = makeUser()
     inMemoryUsersRepository.create({
       ...user,
-      profileId: user.profileId,
     })
 
     const result = await sut.execute({
@@ -185,7 +183,7 @@ describe('Create Event', () => {
     expect(inMemoryEventLotsRepository.items).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          eventId: 1,
+          eventId: expect.any(String),
           lot: 1,
           value: 100,
         }),

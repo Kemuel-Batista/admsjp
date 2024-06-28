@@ -1,19 +1,9 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-  UseGuards,
-} from '@nestjs/common'
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common'
 import { z } from 'zod'
 
-import { UserProfile } from '@/domain/admsjp/enums/user'
 import { CreateDepartmentUseCase } from '@/domain/admsjp/use-cases/departments/create-department'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
-import { ProfileGuard } from '@/infra/auth/profile.guard'
-import { Profiles } from '@/infra/auth/profiles'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 
 const createDepartmentSchema = z.object({
@@ -31,8 +21,6 @@ const bodyValidationPipe = new ZodValidationPipe(createDepartmentSchema)
 export class CreateDepartmentController {
   constructor(private createDepartment: CreateDepartmentUseCase) {}
 
-  @Profiles(UserProfile.ADMINISTRADOR)
-  @UseGuards(ProfileGuard)
   @Post()
   @HttpCode(HttpStatus.OK)
   async handle(
