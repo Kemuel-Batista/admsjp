@@ -16,7 +16,6 @@ export class PrismaUsersRepository implements UsersRepository {
     photo,
     status,
     departmentId,
-    profileId,
     provider,
     createdBy,
   }: Prisma.UserUncheckedCreateInput): Promise<User> {
@@ -28,7 +27,6 @@ export class PrismaUsersRepository implements UsersRepository {
         photo,
         status,
         departmentId,
-        profileId,
         provider,
         createdBy,
         updatedBy: createdBy,
@@ -45,7 +43,6 @@ export class PrismaUsersRepository implements UsersRepository {
     password,
     status,
     departmentId,
-    profileId,
     updatedBy,
   }: User): Promise<User> {
     const user = await this.prisma.user.update({
@@ -58,7 +55,6 @@ export class PrismaUsersRepository implements UsersRepository {
         password: password ?? undefined,
         status: status ?? undefined,
         departmentId: departmentId ?? undefined,
-        profileId: profileId ?? undefined,
         updatedBy,
       },
     })

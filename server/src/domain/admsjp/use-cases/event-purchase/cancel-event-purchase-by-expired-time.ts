@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import type { EventPurchase } from '@prisma/client'
 
 import { Either, failure, success } from '@/core/either'
 import { LimitTimeNotExpiredError } from '@/core/errors/errors/limit-time-not-expired-error'
@@ -8,7 +9,7 @@ import { EventPurchasesRepository } from '../../repositories/event-purchases-rep
 import { EventTicketsRepository } from '../../repositories/event-tickets-repository'
 
 interface CancelEventPurchaseByExpiredTimeUseCaseRequest {
-  purchaseId: string
+  purchaseId: EventPurchase['id']
 }
 
 type CancelEventPurchaseByExpiredTimeUseCaseResponse = Either<

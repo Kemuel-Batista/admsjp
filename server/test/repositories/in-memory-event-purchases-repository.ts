@@ -117,6 +117,21 @@ export class InMemoryEventPurchasesRepository
     return paginatedEventPurchases
   }
 
+  async listByEventId(
+    eventId: EventPurchase['eventId'],
+    options?: ListOptions,
+  ): Promise<EventPurchase[]> {
+    let eventPurchases = this.items
+
+    const { skip, take } = calcPagination(options)
+
+    eventPurchases = eventPurchases
+      .filter((item) => item.eventId === eventId)
+      .slice(skip, skip + take)
+
+    return eventPurchases
+  }
+
   async listByBuyerId(
     buyerId: EventPurchase['buyerId'],
     options?: ListOptions,

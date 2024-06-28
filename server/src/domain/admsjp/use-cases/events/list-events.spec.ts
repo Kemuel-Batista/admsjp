@@ -1,16 +1,22 @@
+import { randomUUID } from 'node:crypto'
+
 import { makeDepartment } from 'test/factories/make-department'
 import { makeEvent } from 'test/factories/make-event'
+import { makeProfile } from 'test/factories/make-profile'
 import { makeUser } from 'test/factories/make-user'
+import { makeUsersOnProfiles } from 'test/factories/make-users-on-profiles'
 import { InMemoryDepartmentsRepository } from 'test/repositories/in-memory-departments-repository'
 import { InMemoryEventsRepository } from 'test/repositories/in-memory-events-repository'
+import { InMemoryProfilesRepository } from 'test/repositories/in-memory-profiles-repository'
+import { InMemoryUsersOnProfilesRepository } from 'test/repositories/in-memory-users-on-profiles-repository'
 import { InMemoryUsersRepository } from 'test/repositories/in-memory-users-repository'
-
-import { UserProfile } from '@/domain/admsjp/enums/user'
 
 import { ListEventsUseCase } from './list-events'
 
 let inMemoryDepartmentsRepository: InMemoryDepartmentsRepository
 let inMemoryUsersRepository: InMemoryUsersRepository
+let inMemoryProfilesRepository: InMemoryProfilesRepository
+let inMemoryUsersOnProfilesRepository: InMemoryUsersOnProfilesRepository
 let inMemoryEventsRepository: InMemoryEventsRepository
 
 let sut: ListEventsUseCase
@@ -19,6 +25,11 @@ describe('List Events', () => {
   beforeEach(() => {
     inMemoryDepartmentsRepository = new InMemoryDepartmentsRepository()
     inMemoryUsersRepository = new InMemoryUsersRepository()
+    inMemoryProfilesRepository = new InMemoryProfilesRepository()
+    inMemoryUsersOnProfilesRepository = new InMemoryUsersOnProfilesRepository(
+      inMemoryProfilesRepository,
+    )
+
     inMemoryEventsRepository = new InMemoryEventsRepository()
 
     sut = new ListEventsUseCase(inMemoryEventsRepository)
@@ -28,6 +39,17 @@ describe('List Events', () => {
     const userFactory = makeUser()
     const user = await inMemoryUsersRepository.create(userFactory)
 
+    const profileFactory = makeProfile({
+      name: 'ADMIN',
+    })
+    const profile = await inMemoryProfilesRepository.create(profileFactory)
+
+    const usersOnProfilesFactory = makeUsersOnProfiles({
+      userId: user.id,
+      profileId: profile.id,
+    })
+    await inMemoryUsersOnProfilesRepository.create(usersOnProfilesFactory)
+
     const eventFactory01 = makeEvent()
     const event01 = await inMemoryEventsRepository.create(eventFactory01)
 
@@ -36,7 +58,7 @@ describe('List Events', () => {
 
     const result = await sut.execute({
       departmentId: user.departmentId,
-      profileId: user.profileId,
+      roles: [profile.name],
       options: {},
     })
 
@@ -64,21 +86,31 @@ describe('List Events', () => {
 
     const userFactory = makeUser({
       departmentId: department.id,
-      profileId: UserProfile.EVENTS,
     })
     const user = await inMemoryUsersRepository.create(userFactory)
+
+    const profileFactory = makeProfile({
+      name: 'GENERAL',
+    })
+    const profile = await inMemoryProfilesRepository.create(profileFactory)
+
+    const usersOnProfilesFactory = makeUsersOnProfiles({
+      userId: user.id,
+      profileId: profile.id,
+    })
+    await inMemoryUsersOnProfilesRepository.create(usersOnProfilesFactory)
 
     const eventFactory01 = makeEvent({
       departmentId: department.id,
     })
     const event01 = await inMemoryEventsRepository.create(eventFactory01)
 
-    const eventFactory02 = makeEvent({ departmentId: 2 })
+    const eventFactory02 = makeEvent({ departmentId: randomUUID() })
     await inMemoryEventsRepository.create(eventFactory02)
 
     const result = await sut.execute({
       departmentId: user.departmentId,
-      profileId: user.profileId,
+      roles: [profile.name],
       options: {},
     })
 
@@ -100,13 +132,24 @@ describe('List Events', () => {
     const userFactory = makeUser()
     const user = await inMemoryUsersRepository.create(userFactory)
 
+    const profileFactory = makeProfile({
+      name: 'ADMIN',
+    })
+    const profile = await inMemoryProfilesRepository.create(profileFactory)
+
+    const usersOnProfilesFactory = makeUsersOnProfiles({
+      userId: user.id,
+      profileId: profile.id,
+    })
+    await inMemoryUsersOnProfilesRepository.create(usersOnProfilesFactory)
+
     for (let i = 1; i <= 22; i++) {
       await inMemoryEventsRepository.create(makeEvent())
     }
 
     const result = await sut.execute({
       departmentId: user.departmentId,
-      profileId: user.profileId,
+      roles: [profile.name],
       options: {
         allRecords: null,
         page: 1,

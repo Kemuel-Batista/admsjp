@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto'
 
 import { Prisma, Profile } from '@prisma/client'
-import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
 import { ProfilesRepository } from '@/domain/admsjp/repositories/profiles-repository'
 
@@ -9,11 +8,8 @@ export class InMemoryProfilesRepository implements ProfilesRepository {
   public items: Profile[] = []
 
   async create(data: Prisma.ProfileUncheckedCreateInput): Promise<Profile> {
-    const id = getLastInsertedId(this.items)
-
     const profile = {
-      id,
-      uuid: randomUUID(),
+      id: randomUUID(),
       name: data.name,
       status: data.status,
       visible: data.visible,
@@ -56,7 +52,7 @@ export class InMemoryProfilesRepository implements ProfilesRepository {
     return profiles
   }
 
-  async findById(id: number): Promise<Profile> {
+  async findById(id: Profile['id']): Promise<Profile> {
     const profile = this.items.find((item) => item.id === id)
 
     if (!profile) {

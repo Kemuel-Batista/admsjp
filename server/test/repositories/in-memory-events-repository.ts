@@ -2,9 +2,9 @@ import { randomUUID } from 'node:crypto'
 
 import { Event } from '@prisma/client'
 import { EventProps } from 'test/factories/make-event'
-import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
 import { ListOptions } from '@/core/repositories/list-options'
+import { SearchParams } from '@/core/repositories/search-params'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 
@@ -12,11 +12,8 @@ export class InMemoryEventsRepository implements EventsRepository {
   public items: Event[] = []
 
   async create(data: EventProps): Promise<Event> {
-    const id = getLastInsertedId(this.items)
-
     const event = {
-      id,
-      uuid: randomUUID(),
+      id: randomUUID(),
       title: data.title,
       slug: data.slug,
       description: data.description,
@@ -71,7 +68,10 @@ export class InMemoryEventsRepository implements EventsRepository {
     return event
   }
 
-  async list(options?: ListOptions): Promise<Event[]> {
+  async list(
+    options?: ListOptions,
+    searchParams?: SearchParams[],
+  ): Promise<Event[]> {
     const { skip, take } = calcPagination(options)
 
     const events = this.items.slice(skip, skip + take)
@@ -79,7 +79,7 @@ export class InMemoryEventsRepository implements EventsRepository {
     return events
   }
 
-  async findById(id: number): Promise<Event> {
+  async findById(id: Event['id']): Promise<Event> {
     const event = this.items.find((item) => item.id === id)
 
     if (!event) {
@@ -109,7 +109,7 @@ export class InMemoryEventsRepository implements EventsRepository {
     return event
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: Event['id']): Promise<void> {
     const itemIndex = this.items.findIndex((item) => item.id === id)
 
     this.items.splice(itemIndex, 1)

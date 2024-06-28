@@ -2,7 +2,6 @@ import { randomUUID } from 'node:crypto'
 
 import { Parameter } from '@prisma/client'
 import { ParameterProps } from 'test/factories/make-parameter'
-import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
 import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
@@ -12,11 +11,8 @@ export class InMemoryParametersRepository implements ParametersRepository {
   public items: Parameter[] = []
 
   async create(data: ParameterProps): Promise<Parameter> {
-    const id = getLastInsertedId(this.items)
-
     const parameter = {
-      id,
-      uuid: randomUUID(),
+      id: randomUUID(),
       key: data.key,
       keyInfo: data.keyInfo,
       status: data.status,
@@ -62,7 +58,7 @@ export class InMemoryParametersRepository implements ParametersRepository {
     return parameters
   }
 
-  async findById(id: number): Promise<Parameter> {
+  async findById(id: Parameter['id']): Promise<Parameter> {
     const parameter = this.items.find((item) => item.id === id)
 
     if (!parameter) {

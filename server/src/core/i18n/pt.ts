@@ -7,7 +7,6 @@ import eventTicket from '@/domain/admsjp/languages/event-ticket.pt'
 import order from '@/domain/admsjp/languages/order.pt'
 import parameter from '@/domain/admsjp/languages/parameter.pt'
 import profile from '@/domain/admsjp/languages/profile.pt'
-import profilePermission from '@/domain/admsjp/languages/profile-permission.pt'
 import user from '@/domain/admsjp/languages/user.pt'
 
 const messages = {
@@ -16,7 +15,6 @@ const messages = {
       ...department,
       ...user,
       ...profile,
-      ...profilePermission,
       ...event,
       ...eventAddress,
       ...eventLot,

@@ -9,11 +9,11 @@ import { Env } from '../env/env'
 
 const tokenPayloadSchema = z.object({
   sub: z.object({
-    id: z.number(),
+    id: z.string().uuid(),
     name: z.string(),
     status: z.number(),
-    profileId: z.number(),
-    departmentId: z.number(),
+    roles: z.array(z.string()),
+    departmentId: z.string().uuid(),
     email: z.string().email(),
     permissions: z.array(z.string()).optional(),
   }),

@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto'
+
 import { makeEventPurchase } from 'test/factories/make-event-purchase'
 import { makeUser } from 'test/factories/make-user'
 import { InMemoryEventLotsRepository } from 'test/repositories/in-memory-event-lots-repository'
@@ -83,7 +85,7 @@ describe('Create manual order payment', () => {
     const user = await inMemoryUsersRepository.create(userFactory)
 
     const eventPurchaseFactory = makeEventPurchase({
-      buyerId: 2,
+      buyerId: randomUUID(),
     })
     const eventPurchase =
       await inMemoryEventPurchasesRepository.create(eventPurchaseFactory)
@@ -105,7 +107,7 @@ describe('Create manual order payment', () => {
     const user = await inMemoryUsersRepository.create(userFactory)
 
     const eventPurchaseFactory = makeEventPurchase({
-      buyerId: 2,
+      buyerId: user.id,
       expiresAt: new Date(),
     })
     const eventPurchase =
@@ -121,7 +123,7 @@ describe('Create manual order payment', () => {
 
     expect(result.isSuccess()).toBe(true)
 
-    expect(inMemoryEventTicketsRepository.items).toEqual(
+    expect(inMemoryEventPurchasesRepository.items).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           expiresAt: null,

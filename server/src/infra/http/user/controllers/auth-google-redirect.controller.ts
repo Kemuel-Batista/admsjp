@@ -10,6 +10,8 @@ import {
 import { Request, Response } from 'express'
 
 import { UserStatus } from '@/domain/admsjp/enums/user'
+import { FindDepartmentByNameUseCase } from '@/domain/admsjp/use-cases/departments/find-department-by-name'
+import { FindProfileByNameUseCase } from '@/domain/admsjp/use-cases/profile/find-profile-by-name'
 import { AuthenticateUserUseCase } from '@/domain/admsjp/use-cases/user/authenticate-user'
 import { GetUserByEmailUseCase } from '@/domain/admsjp/use-cases/user/get-user-by-email'
 import { RegisterUserUseCase } from '@/domain/admsjp/use-cases/user/register-user'
@@ -23,6 +25,8 @@ export class AuthGoogleRedirectController {
   constructor(
     private getUserByEmail: GetUserByEmailUseCase,
     private authenticateUser: AuthenticateUserUseCase,
+    private findProfileByName: FindProfileByNameUseCase,
+    private findDepartmentByName: FindDepartmentByNameUseCase,
     private registerUser: RegisterUserUseCase,
   ) {}
 
@@ -51,14 +55,22 @@ export class AuthGoogleRedirectController {
 
       accessToken = result.value.accessToken
     } else {
+      const profile = await this.findProfileByName.execute({
+        name: 'GENERAL',
+      })
+
+      const department = await this.findDepartmentByName.execute({
+        name: 'GENERAL',
+      })
+
       await this.registerUser.execute({
         name: `${reqUser.firstName} ${reqUser.lastName}`,
         email: reqUser.email,
         password: '123456',
         photo: reqUser.picture,
         provider: 'google',
-        profileId: 2, // General profile
-        departmentId: 3, // General Department
+        profileId: profile.id,
+        departmentId: department.id,
         status: UserStatus.ACTIVE,
       })
 

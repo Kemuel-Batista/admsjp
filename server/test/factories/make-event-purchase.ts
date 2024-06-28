@@ -14,8 +14,8 @@ export function makeEventPurchase(
   return {
     id: randomUUID(),
     invoiceNumber: faker.commerce.isbn(13),
-    buyerId: faker.number.int({ max: 1 }),
-    eventId: faker.number.int({ max: 1 }),
+    buyerId: randomUUID(),
+    eventId: randomUUID(),
     status: 1,
     expiresAt: faker.date.future(),
     ...override,

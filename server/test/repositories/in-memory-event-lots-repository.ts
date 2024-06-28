@@ -62,7 +62,7 @@ export class InMemoryEventLotsRepository implements EventLotsRepository {
   }
 
   async listByEventId(
-    eventId: number,
+    eventId: EventLot['eventId'],
     options?: ListOptions,
   ): Promise<EventLot[]> {
     const { skip, take } = calcPagination(options)
@@ -87,7 +87,7 @@ export class InMemoryEventLotsRepository implements EventLotsRepository {
     return eventLot
   }
 
-  async findMaxLotByEventId(eventId: number): Promise<number> {
+  async findMaxLotByEventId(eventId: EventLot['eventId']): Promise<number> {
     const eventLots = this.items
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .filter((item) => item.eventId === eventId)

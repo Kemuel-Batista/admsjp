@@ -5,6 +5,7 @@ import request from 'supertest'
 import { DepartmentFactory } from 'test/factories/make-department'
 import { ProfileFactory } from 'test/factories/make-profile'
 import { UserFactory } from 'test/factories/make-user'
+import { UsersOnProfilesFactory } from 'test/factories/make-users-on-profiles'
 
 import {
   ParameterStatus,
@@ -18,22 +19,29 @@ describe('Create parameter (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
   let jwt: JwtService
-  let profileFactory: ProfileFactory
-  let departmentFactory: DepartmentFactory
   let userFactory: UserFactory
+  let profileFactory: ProfileFactory
+  let usersOnProfilesFactory: UsersOnProfilesFactory
+  let departmentFactory: DepartmentFactory
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
-      providers: [ProfileFactory, DepartmentFactory, UserFactory],
+      providers: [
+        UserFactory,
+        ProfileFactory,
+        UsersOnProfilesFactory,
+        DepartmentFactory,
+      ],
     }).compile()
 
     app = moduleRef.createNestApplication()
     prisma = moduleRef.get(PrismaService)
     jwt = moduleRef.get(JwtService)
-    profileFactory = moduleRef.get(ProfileFactory)
-    departmentFactory = moduleRef.get(DepartmentFactory)
     userFactory = moduleRef.get(UserFactory)
+    profileFactory = moduleRef.get(ProfileFactory)
+    usersOnProfilesFactory = moduleRef.get(UsersOnProfilesFactory)
+    departmentFactory = moduleRef.get(DepartmentFactory)
 
     await app.init()
   })
@@ -44,8 +52,12 @@ describe('Create parameter (E2E)', () => {
 
     const user = await userFactory.makePrismaUser({
       name: 'John Doe',
-      profileId: profile.id,
       departmentId: department.id,
+    })
+
+    await usersOnProfilesFactory.makePrismaUsersOnProfiles({
+      userId: user.id,
+      profileId: profile.id,
     })
 
     const accessToken = jwt.sign({ sub: user.id.toString() })

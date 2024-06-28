@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto'
+
 import { faker } from '@faker-js/faker'
 import { Injectable } from '@nestjs/common'
 import { Department, Prisma } from '@prisma/client'
@@ -18,7 +20,7 @@ export function makeDepartment(
     description: faker.commerce.productDescription(),
     status: DepartmentStatus.ACTIVE,
     visible: DepartmentVisible.VISIBLE,
-    createdBy: 1,
+    createdBy: randomUUID(),
     ...override,
   }
 }

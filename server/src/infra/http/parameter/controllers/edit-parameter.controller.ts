@@ -5,16 +5,12 @@ import {
   HttpStatus,
   Param,
   Put,
-  UseGuards,
 } from '@nestjs/common'
 import { z } from 'zod'
 
-import { UserProfile } from '@/domain/admsjp/enums/user'
 import { EditParameterUseCase } from '@/domain/admsjp/use-cases/parameters/edit-parameter'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
-import { ProfileGuard } from '@/infra/auth/profile.guard'
-import { Profiles } from '@/infra/auth/profiles'
 
 import { ZodValidationPipe } from '../../pipes/zod-validation-pipe'
 
@@ -30,7 +26,7 @@ type EditParameterSchema = z.infer<typeof editParameterSchema>
 
 const bodyValidationPipe = new ZodValidationPipe(editParameterSchema)
 
-const editEventParamSchema = z.coerce.number().int().positive()
+const editEventParamSchema = z.string().uuid()
 const paramValidationPipe = new ZodValidationPipe(editEventParamSchema)
 type ParamSchema = z.infer<typeof editEventParamSchema>
 
@@ -38,8 +34,6 @@ type ParamSchema = z.infer<typeof editEventParamSchema>
 export class EditParameterController {
   constructor(private editParameter: EditParameterUseCase) {}
 
-  @Profiles(UserProfile.ADMINISTRADOR)
-  @UseGuards(ProfileGuard)
   @Put()
   @HttpCode(HttpStatus.NO_CONTENT)
   async handle(

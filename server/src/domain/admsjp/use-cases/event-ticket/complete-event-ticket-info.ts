@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import type { EventTicket, User } from '@prisma/client'
 
 import { Either, failure, success } from '@/core/either'
 import { IncorrectAssociationError } from '@/core/errors/errors/incorrect-association-error'
@@ -8,14 +9,14 @@ import { EventPurchasesRepository } from '../../repositories/event-purchases-rep
 import { EventTicketsRepository } from '../../repositories/event-tickets-repository'
 
 interface CompleteEventTicketInfoUseCaseRequest {
-  id?: string
-  eventPurchaseId?: string
-  name?: string
-  email?: string
-  cpf?: string
-  phone?: string
-  birthday?: Date
-  shirtSize?: string
+  id?: EventTicket['id']
+  eventPurchaseId?: EventTicket['eventPurchaseId']
+  name?: EventTicket['name']
+  email?: EventTicket['email']
+  cpf?: EventTicket['cpf']
+  phone?: EventTicket['phone']
+  birthday?: EventTicket['birthday']
+  shirtSize?: EventTicket['shirtSize']
 }
 
 type CompleteEventTicketInfoUseCaseResponse = Either<
@@ -32,7 +33,7 @@ export class CompleteEventTicketInfoUseCase {
 
   async execute(
     data: CompleteEventTicketInfoUseCaseRequest[],
-    requestedBy: number,
+    requestedBy: User['id'],
   ): Promise<CompleteEventTicketInfoUseCaseResponse> {
     const eventTicketsPromise = data.map(async (item) => {
       const eventTicket = await this.eventTicketsRepository.findById(item.id)

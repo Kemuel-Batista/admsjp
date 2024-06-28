@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto'
+
 import { faker } from '@faker-js/faker'
 import { Injectable } from '@nestjs/common'
 import { Prisma, Profile } from '@prisma/client'
@@ -14,7 +16,7 @@ export function makeProfile(
     name: faker.commerce.department(),
     status: ProfileStatus.ACTIVE,
     visible: ProfileVisible.VISIBLE,
-    createdBy: 1,
+    createdBy: randomUUID(),
     ...override,
   }
 }

@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 
-const paramsSchema = z.string().transform(Number).pipe(z.number().min(1))
+const paramsSchema = z.string().uuid()
 
 export const paramsValidationPipe = new ZodValidationPipe(paramsSchema)
 

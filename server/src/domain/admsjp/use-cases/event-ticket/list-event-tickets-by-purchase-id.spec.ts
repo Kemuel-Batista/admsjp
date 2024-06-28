@@ -42,7 +42,7 @@ describe('List event tickets by event id', () => {
 
   it('should be able to list event tickets with details by event id', async () => {
     const userFactory = makeUser()
-    const user = await inMemoryUsersRepository.create(userFactory)
+    await inMemoryUsersRepository.create(userFactory)
 
     const eventFactory = makeEvent()
     const event = await inMemoryEventsRepository.create(eventFactory)
@@ -72,13 +72,7 @@ describe('List event tickets by event id', () => {
     expect(result.value).toEqual({
       eventTickets: expect.arrayContaining([
         expect.objectContaining({
-          createdBy: user.id,
-          eventId: event.id,
-          lot: eventLot.lot,
-          user: expect.objectContaining({
-            email: user.email,
-            name: user.name,
-          }),
+          eventPurchaseId: eventPurchase.id,
           eventLot: expect.objectContaining({
             lot: eventLot.lot,
           }),

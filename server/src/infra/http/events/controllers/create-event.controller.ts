@@ -11,7 +11,6 @@ import {
   ParseFilePipe,
   Post,
   UploadedFile,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
@@ -20,12 +19,9 @@ import { z } from 'zod'
 
 import { ResourceAlreadyExistsError } from '@/core/errors/errors/resource-already-exists-error'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
-import { UserProfile } from '@/domain/admsjp/enums/user'
 import { CreateEventUseCase } from '@/domain/admsjp/use-cases/events/create-event'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
-import { ProfileGuard } from '@/infra/auth/profile.guard'
-import { Profiles } from '@/infra/auth/profiles'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 
 const createEventLotSchema = z
@@ -47,7 +43,7 @@ const createEventSchema = z.object({
   status: z.coerce.number().int().min(0).max(1).optional(),
   visible: z.coerce.number().int().min(0).max(1).optional(),
   eventType: z.coerce.number().min(0).max(20),
-  departmentId: z.coerce.number().positive().min(1),
+  departmentId: z.string().uuid(),
   message: z.string().optional(),
   lots: z
     .string()
@@ -96,8 +92,6 @@ const bodyValidationPipe = new ZodValidationPipe(createEventSchema)
 export class CreateEventController {
   constructor(private createEvent: CreateEventUseCase) {}
 
-  @Profiles(UserProfile.ADMINISTRADOR, UserProfile.EVENTS)
-  @UseGuards(ProfileGuard)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('file'))

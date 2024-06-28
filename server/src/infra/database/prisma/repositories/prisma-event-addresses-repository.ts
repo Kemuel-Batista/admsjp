@@ -87,7 +87,7 @@ export class PrismaEventAddressesRepository
     return eventAddresses
   }
 
-  async findById(id: number): Promise<EventAddress> {
+  async findById(id: EventAddress['id']): Promise<EventAddress> {
     const eventAddress = await this.prisma.eventAddress.findUnique({
       where: {
         id,
@@ -97,7 +97,7 @@ export class PrismaEventAddressesRepository
     return eventAddress
   }
 
-  async findByEventId(eventId: number): Promise<EventAddress> {
+  async findByEventId(eventId: EventAddress['eventId']): Promise<EventAddress> {
     const eventAddress = await this.prisma.eventAddress.findUnique({
       where: {
         eventId,

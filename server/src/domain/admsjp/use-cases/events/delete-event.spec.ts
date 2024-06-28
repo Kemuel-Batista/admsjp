@@ -37,8 +37,7 @@ describe('Delete Event', () => {
 
     sut = new DeleteEventUseCase(
       inMemoryEventsRepository,
-      inMemoryEventLotsRepository,
-      inMemoryEventTicketsRepository,
+      inMemoryEventPurchasesRepository,
     )
   })
 

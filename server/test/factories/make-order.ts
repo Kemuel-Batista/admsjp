@@ -10,7 +10,7 @@ interface OrderProps extends Prisma.OrderUncheckedCreateInput {}
 
 export function makeOrder(override: Partial<OrderProps> = {}): OrderProps {
   return {
-    uuid: randomUUID(),
+    id: randomUUID(),
     transactionId: randomUUID(),
     paymentMethod: OrderPaymentMethod.PIX,
     status: OrderStatus.PENDING,
@@ -27,7 +27,7 @@ export class OrderFactory {
 
     const createdOrder = await this.prisma.order.upsert({
       where: {
-        uuid: order.uuid,
+        id: order.id,
       },
       create: order,
       update: {},

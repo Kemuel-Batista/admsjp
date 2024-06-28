@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto'
 
 import { Department, Prisma } from '@prisma/client'
-import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
 import { DepartmentsRepository } from '@/domain/admsjp/repositories/departments-repository'
 
@@ -11,11 +10,8 @@ export class InMemoryDepartmentsRepository implements DepartmentsRepository {
   async create(
     data: Prisma.DepartmentUncheckedCreateInput,
   ): Promise<Department> {
-    const id = getLastInsertedId(this.items)
-
     const department = {
-      id,
-      uuid: randomUUID(),
+      id: randomUUID(),
       name: data.name,
       description: data.description,
       status: data.status,
@@ -60,7 +56,7 @@ export class InMemoryDepartmentsRepository implements DepartmentsRepository {
     return departments
   }
 
-  async findById(id: number): Promise<Department> {
+  async findById(id: Department['id']): Promise<Department> {
     const department = this.items.find((item) => item.id === id)
 
     if (!department) {

@@ -8,9 +8,7 @@ export abstract class DepartmentsRepository {
   ): Promise<Department>
 
   abstract update(data: Department): Promise<Department>
-
   abstract list(options?: ListOptions): Promise<Department[]>
-
   abstract findById(id: Department['id']): Promise<Department | null>
   abstract findByName(name: Department['name']): Promise<Department | null>
 }

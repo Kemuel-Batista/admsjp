@@ -6,6 +6,7 @@ import { DepartmentFactory } from 'test/factories/make-department'
 import { EventFactory } from 'test/factories/make-event'
 import { ProfileFactory } from 'test/factories/make-profile'
 import { UserFactory } from 'test/factories/make-user'
+import { UsersOnProfilesFactory } from 'test/factories/make-users-on-profiles'
 
 import { AppModule } from '@/infra/app.module'
 import { DatabaseModule } from '@/infra/database/database.module'
@@ -13,23 +14,31 @@ import { DatabaseModule } from '@/infra/database/database.module'
 describe('Get event by slug (E2E)', () => {
   let app: INestApplication
   let jwt: JwtService
-  let profileFactory: ProfileFactory
-  let departmentFactory: DepartmentFactory
   let userFactory: UserFactory
+  let profileFactory: ProfileFactory
+  let usersOnProfilesFactory: UsersOnProfilesFactory
+  let departmentFactory: DepartmentFactory
   let eventFactory: EventFactory
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
-      providers: [ProfileFactory, DepartmentFactory, UserFactory, EventFactory],
+      providers: [
+        UserFactory,
+        ProfileFactory,
+        UsersOnProfilesFactory,
+        DepartmentFactory,
+        EventFactory,
+      ],
     }).compile()
 
     app = moduleRef.createNestApplication()
 
     jwt = moduleRef.get(JwtService)
-    profileFactory = moduleRef.get(ProfileFactory)
-    departmentFactory = moduleRef.get(DepartmentFactory)
     userFactory = moduleRef.get(UserFactory)
+    profileFactory = moduleRef.get(ProfileFactory)
+    usersOnProfilesFactory = moduleRef.get(UsersOnProfilesFactory)
+    departmentFactory = moduleRef.get(DepartmentFactory)
     eventFactory = moduleRef.get(EventFactory)
 
     await app.init()
@@ -41,8 +50,12 @@ describe('Get event by slug (E2E)', () => {
 
     const user = await userFactory.makePrismaUser({
       name: 'John Doe',
-      profileId: profile.id,
       departmentId: department.id,
+    })
+
+    await usersOnProfilesFactory.makePrismaUsersOnProfiles({
+      profileId: profile.id,
+      userId: user.id,
     })
 
     const accessToken = jwt.sign({ sub: user.id.toString() })

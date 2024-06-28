@@ -28,12 +28,14 @@ describe('List event lots by event id', () => {
     const eventLot01 = makeEventLot({
       eventId: event.id,
       lot: 1,
+      fulfilledQuantity: 0,
     })
     await inMemoryEventLotsRepository.create(eventLot01)
 
     const eventLot02 = makeEventLot({
       eventId: event.id,
       lot: 2,
+      fulfilledQuantity: 0,
     })
     await inMemoryEventLotsRepository.create(eventLot02)
 

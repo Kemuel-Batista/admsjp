@@ -1,12 +1,3 @@
-export enum UserProfile {
-  ADMINISTRADOR = 1,
-  ADMSJP_DIRETORIA = 2,
-  UMADSJP_DIRETORIA = 3,
-  UMADSJP_LEADERS = 4,
-  UMADSJP_DEPARTMENT_LEADERS = 5,
-  EVENTS = 6,
-}
-
 export enum UserStatus {
   INACTIVE = 0,
   ACTIVE = 1,

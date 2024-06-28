@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
+import type { Department, Profile, User } from '@prisma/client'
 
-import { Either, failure } from '@/core/either'
+import { Either, failure, success } from '@/core/either'
 import { ResourceAlreadyExistsError } from '@/core/errors/errors/resource-already-exists-error'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 
@@ -8,17 +9,18 @@ import { HashGenerator } from '../../cryptography/hash-generator'
 import { UserStatus } from '../../enums/user'
 import { DepartmentsRepository } from '../../repositories/departments-repository'
 import { ProfilesRepository } from '../../repositories/profiles-repository'
+import { UsersOnProfilesRepository } from '../../repositories/users-on-profiles-repository'
 import { UsersRepository } from '../../repositories/users-repository'
 
 interface RegisterUserUseCaseRequest {
-  email: string
-  name: string
-  password: string
-  photo?: string
-  status: number
-  departmentId: number
-  profileId: number
-  provider: string
+  email: User['email']
+  name: User['name']
+  password: User['password']
+  photo?: User['photo']
+  status: User['status']
+  departmentId: Department['id']
+  profileId: Profile['id']
+  provider: User['provider']
 }
 
 type RegisterUserUseCaseResponse = Either<
@@ -32,6 +34,7 @@ export class RegisterUserUseCase {
     private usersRepository: UsersRepository,
     private departmentsRepository: DepartmentsRepository,
     private profilesRepository: ProfilesRepository,
+    private usersOnProfilesRepository: UsersOnProfilesRepository,
     private hashGenerator: HashGenerator,
   ) {}
 
@@ -80,16 +83,22 @@ export class RegisterUserUseCase {
 
     const hashedPassword = await this.hashGenerator.hash(password)
 
-    await this.usersRepository.create({
+    const user = await this.usersRepository.create({
       email,
       name,
       password: hashedPassword,
       photo,
       status,
       departmentId,
-      profileId,
-      createdBy: 1,
+      createdBy: String('1'),
       provider,
     })
+
+    await this.usersOnProfilesRepository.create({
+      userId: user.id,
+      profileId,
+    })
+
+    return success(null)
   }
 }

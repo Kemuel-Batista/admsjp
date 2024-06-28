@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import type { EventLot } from '@prisma/client'
 
 import { Either, failure, success } from '@/core/either'
 import { ResourceHasAssociationsError } from '@/core/errors/errors/resource-has-associations-error'
@@ -8,12 +9,12 @@ import { EventLotsRepository } from '../../repositories/event-lots-repository'
 import { EventTicketsRepository } from '../../repositories/event-tickets-repository'
 
 interface EditEventLotUseCaseRequest {
-  id: string
-  eventId: number
-  lot: number
-  quantity: number
-  value: number
-  status: number
+  id: EventLot['id']
+  eventId: EventLot['eventId']
+  lot: EventLot['lot']
+  quantity: EventLot['quantity']
+  value: EventLot['value']
+  status: EventLot['status']
 }
 
 type EditEventLotUseCaseResponse = Either<

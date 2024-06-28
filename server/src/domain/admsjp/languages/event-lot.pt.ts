@@ -5,6 +5,9 @@ const pt = {
     },
     find: {
       notFound: 'Não foi possível localizar o event lot {{key}}',
+      event: {
+        'not-match': 'Esse event lot não pertence a esse evento',
+      },
     },
     sales: {
       'remaining-qty-not-enough':

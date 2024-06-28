@@ -5,8 +5,7 @@ import { Either, failure, success } from '@/core/either'
 import { ResourceHasAssociationsError } from '@/core/errors/errors/resource-has-associations-error'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 
-import { EventLotsRepository } from '../../repositories/event-lots-repository'
-import { EventTicketsRepository } from '../../repositories/event-tickets-repository'
+import { EventPurchasesRepository } from '../../repositories/event-purchases-repository'
 import { EventsRepository } from '../../repositories/events-repository'
 
 interface DeleteEventUseCaseRequest {
@@ -22,8 +21,7 @@ type DeleteEventUseCaseResponse = Either<
 export class DeleteEventUseCase {
   constructor(
     private eventsRepository: EventsRepository,
-    private eventLotsRepository: EventLotsRepository,
-    private eventTicketsRepository: EventTicketsRepository,
+    private eventPurchasesRepository: EventPurchasesRepository,
   ) {}
 
   async execute({
@@ -40,20 +38,16 @@ export class DeleteEventUseCase {
       )
     }
 
-    const eventLots = await this.eventLotsRepository.listByEventId(event.id, {})
+    const eventPurchases = await this.eventPurchasesRepository.listByEventId(
+      event.id,
+    )
 
-    for (const eventLot of eventLots) {
-      const eventTickets = await this.eventTicketsRepository.listByEventLotId(
-        eventLot.id,
+    if (eventPurchases.length > 0) {
+      return failure(
+        new ResourceHasAssociationsError({
+          errorKey: 'event.delete.hasAssociations',
+        }),
       )
-
-      if (eventTickets.length > 0) {
-        return failure(
-          new ResourceHasAssociationsError({
-            errorKey: 'event.delete.hasAssociations',
-          }),
-        )
-      }
     }
 
     await this.eventsRepository.delete(id)

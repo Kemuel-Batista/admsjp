@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import type { User } from '@prisma/client'
 
 import { Either, failure, success } from '@/core/either'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
@@ -8,7 +9,7 @@ import { UsersRepository } from '../../repositories/users-repository'
 import { EventPurchaseWithEvent } from '../../types/event-purchase'
 
 interface ListEventPurchasesByUserIdUseCaseRequest {
-  buyerId: number
+  buyerId: User['id']
 }
 
 type ListEventPurchasesByUserIdUseCaseResponse = Either<

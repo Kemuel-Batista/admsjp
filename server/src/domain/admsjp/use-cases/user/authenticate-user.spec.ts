@@ -1,11 +1,15 @@
 import { FakeEncrypter } from 'test/cryptography/fake-encrypter'
 import { FakeHasher } from 'test/cryptography/fake-hasher'
 import { makeUser } from 'test/factories/make-user'
+import { InMemoryProfilesRepository } from 'test/repositories/in-memory-profiles-repository'
+import { InMemoryUsersOnProfilesRepository } from 'test/repositories/in-memory-users-on-profiles-repository'
 import { InMemoryUsersRepository } from 'test/repositories/in-memory-users-repository'
 
 import { AuthenticateUserUseCase } from './authenticate-user'
 
 let inMemoryUsersRepository: InMemoryUsersRepository
+let inMemoryProfilesRepository: InMemoryProfilesRepository
+let inMemoryUsersOnProfilesRepository: InMemoryUsersOnProfilesRepository
 let fakeHasher: FakeHasher
 let encrypter: FakeEncrypter
 
@@ -14,11 +18,17 @@ let sut: AuthenticateUserUseCase
 describe('Authenticate User', () => {
   beforeEach(() => {
     inMemoryUsersRepository = new InMemoryUsersRepository()
+    inMemoryProfilesRepository = new InMemoryProfilesRepository()
+    inMemoryUsersOnProfilesRepository = new InMemoryUsersOnProfilesRepository(
+      inMemoryProfilesRepository,
+    )
+
     fakeHasher = new FakeHasher()
     encrypter = new FakeEncrypter()
 
     sut = new AuthenticateUserUseCase(
       inMemoryUsersRepository,
+      inMemoryUsersOnProfilesRepository,
       fakeHasher,
       encrypter,
     )

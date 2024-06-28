@@ -1,6 +1,5 @@
 import { Order, Prisma } from '@prisma/client'
 import { randomUUID } from 'crypto'
-import { getLastInsertedId } from 'test/utils/get-last-inserted-id'
 
 import { OrdersRepository } from '@/domain/admsjp/repositories/orders-repository'
 
@@ -8,11 +7,8 @@ export class InMemoryOrdersRepository implements OrdersRepository {
   public items: Order[] = []
 
   async create(data: Prisma.OrderUncheckedCreateInput): Promise<Order> {
-    const id = getLastInsertedId(this.items)
-
     const order = {
-      id,
-      uuid: randomUUID(),
+      id: randomUUID(),
       transactionId: data.transactionId,
       transactionType: data.transactionType,
       paymentMethod: data.paymentMethod,
@@ -56,7 +52,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     return order
   }
 
-  async findById(id: number): Promise<Order> {
+  async findById(id: Order['id']): Promise<Order> {
     const order = this.items.find((item) => item.id === id)
 
     if (!order) {

@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto'
+
 import { faker } from '@faker-js/faker'
 import { Injectable } from '@nestjs/common'
 import { Parameter, Prisma } from '@prisma/client'
@@ -22,7 +24,7 @@ export function makeParameter(
     value: faker.commerce.isbn(10),
     status: ParameterStatus.ACTIVE,
     visible: ParameterVisible.VISIBLE,
-    createdBy: 1,
+    createdBy: randomUUID(),
     createdAt: new Date(),
     ...override,
   }

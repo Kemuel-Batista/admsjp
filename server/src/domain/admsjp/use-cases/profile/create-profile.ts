@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common'
-import { Profile } from '@prisma/client'
+import { Profile, type User } from '@prisma/client'
 
 import { Either, failure, success } from '@/core/either'
 import { ResourceAlreadyExistsError } from '@/core/errors/errors/resource-already-exists-error'
 import { ProfilesRepository } from '@/domain/admsjp/repositories/profiles-repository'
 
 interface CreateProfileUseCaseRequest {
-  name: string
-  status: number
-  visible: number
-  createdBy: number
+  name: Profile['name']
+  status: Profile['status']
+  visible: Profile['visible']
+  createdBy: User['id']
 }
 
 type CreateProfileUseCaseResponse = Either<
@@ -41,7 +41,7 @@ export class CreateProfileUseCase {
     }
 
     const profile = await this.profilesRepository.create({
-      name,
+      name: name.toUpperCase(),
       status,
       visible,
       createdBy,

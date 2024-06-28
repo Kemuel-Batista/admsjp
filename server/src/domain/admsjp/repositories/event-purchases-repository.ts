@@ -18,6 +18,11 @@ export abstract class EventPurchasesRepository {
 
   abstract lastInvoiceNumber(): Promise<string>
   abstract list(options?: ListOptions): Promise<EventPurchase[]>
+  abstract listByEventId(
+    eventId: EventPurchase['eventId'],
+    options?: ListOptions,
+  ): Promise<EventPurchase[]>
+
   abstract listByBuyerId(
     buyerId: EventPurchase['buyerId'],
     options?: ListOptions,

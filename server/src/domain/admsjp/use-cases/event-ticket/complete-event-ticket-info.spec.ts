@@ -101,7 +101,6 @@ describe('Complete event ticket info', () => {
           cpf: '123124234312',
           phone: '81989943240',
           birthday: expect.any(Date),
-          createdBy: user.id,
         }),
       ]),
     )

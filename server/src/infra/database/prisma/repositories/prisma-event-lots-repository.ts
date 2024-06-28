@@ -109,7 +109,7 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
     return eventLot
   }
 
-  async findMaxLotByEventId(eventId: number): Promise<number> {
+  async findMaxLotByEventId(eventId: EventLot['eventId']): Promise<number> {
     const eventLots = await this.prisma.eventLot.findMany({
       where: {
         eventId,
