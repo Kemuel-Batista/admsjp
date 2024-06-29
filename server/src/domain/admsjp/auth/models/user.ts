@@ -4,6 +4,7 @@ import { roleSchema } from '../roles'
 
 export const userSchema = z.object({
   id: z.string(),
+  departmentId: z.string(),
   roles: z.array(roleSchema),
 })
 
