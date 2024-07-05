@@ -14,8 +14,14 @@ import {
 } from '@tanstack/react-table'
 import clsx from 'clsx'
 import { Ellipsis } from 'lucide-react'
+import Link from 'next/link'
 import React, { createContext, useContext, useMemo, useState } from 'react'
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import {
   Table,
   TableBody,
@@ -47,9 +53,7 @@ export type Column<TColumn> = ColumnDef<TColumn, any> & {
 export type Lineaction = {
   label: string
   icon?: React.ElementType
-  color?: string
-  onClick?: (row: any) => void
-  component?: React.ElementType
+  href: string
   disabled?: boolean
 }
 
@@ -318,47 +322,34 @@ export const DatagridProvider = ({
         cell: ({ row }: { row: RowData }) => {
           return (
             <div className="flex justify-between">
-              {/* TODO: aplicar novo menu */}
-              <Button
-                className="rounded-full"
-                style={{
-                  borderRadius: '8px',
-                  backgroundColor: 'white',
-                  borderColor: '#D0D5DD',
-                  borderWidth: '1px',
-                  padding: '20px 8px',
-                }}
-              >
-                <Ellipsis />
-              </Button>
-              {lineactions.map((item) => {
-                const { component: Component, icon: Icon, onClick } = item
-
-                // Renderiza o item de menu com o ícone, se o ícone estiver definido
-                const menuItem = (
-                  <Button
-                    key={item.label}
-                    onClick={onClick ? () => onClick(row) : undefined}
-                  >
-                    {Icon ? (
-                      <Icon
-                        style={{
-                          width: 16,
-                          height: 16,
-                        }}
-                      />
-                    ) : undefined}
-                    <div className="title">{item.label}</div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline">
+                    <Ellipsis />
                   </Button>
-                )
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  {lineactions.map((item) => {
+                    const { icon: Icon, href } = item
 
-                // Renderiza o componente personalizado ou o item de menu
-                return Component ? (
-                  <Component lineaction={item} row={row} key={item.label} />
-                ) : (
-                  menuItem
-                )
-              })}
+                    return (
+                      <Link key={item.label} href={href}>
+                        <Button>
+                          {Icon ? (
+                            <Icon
+                              style={{
+                                width: 16,
+                                height: 16,
+                              }}
+                            />
+                          ) : undefined}
+                          <div className="title">{item.label}</div>
+                        </Button>
+                      </Link>
+                    )
+                  })}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           )
         },
