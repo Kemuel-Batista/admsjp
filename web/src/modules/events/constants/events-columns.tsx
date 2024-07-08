@@ -7,10 +7,6 @@ import { Event } from '../types/event'
 export const EventsColumns = (): ColumnDef<Event>[] => {
   return [
     {
-      accessorKey: 'id',
-      header: 'Id',
-    },
-    {
       accessorKey: 'title',
       header: 'Titulo',
     },

@@ -113,13 +113,21 @@ export class PrismaEventPurchasesRepository
   async listByEventId(
     eventId: EventPurchase['eventId'],
     options?: ListOptions,
-  ): Promise<EventPurchase[]> {
+  ): Promise<EventPurchaseWithBuyer[]> {
     const { skip, take } = calcPagination(options)
 
     const eventPurchases = await this.prisma.eventPurchase.findMany({
       where: {
         deletedAt: null,
         eventId,
+      },
+      include: {
+        user: {
+          select: {
+            email: true,
+            name: true,
+          },
+        },
       },
       skip,
       take,

@@ -120,8 +120,20 @@ export class InMemoryEventPurchasesRepository
   async listByEventId(
     eventId: EventPurchase['eventId'],
     options?: ListOptions,
-  ): Promise<EventPurchase[]> {
-    let eventPurchases = this.items
+  ): Promise<EventPurchaseWithBuyer[]> {
+    let eventPurchases = this.items.map((eventPurchase) => {
+      const user = this.usersRepository.items.find((item) => {
+        return item.id === eventPurchase.buyerId
+      })
+
+      return {
+        ...eventPurchase,
+        user: {
+          name: user.name,
+          email: user.email,
+        },
+      }
+    })
 
     const { skip, take } = calcPagination(options)
 

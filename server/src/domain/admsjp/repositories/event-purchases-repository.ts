@@ -21,7 +21,7 @@ export abstract class EventPurchasesRepository {
   abstract listByEventId(
     eventId: EventPurchase['eventId'],
     options?: ListOptions,
-  ): Promise<EventPurchase[]>
+  ): Promise<EventPurchaseWithBuyer[]>
 
   abstract listByBuyerId(
     buyerId: EventPurchase['buyerId'],

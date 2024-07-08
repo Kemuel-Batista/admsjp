@@ -2,7 +2,7 @@
 
 import { LogOut, Menu, MoreHorizontal, Settings, X } from 'lucide-react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -15,6 +15,7 @@ import {
   SheetHeader,
   SheetTrigger,
 } from '@/components/ui/sheet'
+import { useAuth } from '@/contexts/auth-context'
 
 import { SidebarItems } from '../types/sidebar-items'
 import { SidebarButtonSheet as SidebarButton } from './sidebar-button'
@@ -25,6 +26,14 @@ interface SidebarMobileProps {
 
 export function SidebarMobile(props: SidebarMobileProps) {
   const pathname = usePathname()
+  const router = useRouter()
+
+  const { user, signOut } = useAuth()
+
+  async function handleSignOut() {
+    await signOut()
+    router.push('/')
+  }
 
   return (
     <Sheet>
@@ -67,10 +76,10 @@ export function SidebarMobile(props: SidebarMobileProps) {
                   <div className="flex justify-between items-center w-full">
                     <div className="flex gap-2">
                       <Avatar className="h-5 w-5">
-                        <AvatarImage src="https://github.com/max-programming.png" />
-                        <AvatarFallback>Max Programming</AvatarFallback>
+                        <AvatarImage src={user.photo} />
+                        <AvatarFallback>Foto</AvatarFallback>
                       </Avatar>
-                      <span>Max Programming</span>
+                      <span>{user.name}</span>
                     </div>
                     <MoreHorizontal size={20} />
                   </div>
@@ -83,7 +92,12 @@ export function SidebarMobile(props: SidebarMobileProps) {
                       Account Settings
                     </SidebarButton>
                   </Link>
-                  <SidebarButton size="sm" icon={LogOut} className="w-full">
+                  <SidebarButton
+                    size="sm"
+                    icon={LogOut}
+                    className="w-full"
+                    onClick={handleSignOut}
+                  >
                     Log Out
                   </SidebarButton>
                 </div>

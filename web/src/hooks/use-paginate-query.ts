@@ -5,6 +5,7 @@ import { api } from '@/lib/axios'
 export type PaginateParams = {
   pageIndex?: number
   allRecords?: boolean
+  id?: string
 }
 
 export const usePaginateQuery = <T>(

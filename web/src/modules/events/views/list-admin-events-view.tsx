@@ -1,16 +1,31 @@
 'use client'
 
-import { Plus } from 'lucide-react'
+import { Eye, Plus } from 'lucide-react'
 
-import { Datagrid } from '@/components/datagrid'
+import { Datagrid, Lineaction } from '@/components/datagrid'
 import { Header } from '@/components/header'
 import { Button } from '@/components/ui/button'
 import { Sidebar } from '@/modules/admin/components/sidebar'
 
+import { EventTicketsSheet } from '../../purchase/components/event-purchases-sheet'
+import { EventViewSheet } from '../components/event-view-sheet'
 import { EventsColumns } from '../constants/events-columns'
-import { ListPublicEventsService } from '../services/list-public-events'
+import { ListEventService } from '../services/list-events'
 
 export function ListAdminEventsView() {
+  const lineactions: Lineaction[] = [
+    {
+      label: 'Visualizar',
+      icon: Eye,
+      component: EventViewSheet,
+    },
+    {
+      label: 'Inscrições',
+      icon: Eye,
+      component: EventTicketsSheet,
+    },
+  ]
+
   return (
     <main className="gap-4 space-y-4">
       <Sidebar />
@@ -25,8 +40,8 @@ export function ListAdminEventsView() {
         <Datagrid
           title="Eventos"
           columns={EventsColumns()}
-          service={ListPublicEventsService}
-          lineactions={[]}
+          service={ListEventService}
+          lineactions={lineactions}
           massactions={[]}
           source="/event"
           module="events"
