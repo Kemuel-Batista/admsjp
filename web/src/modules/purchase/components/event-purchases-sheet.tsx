@@ -1,5 +1,5 @@
 import { Row } from '@tanstack/react-table'
-import { CreditCard } from 'lucide-react'
+import { CreditCard, Tags } from 'lucide-react'
 
 import { Datagrid, Lineaction } from '@/components/datagrid'
 import {
@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/sheet'
 import { OrderViewSheet } from '@/modules/orders/components/order-view-sheet'
 import { ListEventPurchasesByEventId } from '@/modules/purchase/services/list-event-purchases-by-event-id'
+import { TicketsViewSheet } from '@/modules/tickets/components/tickets-view-sheet'
 
 import { Event } from '../../events/types/event'
 import { EventPurchasesColumns } from '../constants/event-purchases-columns'
@@ -32,6 +33,11 @@ export function EventTicketsSheet({
       label: 'Dados de pagamento',
       icon: CreditCard,
       component: OrderViewSheet,
+    },
+    {
+      label: 'Visualizar ingressos',
+      icon: Tags,
+      component: TicketsViewSheet,
     },
   ]
 
