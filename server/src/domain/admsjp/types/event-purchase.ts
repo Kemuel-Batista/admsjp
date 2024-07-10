@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client'
+import { Order, Prisma } from '@prisma/client'
 
 export type EventPurchaseWithEvent = Prisma.EventPurchaseGetPayload<{
   include: {
@@ -50,3 +50,19 @@ export type EventPurchaseWithEventTicketsAndLot =
       }
     }
   }>
+
+export type EventPurchaseWithOrder = {
+  id: string
+  invoiceNumber: string
+  eventId: string
+  buyerId: string
+  buyerName: string
+  buyerEmail: string
+  status: number
+  expiresAt?: Date
+  createdAt?: Date
+  updatedAt?: Date
+  deletedAt?: Date
+  deletedBy?: string
+  order: Order | null
+}

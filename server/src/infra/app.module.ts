@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
+import { ScheduleModule } from '@nestjs/schedule'
 
 import { AuthModule } from './auth/auth.module'
 import { envSchema } from './env/env'
@@ -10,6 +11,7 @@ import { WebsocketModule } from './websocket/websocket.module'
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       validate: (env) => envSchema.parse(env),
       isGlobal: true,

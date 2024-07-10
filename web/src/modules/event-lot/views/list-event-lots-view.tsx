@@ -89,8 +89,6 @@ export function ListEventLotsView({
       }
     })
 
-    console.log(eventId)
-
     const form: CreateEventPurchaseFormData = {
       eventId,
       eventLotInfo,

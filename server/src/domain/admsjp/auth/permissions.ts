@@ -13,5 +13,10 @@ export const permissions: Record<Role, PermissionsByRole> = {
   ADMIN(_, { can }) {
     can('manage', 'all')
   },
-  EVENTS_MANAGER(user, { can, cannot }) {},
+  MANAGER_EVENTS(user, { can, cannot }) {
+    cannot(['get', 'create', 'delete', 'update'], 'Event')
+    can(['get', 'create', 'delete', 'update'], 'Event', {
+      departmentId: { $eq: user.departmentId },
+    })
+  },
 }

@@ -7,15 +7,22 @@ import { Header } from '@/components/header'
 import { Button } from '@/components/ui/button'
 import { Sidebar } from '@/modules/admin/components/sidebar'
 
+import { EventTicketsSheet } from '../../purchase/components/event-purchases-sheet'
+import { EventViewSheet } from '../components/event-view-sheet'
 import { EventsColumns } from '../constants/events-columns'
-import { ListPublicEventsService } from '../services/list-public-events'
+import { ListEventService } from '../services/list-events'
 
 export function ListAdminEventsView() {
   const lineactions: Lineaction[] = [
     {
       label: 'Visualizar',
       icon: Eye,
-      href: '',
+      component: EventViewSheet,
+    },
+    {
+      label: 'Inscrições',
+      icon: Eye,
+      component: EventTicketsSheet,
     },
   ]
 
@@ -33,7 +40,7 @@ export function ListAdminEventsView() {
         <Datagrid
           title="Eventos"
           columns={EventsColumns()}
-          service={ListPublicEventsService}
+          service={ListEventService}
           lineactions={lineactions}
           massactions={[]}
           source="/event"

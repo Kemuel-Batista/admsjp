@@ -12,7 +12,16 @@ async function bootstrap() {
 
   const corsOptions: CorsOptions = {
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATH', 'OPTIONS', 'HEAD'],
+    methods: [
+      'GET',
+      'POST',
+      'PUT',
+      'DELETE',
+      'PATCH',
+      'PATH',
+      'OPTIONS',
+      'HEAD',
+    ],
     origin: ['http://localhost:3000', 'https://umadsjp.vercel.app'],
     allowedHeaders: [
       'Access-Control-Allow-Origin',

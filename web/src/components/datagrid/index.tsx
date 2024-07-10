@@ -53,8 +53,9 @@ export type Column<TColumn> = ColumnDef<TColumn, any> & {
 export type Lineaction = {
   label: string
   icon?: React.ElementType
-  href: string
+  href?: string
   disabled?: boolean
+  component?: React.ElementType
 }
 
 export type Massaction = {
@@ -74,7 +75,7 @@ type DatagridProps = {
   expandRow?: React.ElementType
   manualPagination?: boolean
   title: string
-  id?: number
+  id?: string
   enableRowSelection?: (row: RowData) => boolean
   source?: string
   module: string
@@ -321,36 +322,45 @@ export const DatagridProvider = ({
         header: '',
         cell: ({ row }: { row: RowData }) => {
           return (
-            <div className="flex justify-between">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline">
-                    <Ellipsis />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  {lineactions.map((item) => {
-                    const { icon: Icon, href } = item
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <Ellipsis />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="flex flex-col gap-2">
+                {lineactions.map((item) => {
+                  const {
+                    icon: Icon,
+                    href,
+                    component: Component,
+                    disabled,
+                  } = item
 
-                    return (
-                      <Link key={item.label} href={href}>
-                        <Button>
-                          {Icon ? (
-                            <Icon
-                              style={{
-                                width: 16,
-                                height: 16,
-                              }}
-                            />
-                          ) : undefined}
-                          <div className="title">{item.label}</div>
-                        </Button>
-                      </Link>
-                    )
-                  })}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+                  const menuItem = (
+                    <Link key={item.label} href={href ?? ''}>
+                      <Button className="gap-2" size="lg" variant="link">
+                        {Icon ? (
+                          <Icon
+                            style={{
+                              width: 16,
+                              height: 16,
+                            }}
+                          />
+                        ) : undefined}
+                        <div className="title">{item.label}</div>
+                      </Button>
+                    </Link>
+                  )
+
+                  return disabled ? undefined : Component ? (
+                    <Component lineaction={item} row={row} key={item.label} />
+                  ) : (
+                    menuItem
+                  )
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
           )
         },
         enableColumnFilter: false,
