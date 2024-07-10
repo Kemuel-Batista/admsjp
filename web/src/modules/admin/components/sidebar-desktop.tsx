@@ -1,6 +1,6 @@
 'use client'
 
-import { LogOut, MoreHorizontal, Settings } from 'lucide-react'
+import { LogOut, MoreHorizontal } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 
@@ -70,11 +70,6 @@ export function SidebarDesktop(props: SidebarDesktopProps) {
               </PopoverTrigger>
               <PopoverContent className="mb-2 w-56 p-3 rounded-[1rem]">
                 <div className="space-y-1">
-                  <Link href="/">
-                    <SidebarButton size="sm" icon={Settings} className="w-full">
-                      Account Settings
-                    </SidebarButton>
-                  </Link>
                   <SidebarButton
                     size="sm"
                     icon={LogOut}

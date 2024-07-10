@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 
 import { CancelEventPurchaseByExpiredTimeUseCase } from '@/domain/admsjp/use-cases/event-purchase/cancel-event-purchase-by-expired-time'
+import { ConfirmEventPurchaseUseCase } from '@/domain/admsjp/use-cases/event-purchase/confirm-event-purchase'
 import { CreateEventPurchaseUseCase } from '@/domain/admsjp/use-cases/event-purchase/create-event-purchase'
 import { ListEventPurchasesByEventIdUseCase } from '@/domain/admsjp/use-cases/event-purchase/list-event-purchases-by-event-id'
 import { ListEventPurchasesByUserIdUseCase } from '@/domain/admsjp/use-cases/event-purchase/list-event-purchases-by-user-id'
@@ -9,6 +10,7 @@ import { DatabaseModule } from '@/infra/database/database.module'
 import { GeneratorsModule } from '@/infra/generators/generators.module'
 
 import { CancelEventPurchaseByExpiredTimeController } from './controllers/cancel-event-purchase-by-expired-time.controller'
+import { ConfirmEventPurchaseController } from './controllers/confirm-event-purchase.controller'
 import { CreateEventPurchaseController } from './controllers/create-event-purchase.controller'
 import { ListEventPurchasesByEventIdController } from './controllers/list-event-purchases-by-event-id.controller'
 import { ListEventPurchasesByUserIdController } from './controllers/list-event-purchases-by-user-id.controller'
@@ -22,6 +24,7 @@ import { ListUnexpiredEventPurchasesWithDetailsByUserIdController } from './cont
     ListEventPurchasesByUserIdController,
     ListEventPurchasesByEventIdController,
     CancelEventPurchaseByExpiredTimeController,
+    ConfirmEventPurchaseController,
   ],
   providers: [
     CreateEventPurchaseUseCase,
@@ -29,6 +32,7 @@ import { ListUnexpiredEventPurchasesWithDetailsByUserIdController } from './cont
     ListEventPurchasesByUserIdUseCase,
     CancelEventPurchaseByExpiredTimeUseCase,
     ListEventPurchasesByEventIdUseCase,
+    ConfirmEventPurchaseUseCase,
   ],
 })
 export class EventPurchaseHttpModule {}

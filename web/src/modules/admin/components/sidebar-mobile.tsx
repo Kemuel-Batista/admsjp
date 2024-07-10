@@ -1,6 +1,6 @@
 'use client'
 
-import { LogOut, Menu, MoreHorizontal, Settings, X } from 'lucide-react'
+import { LogOut, Menu, MoreHorizontal, X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 
@@ -87,18 +87,13 @@ export function SidebarMobile(props: SidebarMobileProps) {
               </DrawerTrigger>
               <DrawerContent className="mb-2 p-2">
                 <div className="flex flex-col space-y-2 mt-2">
-                  <Link href="/">
-                    <SidebarButton size="sm" icon={Settings} className="w-full">
-                      Account Settings
-                    </SidebarButton>
-                  </Link>
                   <SidebarButton
                     size="sm"
                     icon={LogOut}
                     className="w-full"
                     onClick={handleSignOut}
                   >
-                    Log Out
+                    Sair
                   </SidebarButton>
                 </div>
               </DrawerContent>

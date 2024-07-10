@@ -1,5 +1,6 @@
 import { Row } from '@tanstack/react-table'
 import { CreditCard, Tags } from 'lucide-react'
+import { useState } from 'react'
 
 import { Datagrid, Lineaction } from '@/components/datagrid'
 import {
@@ -24,6 +25,8 @@ export function EventTicketsSheet({
   lineaction: Lineaction
   row: Row<Event>
 }) {
+  const [open, setOpen] = useState(false)
+
   const { icon: Icon } = lineaction
 
   const { original: event } = row
@@ -42,7 +45,7 @@ export function EventTicketsSheet({
   ]
 
   return (
-    <Sheet>
+    <Sheet onOpenChange={setOpen} open={open}>
       <SheetTrigger className="flex items-center gap-2 px-2 py-1.5 text-sm">
         {Icon ? (
           <Icon

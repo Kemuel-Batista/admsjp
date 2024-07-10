@@ -1,8 +1,11 @@
 import { Row } from '@tanstack/react-table'
 import Image from 'next/image'
+import { useState } from 'react'
+import { toast } from 'sonner'
 
 import { Lineaction } from '@/components/datagrid'
 import { Button } from '@/components/ui/button'
+import { Icons } from '@/components/ui/icons'
 import {
   Sheet,
   SheetContent,
@@ -12,6 +15,8 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { env } from '@/env'
+import { EventPurchaseStatus } from '@/modules/purchase/enums/event-purchase-status'
+import { ConfirmEventPurchaseService } from '@/modules/purchase/services/confirm-event-purchase'
 import { EventPurchaseWithOrder } from '@/modules/purchase/types/event-purchase-with-order'
 
 export function OrderViewSheet({
@@ -21,12 +26,25 @@ export function OrderViewSheet({
   lineaction: Lineaction
   row: Row<EventPurchaseWithOrder>
 }) {
+  const [open, setOpen] = useState(false)
+
   const { icon: Icon } = lineaction
 
   const { original: purchase } = row
 
+  const { mutateAsync, isPending } = ConfirmEventPurchaseService()
+
+  async function handleConfirmEventPurchase() {
+    await mutateAsync(purchase.id, {
+      onSuccess: () => {
+        toast.success('Inscrição confirmada com sucesso!')
+        setOpen(!open)
+      },
+    })
+  }
+
   return (
-    <Sheet>
+    <Sheet onOpenChange={setOpen} open={open}>
       <SheetTrigger className="flex items-center gap-2 px-2 py-1.5 text-sm">
         {Icon ? (
           <Icon
@@ -53,7 +71,11 @@ export function OrderViewSheet({
           width={300}
           height={24}
         />
-        <Button>Validar inscrição</Button>
+        {purchase.status === EventPurchaseStatus.WAITING_CONFIRMATION && (
+          <Button onClick={handleConfirmEventPurchase} disabled={isPending}>
+            {isPending ? <Icons.spinner /> : 'Validar inscrição'}
+          </Button>
+        )}
       </SheetContent>
     </Sheet>
   )

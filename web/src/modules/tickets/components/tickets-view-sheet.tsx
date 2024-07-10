@@ -1,4 +1,5 @@
 import { Row } from '@tanstack/react-table'
+import { useState } from 'react'
 
 import { Lineaction } from '@/components/datagrid'
 import { Card } from '@/components/ui/card'
@@ -31,6 +32,8 @@ export function TicketsViewSheet({
   lineaction: Lineaction
   row: Row<EventPurchaseWithOrder>
 }) {
+  const [open, setOpen] = useState(false)
+
   const { icon: Icon } = lineaction
 
   const { original: purchase } = row
@@ -45,7 +48,7 @@ export function TicketsViewSheet({
   const eventTickets = data?.eventTickets || []
 
   return (
-    <Sheet>
+    <Sheet onOpenChange={setOpen} open={open}>
       <SheetTrigger className="flex items-center gap-2 px-2 py-1.5 text-sm">
         {Icon ? (
           <Icon
@@ -96,6 +99,7 @@ export function TicketsViewSheet({
               <TableHead>N° Ingresso</TableHead>
               <TableHead>Participante</TableHead>
               <TableHead>E-mail</TableHead>
+              <TableHead>Telefone</TableHead>
               <TableHead>Tipo</TableHead>
               <TableHead>Valor</TableHead>
             </TableRow>
@@ -106,6 +110,7 @@ export function TicketsViewSheet({
                 <TableCell className="font-medium">{item.ticket}</TableCell>
                 <TableCell>{item.name}</TableCell>
                 <TableCell>{item.email}</TableCell>
+                <TableCell>{item.phone}</TableCell>
                 <TableCell>{item.eventLot.name}</TableCell>
                 <TableCell>
                   {maskCurrency(String(item.eventLot.value))}

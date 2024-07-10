@@ -1,6 +1,7 @@
 import { Row } from '@tanstack/react-table'
 import { Calendar } from 'lucide-react'
 import Image from 'next/image'
+import { useState } from 'react'
 
 import { Lineaction } from '@/components/datagrid'
 import { Label } from '@/components/ui/label'
@@ -25,12 +26,14 @@ export function EventViewSheet({
   lineaction: Lineaction
   row: Row<Event>
 }) {
+  const [open, setOpen] = useState(false)
+
   const { icon: Icon } = lineaction
 
   const { original: event } = row
 
   return (
-    <Sheet>
+    <Sheet onOpenChange={setOpen} open={open}>
       <SheetTrigger className="flex items-center gap-2 px-2 py-1.5 text-sm">
         {Icon ? (
           <Icon
