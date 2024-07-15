@@ -1,5 +1,8 @@
+import { Injectable } from '@nestjs/common'
+
 import { TicketGenerator } from '@/domain/admsjp/generators/ticket-generator'
 
+@Injectable()
 export class InfraTicketGenerator implements TicketGenerator {
   async generate(type: string, lastTicket: string): Promise<string> {
     const now = new Date()

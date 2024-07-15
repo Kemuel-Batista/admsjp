@@ -22,6 +22,11 @@ export const envSchema = z.object({
   SOCKETIO_SERVER_PATH: z.string().optional(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
+  SENDER_NAME: z.string(),
+  SENDER_ADDRESS: z.string(),
+  SENDER_CITY: z.string(),
+  SENDER_STATE: z.string(),
+  SENDER_ZIP: z.string(),
 })
 
 export type Env = z.infer<typeof envSchema>

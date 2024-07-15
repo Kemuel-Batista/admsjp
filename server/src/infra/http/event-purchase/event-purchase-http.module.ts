@@ -8,7 +8,9 @@ import { ListEventPurchasesByUserIdUseCase } from '@/domain/admsjp/use-cases/eve
 import { ListUnexpiredEventPurchasesWithDetailsByUserIdUseCase } from '@/domain/admsjp/use-cases/event-purchase/list-unexpired-event-purchases-with-details-by-user-id'
 import { OnConfirmEventPurchase } from '@/domain/notification/application/subscribers/on-confirm-event-purchase'
 import { DatabaseModule } from '@/infra/database/database.module'
+import { EventsModule } from '@/infra/events/events.module'
 import { GeneratorsModule } from '@/infra/generators/generators.module'
+import { NotifierModule } from '@/infra/notifier/notifier.module'
 
 import { CancelEventPurchaseByExpiredTimeController } from './controllers/cancel-event-purchase-by-expired-time.controller'
 import { ConfirmEventPurchaseController } from './controllers/confirm-event-purchase.controller'
@@ -18,7 +20,7 @@ import { ListEventPurchasesByUserIdController } from './controllers/list-event-p
 import { ListUnexpiredEventPurchasesWithDetailsByUserIdController } from './controllers/list-unexpired-event-purchases-with-details-by-user-id.controller'
 
 @Module({
-  imports: [DatabaseModule, GeneratorsModule],
+  imports: [DatabaseModule, GeneratorsModule, EventsModule, NotifierModule],
   controllers: [
     CreateEventPurchaseController,
     ListUnexpiredEventPurchasesWithDetailsByUserIdController,
