@@ -15,7 +15,6 @@ export class ConfirmEventPurchaseController {
 
   @Patch()
   async handle(@Param('purchaseId') purchaseId: string) {
-    console.log(purchaseId)
     const result = await this.confirmEventPurchase.execute({
       purchaseId,
     })
