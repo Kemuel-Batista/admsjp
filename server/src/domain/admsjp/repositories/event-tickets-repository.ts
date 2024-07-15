@@ -1,4 +1,4 @@
-import { EventTicket, Prisma } from '@prisma/client'
+import { EventPurchase, EventTicket, Prisma } from '@prisma/client'
 
 import { ListOptions } from '@/core/repositories/list-options'
 
@@ -24,5 +24,6 @@ export abstract class EventTicketsRepository {
     eventLotId: EventTicket['eventLotId'],
   ): Promise<EventTicket[]>
 
+  abstract countByEventId(eventId: EventPurchase['eventId']): Promise<number>
   abstract delete(id: EventTicket['id']): Promise<void>
 }

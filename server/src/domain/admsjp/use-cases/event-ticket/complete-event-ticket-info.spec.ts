@@ -28,14 +28,17 @@ describe('Complete event ticket info', () => {
     inMemoryDepartmentsRepository = new InMemoryDepartmentsRepository()
     inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
-    inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
-      inMemoryEventLotsRepository,
-    )
+
     inMemoryEventPurchasesRepository = new InMemoryEventPurchasesRepository(
       inMemoryUsersRepository,
       inMemoryEventsRepository,
       inMemoryEventLotsRepository,
       inMemoryEventTicketsRepository,
+    )
+
+    inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
+      inMemoryEventLotsRepository,
+      inMemoryEventPurchasesRepository,
     )
 
     sut = new CompleteEventTicketInfoUseCase(

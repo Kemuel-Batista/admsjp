@@ -22,15 +22,16 @@ describe('Clear Expired Tickets Job', () => {
     inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
 
-    inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
-      inMemoryEventLotsRepository,
-    )
-
     inMemoryEventPurchasesRepository = new InMemoryEventPurchasesRepository(
       inMemoryUsersRepository,
       inMemoryEventsRepository,
       inMemoryEventLotsRepository,
       inMemoryEventTicketsRepository,
+    )
+
+    inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
+      inMemoryEventLotsRepository,
+      inMemoryEventPurchasesRepository,
     )
 
     sut = new ClearExpiredPurchasesJob(

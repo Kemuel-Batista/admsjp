@@ -6,6 +6,9 @@ import { makeProfile } from 'test/factories/make-profile'
 import { makeUser } from 'test/factories/make-user'
 import { makeUsersOnProfiles } from 'test/factories/make-users-on-profiles'
 import { InMemoryDepartmentsRepository } from 'test/repositories/in-memory-departments-repository'
+import { InMemoryEventLotsRepository } from 'test/repositories/in-memory-event-lots-repository'
+import { InMemoryEventPurchasesRepository } from 'test/repositories/in-memory-event-purchases-repository'
+import { InMemoryEventTicketsRepository } from 'test/repositories/in-memory-event-tickets-repository'
 import { InMemoryEventsRepository } from 'test/repositories/in-memory-events-repository'
 import { InMemoryProfilesRepository } from 'test/repositories/in-memory-profiles-repository'
 import { InMemoryUsersOnProfilesRepository } from 'test/repositories/in-memory-users-on-profiles-repository'
@@ -18,6 +21,9 @@ let inMemoryUsersRepository: InMemoryUsersRepository
 let inMemoryProfilesRepository: InMemoryProfilesRepository
 let inMemoryUsersOnProfilesRepository: InMemoryUsersOnProfilesRepository
 let inMemoryEventsRepository: InMemoryEventsRepository
+let inMemoryEventLotsRepository: InMemoryEventLotsRepository
+let inMemoryEventPurchasesRepository: InMemoryEventPurchasesRepository
+let inMemoryEventTicketsRepository: InMemoryEventTicketsRepository
 
 let sut: ListEventsUseCase
 
@@ -32,7 +38,23 @@ describe('List Events', () => {
 
     inMemoryEventsRepository = new InMemoryEventsRepository()
 
-    sut = new ListEventsUseCase(inMemoryEventsRepository)
+    inMemoryEventPurchasesRepository = new InMemoryEventPurchasesRepository(
+      inMemoryUsersRepository,
+      inMemoryEventsRepository,
+      inMemoryEventLotsRepository,
+      inMemoryEventTicketsRepository,
+    )
+
+    inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
+      inMemoryEventLotsRepository,
+      inMemoryEventPurchasesRepository,
+    )
+
+    sut = new ListEventsUseCase(
+      inMemoryEventsRepository,
+      inMemoryEventPurchasesRepository,
+      inMemoryEventTicketsRepository,
+    )
   })
 
   it('should be able to fetch all events with admin user', async () => {

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { EventTicket, Prisma } from '@prisma/client'
+import { EventPurchase, EventTicket, Prisma } from '@prisma/client'
 
 import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
@@ -125,6 +125,19 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
     })
 
     return eventTickets
+  }
+
+  async countByEventId(eventId: EventPurchase['eventId']): Promise<number> {
+    const count = await this.prisma.eventTicket.count({
+      where: {
+        eventPurchase: {
+          eventId,
+          deletedAt: null,
+        },
+      },
+    })
+
+    return count
   }
 
   async delete(id: EventTicket['id']): Promise<void> {

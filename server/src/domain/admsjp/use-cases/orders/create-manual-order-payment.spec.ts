@@ -30,15 +30,19 @@ describe('Create manual order payment', () => {
     inMemoryUsersRepository = new InMemoryUsersRepository()
     inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
-    inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
-      inMemoryEventLotsRepository,
-    )
+
     inMemoryEventPurchasesRepository = new InMemoryEventPurchasesRepository(
       inMemoryUsersRepository,
       inMemoryEventsRepository,
       inMemoryEventLotsRepository,
       inMemoryEventTicketsRepository,
     )
+
+    inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
+      inMemoryEventLotsRepository,
+      inMemoryEventPurchasesRepository,
+    )
+
     inMemoryOrdersRepository = new InMemoryOrdersRepository()
     fakeUploader = new FakeUploader()
 

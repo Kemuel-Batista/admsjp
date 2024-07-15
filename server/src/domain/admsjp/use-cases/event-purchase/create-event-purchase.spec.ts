@@ -35,9 +35,7 @@ describe('Create Event Ticket', () => {
     inMemoryUsersRepository = new InMemoryUsersRepository()
     inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
-    inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
-      inMemoryEventLotsRepository,
-    )
+
     inMemoryOrdersRepository = new InMemoryOrdersRepository()
     inMemoryParametersRepository = new InMemoryParametersRepository()
     inMemoryEventPurchasesRepository = new InMemoryEventPurchasesRepository(
@@ -45,6 +43,11 @@ describe('Create Event Ticket', () => {
       inMemoryEventsRepository,
       inMemoryEventLotsRepository,
       inMemoryEventTicketsRepository,
+    )
+
+    inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
+      inMemoryEventLotsRepository,
+      inMemoryEventPurchasesRepository,
     )
 
     fakeTicketGenerator = new FakeTicketGenerator()

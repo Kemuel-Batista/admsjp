@@ -23,15 +23,19 @@ describe('List orders by transaction id', () => {
     inMemoryUsersRepository = new InMemoryUsersRepository()
     inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
-    inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
-      inMemoryEventLotsRepository,
-    )
+
     inMemoryEventPurchasesRepository = new InMemoryEventPurchasesRepository(
       inMemoryUsersRepository,
       inMemoryEventsRepository,
       inMemoryEventLotsRepository,
       inMemoryEventTicketsRepository,
     )
+
+    inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
+      inMemoryEventLotsRepository,
+      inMemoryEventPurchasesRepository,
+    )
+
     inMemoryOrdersRepository = new InMemoryOrdersRepository()
 
     sut = new ListOrdersByTransactionIdUseCase(inMemoryOrdersRepository)

@@ -1,9 +1,9 @@
 import { PaginateParams, usePaginateQuery } from '@/hooks/use-paginate-query'
 
-import { Event } from '../types/event'
+import { EventInfo } from '../types/event-info'
 
 export interface ListEventServiceResponse {
-  events: Event
+  events: EventInfo
 }
 
 export const ListEventService = (params: PaginateParams) => {
