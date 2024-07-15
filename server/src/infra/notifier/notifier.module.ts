@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 
-import { MailNotifier } from '@/domain/admsjp/notifiers/mail-notifier'
+import { MailNotifier } from '@/domain/notification/application/notifiers/mail-notifier'
 
 import { EnvModule } from '../env/env.module'
 import { SendGridNotifier } from './sendgrid-notifier'

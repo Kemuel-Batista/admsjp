@@ -49,6 +49,7 @@ model User {
 
   eventPurchases  EventPurchase[]
   UsersOnProfiles UsersOnProfiles[]
+  notifications   Notification[]
 
   @@map("users")
 }
@@ -233,4 +234,17 @@ model Order {
   confirmedBy String?   @map("confirmed_by")
 
   @@map("orders")
+}
+
+model Notification {
+  id          String    @id @default(uuid())
+  recipientId String    @map("recipient_id")
+  title       String
+  content     String
+  readAt      DateTime? @map("read_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  recipient User @relation(fields: [recipientId], references: [id])
+
+  @@map("notifications")
 }

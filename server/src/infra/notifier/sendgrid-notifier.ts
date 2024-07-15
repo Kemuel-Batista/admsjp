@@ -4,7 +4,7 @@ import { MailService } from '@sendgrid/mail'
 import {
   MailNotifier,
   MailNotifierProps,
-} from '@/domain/admsjp/notifiers/mail-notifier'
+} from '@/domain/notification/application/notifiers/mail-notifier'
 
 import { logger } from '../config/winston-config'
 import { EnvService } from '../env/env.service'

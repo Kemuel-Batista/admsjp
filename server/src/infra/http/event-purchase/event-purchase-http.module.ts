@@ -6,6 +6,7 @@ import { CreateEventPurchaseUseCase } from '@/domain/admsjp/use-cases/event-purc
 import { ListEventPurchasesByEventIdUseCase } from '@/domain/admsjp/use-cases/event-purchase/list-event-purchases-by-event-id'
 import { ListEventPurchasesByUserIdUseCase } from '@/domain/admsjp/use-cases/event-purchase/list-event-purchases-by-user-id'
 import { ListUnexpiredEventPurchasesWithDetailsByUserIdUseCase } from '@/domain/admsjp/use-cases/event-purchase/list-unexpired-event-purchases-with-details-by-user-id'
+import { OnConfirmEventPurchase } from '@/domain/notification/application/subscribers/on-confirm-event-purchase'
 import { DatabaseModule } from '@/infra/database/database.module'
 import { GeneratorsModule } from '@/infra/generators/generators.module'
 
@@ -33,6 +34,7 @@ import { ListUnexpiredEventPurchasesWithDetailsByUserIdController } from './cont
     CancelEventPurchaseByExpiredTimeUseCase,
     ListEventPurchasesByEventIdUseCase,
     ConfirmEventPurchaseUseCase,
+    OnConfirmEventPurchase,
   ],
 })
 export class EventPurchaseHttpModule {}
