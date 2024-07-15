@@ -11,11 +11,18 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from '@/components/ui/table'
+import { EventInfo } from '@/modules/events/types/event-info'
 import { OrderViewSheet } from '@/modules/orders/components/order-view-sheet'
 import { ListEventPurchasesByEventId } from '@/modules/purchase/services/list-event-purchases-by-event-id'
 import { TicketsViewSheet } from '@/modules/tickets/components/tickets-view-sheet'
 
-import { Event } from '../../events/types/event'
 import { EventPurchasesColumns } from '../constants/event-purchases-columns'
 
 export function EventTicketsSheet({
@@ -23,7 +30,7 @@ export function EventTicketsSheet({
   row,
 }: {
   lineaction: Lineaction
-  row: Row<Event>
+  row: Row<EventInfo>
 }) {
   const [open, setOpen] = useState(false)
 
@@ -63,6 +70,27 @@ export function EventTicketsSheet({
           <SheetDescription>
             Lista de compras realizadas do evento
           </SheetDescription>
+
+          <div className="flex items-center justify-between w-full px-6 py-4 !border-gray-300 border-[1px] border-b-0 rounded-t-lg">
+            <h2 className="text-lg font-medium">Informações</h2>
+          </div>
+
+          <Table className="border-gray-300 border-[1px]">
+            <TableBody className="border-[1px] border-b-0">
+              <TableRow>
+                <TableHead className="w-1/3">Total de compras</TableHead>
+                <TableCell className="!border-b-[1px] !border-r-[1px] !bg-gray-100 !py-3 !px-6">
+                  {event.qtyPurchases}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead className="w-1/3">Total de ingressos</TableHead>
+                <TableCell className="!border-b-[1px] !border-r-[1px] !bg-gray-100 !py-3 !px-6">
+                  {event.qtyTickets}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
         </SheetHeader>
 
         <Datagrid

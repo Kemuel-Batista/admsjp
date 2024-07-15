@@ -241,11 +241,17 @@ export class InMemoryEventPurchasesRepository
   }
 
   async listCloseToExpiry(): Promise<EventPurchase[]> {
-    const eventTickets = this.items
+    const eventPurchases = this.items
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .filter((item) => item.expiresAt !== null)
 
-    return eventTickets
+    return eventPurchases
+  }
+
+  async countByEventId(eventId: EventPurchase['eventId']): Promise<number> {
+    const eventPurchases = this.items.filter((item) => item.eventId === eventId)
+
+    return eventPurchases.length
   }
 
   async delete(id: string): Promise<void> {

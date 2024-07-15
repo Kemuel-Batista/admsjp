@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto'
 
-import { EventTicket, Prisma } from '@prisma/client'
+import { EventPurchase, EventTicket, Prisma } from '@prisma/client'
 
 import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
@@ -8,11 +8,15 @@ import { EventTicketsRepository } from '@/domain/admsjp/repositories/event-ticke
 import { EventTicketWithEventLot } from '@/domain/admsjp/types/event-ticket'
 
 import { InMemoryEventLotsRepository } from './in-memory-event-lots-repository'
+import { InMemoryEventPurchasesRepository } from './in-memory-event-purchases-repository'
 
 export class InMemoryEventTicketsRepository implements EventTicketsRepository {
   public items: EventTicket[] = []
 
-  constructor(private eventLotsRepository: InMemoryEventLotsRepository) {}
+  constructor(
+    private eventLotsRepository: InMemoryEventLotsRepository,
+    private eventPurchasesRepository: InMemoryEventPurchasesRepository,
+  ) {}
 
   async create(
     data: Prisma.EventTicketUncheckedCreateInput,
@@ -133,6 +137,23 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
       .filter((item) => item.eventLotId === eventLotId)
 
     return eventTickets
+  }
+
+  async countByEventId(eventId: EventPurchase['eventId']): Promise<number> {
+    const eventPurchases = this.eventPurchasesRepository.items.filter(
+      (eventPurchase) =>
+        eventPurchase.eventId === eventId && eventPurchase.deletedAt === null,
+    )
+
+    const eventPurchaseIds = eventPurchases.map(
+      (eventPurchase) => eventPurchase.id,
+    )
+
+    const count = this.items.filter((eventTicket) =>
+      eventPurchaseIds.includes(eventTicket.eventPurchaseId),
+    ).length
+
+    return count
   }
 
   async delete(id: string): Promise<void> {

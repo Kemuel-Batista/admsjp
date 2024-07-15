@@ -12,8 +12,8 @@ import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-e
 import { Slug } from '@/core/util/slug/slug'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
 import { Uploader } from '@/domain/admsjp/storage/uploader'
+import { MailNotifier } from '@/domain/notification/application/notifiers/mail-notifier'
 
-import { MailNotifier } from '../../notifiers/mail-notifier'
 import { EventPurchasesRepository } from '../../repositories/event-purchases-repository'
 
 interface EditEventUseCaseRequest {

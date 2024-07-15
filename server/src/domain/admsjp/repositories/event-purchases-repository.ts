@@ -37,5 +37,7 @@ export abstract class EventPurchasesRepository {
   ): Promise<EventPurchaseWithBuyer[]>
 
   abstract listCloseToExpiry(): Promise<EventPurchase[]>
+
+  abstract countByEventId(eventId: EventPurchase['eventId']): Promise<number>
   abstract delete(id: EventPurchase['id']): Promise<void>
 }

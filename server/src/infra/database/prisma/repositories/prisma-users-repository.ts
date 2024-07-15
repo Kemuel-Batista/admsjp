@@ -9,6 +9,7 @@ import { PrismaService } from '@/infra/database/prisma/prisma.service'
 @Injectable()
 export class PrismaUsersRepository implements UsersRepository {
   constructor(private prisma: PrismaService) {}
+
   async create({
     email,
     name,

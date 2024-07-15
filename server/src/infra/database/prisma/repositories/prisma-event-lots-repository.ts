@@ -3,6 +3,7 @@ import { EventLot, Prisma } from '@prisma/client'
 
 import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
+import { EventLotStatus } from '@/domain/admsjp/enums/event-lot'
 import { EventLotsRepository } from '@/domain/admsjp/repositories/event-lots-repository'
 
 import { PrismaService } from '../prisma.service'
@@ -86,6 +87,9 @@ export class PrismaEventLotsRepository implements EventLotsRepository {
     let eventLots = await this.prisma.eventLot.findMany({
       where: {
         eventId,
+        status: {
+          not: EventLotStatus.INACTIVE,
+        },
       },
       skip,
       take,

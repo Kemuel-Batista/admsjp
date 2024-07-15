@@ -31,14 +31,17 @@ describe('Edit Event', () => {
     inMemoryUsersRepository = new InMemoryUsersRepository()
     inMemoryEventsRepository = new InMemoryEventsRepository()
     inMemoryEventLotsRepository = new InMemoryEventLotsRepository()
-    inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
-      inMemoryEventLotsRepository,
-    )
+
     inMemoryEventPurchasesRepository = new InMemoryEventPurchasesRepository(
       inMemoryUsersRepository,
       inMemoryEventsRepository,
       inMemoryEventLotsRepository,
       inMemoryEventTicketsRepository,
+    )
+
+    inMemoryEventTicketsRepository = new InMemoryEventTicketsRepository(
+      inMemoryEventLotsRepository,
+      inMemoryEventPurchasesRepository,
     )
 
     fakeUploader = new FakeUploader()

@@ -11,13 +11,7 @@ export const ConfirmEventPurchaseService = () => {
 
     onSuccess: async () => {
       queryClient.invalidateQueries({
-        queryKey: [
-          'event-purchases',
-          'event-purchases-by-event',
-          {
-            type: 'done',
-          },
-        ],
+        queryKey: ['event-purchases', 'event-purchases-by-event'],
       })
     },
   })

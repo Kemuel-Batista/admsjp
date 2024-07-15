@@ -237,6 +237,17 @@ export class PrismaEventPurchasesRepository
     return eventPurchases
   }
 
+  async countByEventId(eventId: EventPurchase['eventId']): Promise<number> {
+    const count = await this.prisma.eventPurchase.count({
+      where: {
+        eventId,
+        deletedAt: null,
+      },
+    })
+
+    return count
+  }
+
   async delete(id: EventPurchase['id']): Promise<void> {
     await this.prisma.eventPurchase.delete({
       where: { id },

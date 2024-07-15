@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common'
-import { Event, Profile, User } from '@prisma/client'
+import { Profile, User } from '@prisma/client'
 
 import { Either, success } from '@/core/either'
 import { ListOptions } from '@/core/repositories/list-options'
 import { SearchParams } from '@/core/repositories/search-params'
 import { EventsRepository } from '@/domain/admsjp/repositories/events-repository'
+
+import { EventPurchasesRepository } from '../../repositories/event-purchases-repository'
+import { EventTicketsRepository } from '../../repositories/event-tickets-repository'
+import { EventInfo } from '../../types/event'
 
 interface ListEventsUseCaseRequest {
   roles: Array<Profile['name']>
@@ -16,13 +20,17 @@ interface ListEventsUseCaseRequest {
 type ListEventsUseCaseResponse = Either<
   null,
   {
-    events: Event[]
+    events: EventInfo[]
   }
 >
 
 @Injectable()
 export class ListEventsUseCase {
-  constructor(private eventsRepository: EventsRepository) {}
+  constructor(
+    private eventsRepository: EventsRepository,
+    private eventPurchasesRepository: EventPurchasesRepository,
+    private eventTicketsRepository: EventTicketsRepository,
+  ) {}
 
   async execute({
     roles,
@@ -47,8 +55,26 @@ export class ListEventsUseCase {
 
     const events = await this.eventsRepository.list(options, searchParams)
 
+    const eventsWithInfo: EventInfo[] = []
+
+    for (const event of events) {
+      const qtyPurchases = await this.eventPurchasesRepository.countByEventId(
+        event.id,
+      )
+
+      const qtyTickets = await this.eventTicketsRepository.countByEventId(
+        event.id,
+      )
+
+      eventsWithInfo.push({
+        ...event,
+        qtyPurchases,
+        qtyTickets,
+      })
+    }
+
     return success({
-      events,
+      events: eventsWithInfo,
     })
   }
 }

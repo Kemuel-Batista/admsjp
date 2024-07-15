@@ -11,6 +11,7 @@ import { ParametersRepository } from '@/domain/admsjp/repositories/parameters-re
 import { ProfilesRepository } from '@/domain/admsjp/repositories/profiles-repository'
 import { UsersOnProfilesRepository } from '@/domain/admsjp/repositories/users-on-profiles-repository'
 import { UsersRepository } from '@/domain/admsjp/repositories/users-repository'
+import { NotificationsRepository } from '@/domain/notification/application/repositories/notification-repository'
 
 import { PrismaService } from './prisma/prisma.service'
 import { PrismaDepartmentRepository } from './prisma/repositories/prisma-departments-repository'
@@ -19,6 +20,7 @@ import { PrismaEventLotsRepository } from './prisma/repositories/prisma-event-lo
 import { PrismaEventPurchasesRepository } from './prisma/repositories/prisma-event-purchases-repository'
 import { PrismaEventTicketsRepository } from './prisma/repositories/prisma-event-tickets-repository'
 import { PrismaEventsRepository } from './prisma/repositories/prisma-events-repository'
+import { PrismaNotificationsRepository } from './prisma/repositories/prisma-notifications-repository'
 import { PrismaOrdersRepository } from './prisma/repositories/prisma-orders-repository'
 import { PrismaParametersRepository } from './prisma/repositories/prisma-parameters-repository'
 import { PrismaProfilesRepository } from './prisma/repositories/prisma-profiles-repository'
@@ -72,6 +74,10 @@ import { PrismaUsersRepository } from './prisma/repositories/prisma-users-reposi
       provide: ParametersRepository,
       useClass: PrismaParametersRepository,
     },
+    {
+      provide: NotificationsRepository,
+      useClass: PrismaNotificationsRepository,
+    },
   ],
   exports: [
     PrismaService,
@@ -86,6 +92,7 @@ import { PrismaUsersRepository } from './prisma/repositories/prisma-users-reposi
     EventTicketsRepository,
     OrdersRepository,
     ParametersRepository,
+    NotificationsRepository,
   ],
 })
 export class DatabaseModule {}
