@@ -27,7 +27,7 @@ type TicketInfo = {
   email: string
   phone: string
   shirtSize: string
-  qrCode: string
+  qrCodeBuffer: Buffer
 }
 
 @Injectable()
@@ -64,9 +64,11 @@ export class OnConfirmEventPurchase {
     for (const eventTicket of eventTicketsByPurchase) {
       const link = `${process.env.APP_BASE_URL}/ticket/details/${eventTicket.ticket}`
 
-      const qrCodeBuffer = await this.qrCodeGenerator.generate(link)
+      eventTicket.qrCodeText = link
 
-      const qrCodeBase64 = Buffer.from(qrCodeBuffer).toString()
+      await this.eventTicketsRepository.save(eventTicket)
+
+      const qrCodeBuffer = await this.qrCodeGenerator.generate(link)
 
       const eventLot = await this.eventLotsRepository.findById(
         eventTicket.eventLotId,
@@ -79,7 +81,7 @@ export class OnConfirmEventPurchase {
         phone: eventTicket.phone,
         shirtSize: eventTicket.shirtSize ?? '',
         email: eventTicket.email,
-        qrCode: qrCodeBase64,
+        qrCodeBuffer,
       })
     }
 
@@ -119,11 +121,22 @@ export class OnConfirmEventPurchase {
       },
     )
 
+    const attachments = ticketsInfo.map((info, index) => {
+      return {
+        cid: `qr-code-${index}`,
+        filename: `ticket-qr-code-${index}`,
+        content: info.qrCodeBuffer.toString().split('base64')[1],
+        contentDisposition: 'inline',
+        encoding: 'base64',
+      }
+    })
+
     await this.mailNotifier.send({
       email: user.email,
       title: '[UMADSJP] Inscrição EBJ confirmada!',
       content: `[UMADSJP] Inscrição EBJ confirmada! Ticket: "${purchase.invoiceNumber}"`,
       renderedHtml,
+      attachments,
     })
 
     await this.sendNotification.execute({

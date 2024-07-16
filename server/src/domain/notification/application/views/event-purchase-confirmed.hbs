@@ -1271,7 +1271,8 @@
                                                           alt=""
                                                           data-proportionally-constrained="true"
                                                           data-responsive="true"
-                                                          src={{this.qrCode}}
+                                                          src="cid:qr-code-{{@index}}"
+                                                          alt="Qr Code"
                                                         />
                                                       </td>
                                                     </tr>
@@ -1782,15 +1783,6 @@
                                       >
                                     </p>
                                   </div>
-                                  <p style="font-size: 12px; line-height: 20px">
-                                    <a
-                                      class="Unsubscribe--unsubscribeLink"
-                                      href="{{{unsubscribe}}}"
-                                      target="_blank"
-                                      style=""
-                                      >Unsubscribe</a
-                                    >
-                                  </p>
                                 </div>
                               </td>
                             </tr>

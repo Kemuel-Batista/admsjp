@@ -8,6 +8,8 @@ export const envSchema = z.object({
   DATABASE_URL: z.string().url(),
   JWT_PRIVATE_KEY: z.string(),
   JWT_PUBLIC_KEY: z.string(),
+  NODEMAILER_EMAIL_ADDRESS: z.string().email(),
+  NODEMAILER_API_KEY: z.string(),
   SENDGRID_EMAIL_ADDRESS: z.string().email(),
   SENDGRID_API_KEY: z.string(),
   ADMIN_USERNAME: z.string(),

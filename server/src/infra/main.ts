@@ -5,6 +5,7 @@ import * as cookieParser from 'cookie-parser'
 
 import { AppModule } from './app.module'
 import { Env } from './env/env'
+import { HttpExceptionFilter } from './middlewares/http-exception.filter'
 import { SocketIOAdapter } from './websocket/socket-io-adapter'
 
 async function bootstrap() {
@@ -36,6 +37,8 @@ async function bootstrap() {
   app.enableCors(corsOptions)
 
   app.use(cookieParser())
+
+  app.useGlobalFilters(new HttpExceptionFilter())
 
   const configService = app.get<ConfigService<Env, true>>(ConfigService)
 
