@@ -38,9 +38,8 @@ export class DeleteEventUseCase {
       )
     }
 
-    const eventPurchases = await this.eventPurchasesRepository.listByEventId(
-      event.id,
-    )
+    const { eventPurchases } =
+      await this.eventPurchasesRepository.listByEventId(event.id)
 
     if (eventPurchases.length > 0) {
       return failure(

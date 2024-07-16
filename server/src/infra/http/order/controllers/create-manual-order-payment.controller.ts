@@ -40,7 +40,7 @@ export class CreateManualOrderPaymentController {
           new MaxFileSizeValidator({
             maxSize: 1024 * 1024 * 5, // 5mb
           }),
-          new FileTypeValidator({ fileType: '.(png|jpg|jpeg|webp)' }),
+          new FileTypeValidator({ fileType: '.(png|jpg|jpeg|webp|pdf)' }),
         ],
       }),
     )

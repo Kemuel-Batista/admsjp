@@ -4,6 +4,7 @@ import { EventPurchaseWithOrder } from '../types/event-purchase-with-order'
 
 export interface ListEventPurchasesByEventIdResponse {
   eventPurchases: EventPurchaseWithOrder[]
+  count: number
 }
 
 export const ListEventPurchasesByEventId = (params: PaginateParams) => {

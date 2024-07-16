@@ -1,7 +1,7 @@
 import {
   MailNotifier,
   MailNotifierProps,
-} from '@/domain/admsjp/notifiers/mail-notifier'
+} from '@/domain/notification/application/notifiers/mail-notifier'
 
 export class FakeMailNotifier implements MailNotifier {
   send({ email, title, content }: MailNotifierProps): Promise<void> {

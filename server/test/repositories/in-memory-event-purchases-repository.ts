@@ -4,6 +4,7 @@ import { EventPurchase, Prisma } from '@prisma/client'
 
 import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
+import { ListEventPurchasesByEventIdDTO } from '@/domain/admsjp/dtos/event-purchase/list-event-purchases-by-event-id-dto'
 import { EventPurchasesRepository } from '@/domain/admsjp/repositories/event-purchases-repository'
 import {
   EventPurchaseWithBuyer,
@@ -120,7 +121,7 @@ export class InMemoryEventPurchasesRepository
   async listByEventId(
     eventId: EventPurchase['eventId'],
     options?: ListOptions,
-  ): Promise<EventPurchaseWithBuyer[]> {
+  ): Promise<ListEventPurchasesByEventIdDTO> {
     let eventPurchases = this.items.map((eventPurchase) => {
       const user = this.usersRepository.items.find((item) => {
         return item.id === eventPurchase.buyerId
@@ -141,7 +142,9 @@ export class InMemoryEventPurchasesRepository
       .filter((item) => item.eventId === eventId)
       .slice(skip, skip + take)
 
-    return eventPurchases
+    const count = eventPurchases.length
+
+    return { eventPurchases, count }
   }
 
   async listByBuyerId(

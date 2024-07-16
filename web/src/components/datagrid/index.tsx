@@ -34,6 +34,7 @@ import {
 import { Button } from '../ui/button'
 import { DefaultActionsBar } from './actions-bar/default-actions-bar'
 import { Expander } from './buttons/expander'
+import { PaginationButton } from './buttons/pagination-button'
 import { IndeterminateCheckboxHeader } from './components/indeterminate-checkbox-header'
 import { IndeterminateCheckboxRow } from './components/indeterminate-checkbox-row'
 
@@ -79,6 +80,7 @@ type DatagridProps = {
   enableRowSelection?: (row: RowData) => boolean
   source?: string
   module: string
+  showPagination?: boolean
 }
 
 type DatagridContextProps = DatagridProps & {
@@ -479,6 +481,7 @@ export const Datagrid = ({
   enableRowSelection,
   source,
   module,
+  showPagination = false,
 }: DatagridProps) => {
   return (
     <DatagridProvider
@@ -500,7 +503,7 @@ export const Datagrid = ({
             title={title}
             actionsDatagrid={<DefaultActionsBar />}
           />
-          {/* <PaginationButton /> */}
+          {showPagination && <PaginationButton />}
         </div>
       </div>
     </DatagridProvider>

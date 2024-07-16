@@ -2,6 +2,7 @@ import { EventPurchase, Prisma } from '@prisma/client'
 
 import { ListOptions } from '@/core/repositories/list-options'
 
+import { ListEventPurchasesByEventIdDTO } from '../dtos/event-purchase/list-event-purchases-by-event-id-dto'
 import {
   EventPurchaseWithBuyer,
   EventPurchaseWithEvent,
@@ -21,7 +22,7 @@ export abstract class EventPurchasesRepository {
   abstract listByEventId(
     eventId: EventPurchase['eventId'],
     options?: ListOptions,
-  ): Promise<EventPurchaseWithBuyer[]>
+  ): Promise<ListEventPurchasesByEventIdDTO>
 
   abstract listByBuyerId(
     buyerId: EventPurchase['buyerId'],

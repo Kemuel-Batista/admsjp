@@ -28,7 +28,7 @@ export function MyPurchasesView() {
   const [showPurchaseDetails, setShowPurchaseDetails] = useState(false)
 
   const { data } = ListMyEventPurchases({
-    allRecords: true,
+    changeAllRecords: true,
   })
   const purchases = data?.eventPurchases
 

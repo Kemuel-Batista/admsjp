@@ -1,3 +1,10 @@
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -15,7 +22,7 @@ export const PaginationButton = () => {
 
   const currentPageCount = table.options.data.length
 
-  const rows = result.data?.['x-total-count'] || 0
+  const rows = result.data?.count || 0
   const page = pagination.pageIndex + 1
   const pages = table.getPageCount()
 
@@ -71,7 +78,9 @@ export const PaginationButton = () => {
           }}
           variant="ghost"
           disabled={!table.getCanPreviousPage()}
-        />
+        >
+          <ChevronsLeft />
+        </Button>
 
         <Button
           variant="ghost"
@@ -79,14 +88,19 @@ export const PaginationButton = () => {
             table.previousPage()
           }}
           disabled={!table.getCanPreviousPage()}
-        />
+        >
+          <ChevronLeft />
+        </Button>
+
         <Button
           variant="ghost"
           onClick={() => {
             table.nextPage()
           }}
           disabled={!table.getCanNextPage()}
-        />
+        >
+          <ChevronRight />
+        </Button>
 
         <Button
           variant="ghost"
@@ -94,7 +108,9 @@ export const PaginationButton = () => {
             table.setPageIndex(table.getPageCount() - 1)
           }}
           disabled={!table.getCanNextPage()}
-        />
+        >
+          <ChevronsRight />
+        </Button>
       </div>
     </div>
   )

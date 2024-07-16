@@ -3,6 +3,7 @@ import { EventPurchase, Prisma } from '@prisma/client'
 
 import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
+import { ListEventPurchasesByEventIdDTO } from '@/domain/admsjp/dtos/event-purchase/list-event-purchases-by-event-id-dto'
 import { EventPurchasesRepository } from '@/domain/admsjp/repositories/event-purchases-repository'
 import {
   EventPurchaseWithBuyer,
@@ -113,27 +114,36 @@ export class PrismaEventPurchasesRepository
   async listByEventId(
     eventId: EventPurchase['eventId'],
     options?: ListOptions,
-  ): Promise<EventPurchaseWithBuyer[]> {
+  ): Promise<ListEventPurchasesByEventIdDTO> {
     const { skip, take } = calcPagination(options)
 
-    const eventPurchases = await this.prisma.eventPurchase.findMany({
-      where: {
-        deletedAt: null,
-        eventId,
-      },
-      include: {
-        user: {
-          select: {
-            email: true,
-            name: true,
+    const [eventPurchases, count] = await this.prisma.$transaction([
+      this.prisma.eventPurchase.findMany({
+        where: {
+          deletedAt: null,
+          eventId,
+        },
+        include: {
+          user: {
+            select: {
+              email: true,
+              name: true,
+            },
           },
         },
-      },
-      skip,
-      take,
-    })
+        skip,
+        take,
+        orderBy: [{ status: 'asc' }],
+      }),
+      this.prisma.eventPurchase.count({
+        where: {
+          deletedAt: null,
+          eventId,
+        },
+      }),
+    ])
 
-    return eventPurchases
+    return { eventPurchases, count }
   }
 
   async listByBuyerId(

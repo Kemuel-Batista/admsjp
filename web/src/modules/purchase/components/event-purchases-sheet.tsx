@@ -102,6 +102,7 @@ export function EventTicketsSheet({
           id={event.id}
           source="/eventPurchases"
           module="eventPurchases"
+          showPagination={true}
         />
       </SheetContent>
     </Sheet>

@@ -127,7 +127,7 @@ export function CheckoutPaymentView() {
                 <Input
                   type="file"
                   placeholder="Picture"
-                  accept="image/*"
+                  accept="image/*,application/pdf"
                   {...fileRef}
                 />
               </FormControl>

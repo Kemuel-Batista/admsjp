@@ -28,7 +28,7 @@ export function CheckoutSummaryView({
 }: CheckoutSummaryViewProps) {
   const { data, isLoading } = ListEventLotByEventId(
     {
-      allRecords: true,
+      changeAllRecords: true,
     },
     eventId,
   )

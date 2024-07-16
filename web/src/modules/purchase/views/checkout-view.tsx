@@ -78,7 +78,7 @@ export function EventCheckoutView({ slug }: EventCheckoutViewProps) {
 
   const { data: purchasesResult, isLoading: isLoadingPurchases } =
     ListEventPurchasesUnexpired({
-      allRecords: true,
+      changeAllRecords: true,
     })
   const purchases = purchasesResult?.eventPurchases || []
 

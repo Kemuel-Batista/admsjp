@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { Lineaction } from '@/components/datagrid'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/ui/icons'
+import { Label } from '@/components/ui/label'
 import {
   Sheet,
   SheetContent,
@@ -31,6 +32,9 @@ export function OrderViewSheet({
   const { icon: Icon } = lineaction
 
   const { original: purchase } = row
+
+  const attachment = purchase?.order?.attachment
+  const isPdf = attachment?.toLowerCase().endsWith('.pdf')
 
   const { mutateAsync, isPending } = ConfirmEventPurchaseService()
 
@@ -63,14 +67,31 @@ export function OrderViewSheet({
             Segue abaixo os detalhes do pagamento da compra realizada
           </SheetDescription>
         </SheetHeader>
-        <Image
-          src={`${env.NEXT_PUBLIC_API_BUCKET_URL}/${env.NEXT_PUBLIC_API_BUCKET_NAME}/${purchase?.order?.attachment}`}
-          className="w-full"
-          alt="Comprovante"
-          unoptimized
-          width={300}
-          height={24}
-        />
+        {isPdf ? (
+          <div className="flex flex-col gap-2">
+            <Label>
+              Este é um PDF. Por favor, clique abaixo para ver o arquivo
+            </Label>
+            <Button>
+              <a
+                href={`${env.NEXT_PUBLIC_API_BUCKET_URL}/${env.NEXT_PUBLIC_API_BUCKET_NAME}/${attachment}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Clique aqui para ver o arquivo
+              </a>
+            </Button>
+          </div>
+        ) : (
+          <Image
+            src={`${env.NEXT_PUBLIC_API_BUCKET_URL}/${env.NEXT_PUBLIC_API_BUCKET_NAME}/${attachment}`}
+            className="w-full"
+            alt="Comprovante"
+            unoptimized
+            width={300}
+            height={24}
+          />
+        )}
         {purchase.status === EventPurchaseStatus.WAITING_CONFIRMATION && (
           <Button onClick={handleConfirmEventPurchase} disabled={isPending}>
             {isPending ? <Icons.spinner /> : 'Validar inscrição'}

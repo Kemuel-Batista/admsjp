@@ -28,7 +28,7 @@ export function ListEventLotsView({
 
   const { data } = ListEventLotByEventId(
     {
-      allRecords: true,
+      changeAllRecords: true,
     },
     eventId,
   )

@@ -40,7 +40,7 @@ export function TicketsViewSheet({
 
   const { data } = ListEventTicketsByPurchaseIdService(
     {
-      allRecords: true,
+      changeAllRecords: true,
     },
     purchase.id,
   )
