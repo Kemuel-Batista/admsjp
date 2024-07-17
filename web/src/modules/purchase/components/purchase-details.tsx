@@ -1,14 +1,11 @@
-import { LoaderCircle } from 'lucide-react'
+import { getCookie } from 'cookies-next'
+import { CircleArrowLeft, LoaderCircle } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import { Card } from '@/components/ui/card'
-import {
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
 import {
   Table,
   TableBody,
@@ -26,13 +23,13 @@ import { EventPurchaseStatus } from '../enums/event-purchase-status'
 import { EventPurchaseStatusDescription } from '../interface/event-purchase-status-description'
 import { EventPurchaseWithEvent } from '../types/event-purchase-with-event'
 
-interface PurchaseDetailsDialogProps {
-  purchase: EventPurchaseWithEvent
-}
+export function PurchaseDetails() {
+  const router = useRouter()
 
-export function PurchaseDetailsDialog({
-  purchase,
-}: PurchaseDetailsDialogProps) {
+  const purchase: EventPurchaseWithEvent = JSON.parse(
+    getCookie('admsjp.purchase-details') ?? '',
+  )
+
   const { user } = useAuth()
   const [totalValue, setTotalValue] = useState(0)
 
@@ -57,22 +54,38 @@ export function PurchaseDetailsDialog({
 
   if (isLoading) {
     return (
-      <DialogContent className="flex flex-col w-3/4 max-w-screen mobile:w-full items-center justify-center mobile:h-screen">
+      <div className="flex flex-col w-full items-center justify-center mobile:h-screen">
         <LoaderCircle size={24} className="text-primary" />
-      </DialogContent>
+      </div>
     )
   }
 
+  function handleNavigateBack() {
+    router.back()
+  }
+
   return (
-    <DialogContent className="w-3/4 max-w-screen mobile:w-full my-5">
-      <DialogHeader>
-        <DialogTitle className="text-start">
+    <div className="max-w-screen w-full my-5 grid gap-4 p-6 duration-200 overflow-auto max-h-screen">
+      <header
+        className="flex flex-row gap-4 items-center hover:cursor-pointer"
+        onClick={handleNavigateBack}
+      >
+        <CircleArrowLeft />
+        <Label className="mobile:text-lg text-xl hover:cursor-pointer">
+          Voltar
+        </Label>
+      </header>
+
+      <Separator />
+
+      <div className="flex flex-col space-y-1.5 text-center sm:text-left">
+        <h1 className="text-lg font-semibold leading-none tracking-tight text-start">
           Pedido N° {purchase.invoiceNumber}
-        </DialogTitle>
-        <DialogDescription className="text-muted-foreground text-start leading-relaxed">
+        </h1>
+        <p className="text-sm text-muted-foreground text-start leading-relaxed">
           Enviado às {dateTimeFormat(purchase.createdAt)}
-        </DialogDescription>
-      </DialogHeader>
+        </p>
+      </div>
 
       <div className="flex flex-row justify-between items-center mobile:flex-col mobile:gap-4 mobile:items-start">
         <div className="flex flex-col">
@@ -143,6 +156,6 @@ export function PurchaseDetailsDialog({
           ))}
         </TableBody>
       </Table>
-    </DialogContent>
+    </div>
   )
 }
