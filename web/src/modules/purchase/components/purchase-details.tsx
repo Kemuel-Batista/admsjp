@@ -26,9 +26,27 @@ import { EventPurchaseWithEvent } from '../types/event-purchase-with-event'
 export function PurchaseDetails() {
   const router = useRouter()
 
-  const purchase: EventPurchaseWithEvent = JSON.parse(
-    getCookie('admsjp.purchase-details') ?? '',
-  )
+  const [purchase, setPurchase] = useState<EventPurchaseWithEvent>()
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Só executa no lado do cliente
+      const purchaseDetailsCookie = getCookie('admsjp.purchase-details')
+      if (purchaseDetailsCookie) {
+        try {
+          setPurchase(JSON.parse(purchaseDetailsCookie))
+
+          if (!purchase) {
+            router.push('/purchases')
+          }
+        } catch (error) {
+          console.error('Failed to parse purchase details cookie:', error)
+        }
+      } else {
+        console.warn('No valid purchase details found in cookie.')
+      }
+    }
+  }, [purchase])
 
   const { user } = useAuth()
   const [totalValue, setTotalValue] = useState(0)
@@ -37,12 +55,12 @@ export function PurchaseDetails() {
     {
       changeAllRecords: true,
     },
-    purchase.id,
+    purchase?.id,
   )
   const eventTickets = data?.eventTickets || []
 
   const statusDescription =
-    EventPurchaseStatusDescription[purchase.status as EventPurchaseStatus]
+    EventPurchaseStatusDescription[purchase?.status as EventPurchaseStatus]
 
   useEffect(() => {
     const newTotalValue = eventTickets.reduce(
@@ -54,7 +72,7 @@ export function PurchaseDetails() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col w-full items-center justify-center mobile:h-screen">
+      <div className="flex flex-col w-full items-center justify-center h-screen">
         <LoaderCircle size={24} className="text-primary" />
       </div>
     )
@@ -80,10 +98,10 @@ export function PurchaseDetails() {
 
       <div className="flex flex-col space-y-1.5 text-center sm:text-left">
         <h1 className="text-lg font-semibold leading-none tracking-tight text-start">
-          Pedido N° {purchase.invoiceNumber}
+          Pedido N° {purchase?.invoiceNumber}
         </h1>
         <p className="text-sm text-muted-foreground text-start leading-relaxed">
-          Enviado às {dateTimeFormat(purchase.createdAt)}
+          Enviado às {dateTimeFormat(purchase?.createdAt ?? '')}
         </p>
       </div>
 
@@ -96,7 +114,7 @@ export function PurchaseDetails() {
           <Label className="text-muted-foreground">N° DO PEDIDO:</Label>
           <div className="flex flex-col gap-1 items-center">
             <Label className="text-base font-bold">
-              {purchase.invoiceNumber}
+              {purchase?.invoiceNumber}
             </Label>
             <Label className="font-normal">{statusDescription}</Label>
           </div>
