@@ -1,11 +1,12 @@
 'use client'
 
-import { Eye, Plus } from 'lucide-react'
+import { Eye, Plus, Shirt, Ticket } from 'lucide-react'
 
 import { Datagrid, Lineaction } from '@/components/datagrid'
 import { Header } from '@/components/header'
 import { Button } from '@/components/ui/button'
 import { Sidebar } from '@/modules/admin/components/sidebar'
+import { TicketsShirtsViewSheet } from '@/modules/tickets/components/tickets-shirts-view-sheet'
 
 import { EventTicketsSheet } from '../../purchase/components/event-purchases-sheet'
 import { EventViewSheet } from '../components/event-view-sheet'
@@ -21,8 +22,13 @@ export function ListAdminEventsView() {
     },
     {
       label: 'Inscrições',
-      icon: Eye,
+      icon: Ticket,
       component: EventTicketsSheet,
+    },
+    {
+      label: 'Camisas',
+      icon: Shirt,
+      component: TicketsShirtsViewSheet,
     },
   ]
 

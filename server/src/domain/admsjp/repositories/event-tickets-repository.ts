@@ -2,6 +2,7 @@ import { EventPurchase, EventTicket, Prisma } from '@prisma/client'
 
 import { ListOptions } from '@/core/repositories/list-options'
 
+import { ListEventTicketsOnlyWithShirtsDTO } from '../dtos/event-ticket/list-event-tickets-only-with-shirts-dto'
 import { EventTicketWithEventLot } from '../types/event-ticket'
 
 export abstract class EventTicketsRepository {
@@ -23,6 +24,10 @@ export abstract class EventTicketsRepository {
   abstract listByEventLotId(
     eventLotId: EventTicket['eventLotId'],
   ): Promise<EventTicket[]>
+
+  abstract listOnlyWithShirts(
+    options?: ListOptions,
+  ): Promise<ListEventTicketsOnlyWithShirtsDTO>
 
   abstract countByEventId(eventId: EventPurchase['eventId']): Promise<number>
   abstract delete(id: EventTicket['id']): Promise<void>

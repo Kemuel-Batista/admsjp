@@ -419,7 +419,7 @@ export const DatagridProvider = ({
 
   const table = useReactTable({
     data: result.data?.[module] ?? defaultData,
-    pageCount: Math.ceil(result.data?.['x-total-count'] / pageSize),
+    pageCount: Math.ceil(result.data?.count / pageSize),
     columns: newColumns,
     getRowCanExpand:
       expandRow &&

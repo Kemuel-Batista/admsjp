@@ -3,6 +3,8 @@ import { EventPurchase, EventTicket, Prisma } from '@prisma/client'
 
 import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
+import { ListEventTicketsOnlyWithShirtsDTO } from '@/domain/admsjp/dtos/event-ticket/list-event-tickets-only-with-shirts-dto'
+import { EventPurchaseStatus } from '@/domain/admsjp/enums/event-purchase'
 import { EventTicketsRepository } from '@/domain/admsjp/repositories/event-tickets-repository'
 import { EventTicketWithEventLot } from '@/domain/admsjp/types/event-ticket'
 
@@ -40,6 +42,11 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
     email,
     phone,
     shirtSize,
+    status,
+    updatedAt,
+    updatedBy,
+    deliveredAt,
+    deliveredBy,
   }: EventTicket): Promise<EventTicket> {
     const event = await this.prisma.eventTicket.update({
       where: {
@@ -52,6 +59,11 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
         email,
         phone,
         shirtSize: shirtSize ?? undefined,
+        status,
+        updatedAt,
+        updatedBy,
+        deliveredAt,
+        deliveredBy,
       },
     })
 
@@ -125,6 +137,44 @@ export class PrismaEventTicketsRepository implements EventTicketsRepository {
     })
 
     return eventTickets
+  }
+
+  async listOnlyWithShirts(
+    options?: ListOptions,
+  ): Promise<ListEventTicketsOnlyWithShirtsDTO> {
+    const { skip, take } = calcPagination(options)
+
+    const [eventTickets, count] = await this.prisma.$transaction([
+      this.prisma.eventTicket.findMany({
+        where: {
+          shirtSize: {
+            not: '',
+          },
+          eventPurchase: {
+            status: {
+              equals: EventPurchaseStatus.CONFIRMED,
+            },
+          },
+        },
+        skip,
+        take,
+        orderBy: [{ status: 'asc' }, { shirtSize: 'asc' }],
+      }),
+      this.prisma.eventTicket.count({
+        where: {
+          shirtSize: {
+            not: '',
+          },
+          eventPurchase: {
+            status: {
+              equals: EventPurchaseStatus.CONFIRMED,
+            },
+          },
+        },
+      }),
+    ])
+
+    return { eventTickets, count }
   }
 
   async countByEventId(eventId: EventPurchase['eventId']): Promise<number> {

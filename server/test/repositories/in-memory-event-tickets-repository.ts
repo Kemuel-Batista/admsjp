@@ -4,6 +4,8 @@ import { EventPurchase, EventTicket, Prisma } from '@prisma/client'
 
 import { ListOptions } from '@/core/repositories/list-options'
 import { calcPagination } from '@/core/util/pagination/calc-pagination'
+import { ListEventTicketsOnlyWithShirtsDTO } from '@/domain/admsjp/dtos/event-ticket/list-event-tickets-only-with-shirts-dto'
+import { EventTicketStatus } from '@/domain/admsjp/enums/event-ticket'
 import { EventTicketsRepository } from '@/domain/admsjp/repositories/event-tickets-repository'
 import { EventTicketWithEventLot } from '@/domain/admsjp/types/event-ticket'
 
@@ -35,6 +37,11 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
       shirtSize: data.shirtSize,
       birthday: new Date(data.birthday),
       createdAt: new Date(),
+      status: EventTicketStatus.NEW,
+      updatedAt: null,
+      updatedBy: null,
+      deliveredAt: null,
+      deliveredBy: null,
     }
 
     this.items.push(eventTicket)
@@ -137,6 +144,13 @@ export class InMemoryEventTicketsRepository implements EventTicketsRepository {
       .filter((item) => item.eventLotId === eventLotId)
 
     return eventTickets
+  }
+
+  async listOnlyWithShirts(): Promise<ListEventTicketsOnlyWithShirtsDTO> {
+    const eventTickets = this.items.filter((item) => item.shirtSize !== '')
+    const count = eventTickets.length
+
+    return { eventTickets, count }
   }
 
   async countByEventId(eventId: EventPurchase['eventId']): Promise<number> {

@@ -12,6 +12,7 @@ export type EventTicketWithLot = {
   email: string
   phone: string
   birthday: Date
+  status: number
   shirtSize: string
   createdAt: Date
   eventLot: EventLot

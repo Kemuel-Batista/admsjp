@@ -7,6 +7,9 @@ const pt = {
       notFound: 'Não foi possível localizar o event ticket {{key}}',
       incorrectAssociation: 'Esse ingresso não pertence a essa compra',
     },
+    pickup: {
+      alreadyPickedUp: 'Este ingresso já foi retirado!',
+    },
   },
 }
 

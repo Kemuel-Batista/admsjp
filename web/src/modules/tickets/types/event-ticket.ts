@@ -12,4 +12,9 @@ export type EventTicket = {
   birthday: Date
   shirtSize: string
   createdAt: Date
+  status: number
+  updatedAt?: string
+  updatedBy?: string
+  delieveredAt?: string
+  deliveredBy?: string
 }
